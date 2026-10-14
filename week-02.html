@@ -21,6 +21,7 @@
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
 <script src="assets/lesson.js"></script>
+<script src="assets/pad.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -57,7 +58,7 @@ Lesson.mount({
       ans:`<div class="m">rf = <b>0.40</b> = 40%</div>`, ansRaw:true, ansNote:'All the rf values add up to 1.'},
     meaning:{text:'For categories, a <b>bar chart</b> compares sizes; a <b>pie chart</b> shows parts of a whole (100%).', fig:{label:'Same data, two charts', build:barPie}} },
 
-  { id:'classes', title:'Grouping numbers into classes',
+  { id:'classes', demo:'Your professor builds a frequency table on the board from raw data.', title:'Grouping numbers into classes',
     def:'Many numbers are grouped into <b>classes</b> of equal width. Each class has limits, boundaries (± 0.5) and a midpoint.',
     life:{text:'25 test scores range from 42 to 98. Listing all 25 shows little; six classes show the pattern.'},
     formula:{f:`${T('w','Width')} = ${fr(T('r','Max − Min'),T('k','k'))}`,
@@ -66,12 +67,12 @@ Lesson.mount({
       ans:`<div class="m">9.33 → round up → <b>10</b></div><p class="calcnote">Classes: 40–49, 50–59, 60–69, 70–79, 80–89, 90–99</p>`, ansRaw:true, ansNote:'Always round the width up.'},
     meaning:{text:'Build the frequency table: class, boundaries, midpoint, f, rf and cumulative frequency. Type your own data.', fig:{label:'Build your own table', build:el=>ST.freqTool(el)}} },
 
-  { id:'histogram', title:'Histograms and shape',
+  { id:'histogram', demo:'Your professor draws a histogram on the board, bar by bar.', title:'Histograms and shape',
     def:'A <b>histogram</b> draws a frequency table as touching bars, one per class. Its <b>shape</b> is symmetric, right-skewed or left-skewed.',
     life:{text:'Ages of 30 visitors to a science museum: most are 10–39, a few are older. Data: illustrative.', fig:{label:'Visitor ages', html:H_AGE}},
     meaning:{text:'Follow the tail. Tail to the right: <b>positively skewed</b>. Tail to the left: <b>negatively skewed</b>. No long tail: <b>symmetric</b>.', fig:{label:'Switch the shape', build:ST.shapeTool}} },
 
-  { id:'polygon', title:'Frequency polygon and ogive',
+  { id:'polygon', demo:'Your professor draws the polygon and the ogive on the board.', title:'Frequency polygon and ogive',
     def:'A <b>frequency polygon</b> joins the class midpoints. An <b>ogive</b> plots cumulative frequency at each upper boundary.',
     life:{text:'From the museum data: how many visitors were younger than 49.5? The ogive answers directly: 26 of 30.'},
     formula:{f:`${T('m','Midpoint')} = ${fr(`${T('l','lower')} + ${T('u','upper')}`,'2')}`,
@@ -79,6 +80,9 @@ Lesson.mount({
       sub:`Midpoint = ${fr('40 + 49','2')}`, keys:'( 4 0 + 4 9 ) ÷ 2 =', ans:`<div class="m">Midpoint = <b>44.5</b></div>`, ansRaw:true, ansNote:'Boundaries of 40–49: 39.5 and 49.5.'},
     meaning:{text:'The polygon shows the shape. The ogive answers “how many below a value?”.', fig:{label:'Same data, two graphs', build:ST.polyTool}} }
   ],
+  inClass:{intro:'Your professor builds the table and draws the histogram on the board. Draw it with them on graph paper.', items:[
+    {q:'Commute times (min) of 20 students: 12, 25, 18, 33, 41, 22, 15, 28, 36, 19, 24, 30, 45, 27, 16, 21, 38, 26, 29, 23. Build a frequency table with classes 10–19, 20–29, 30–39, 40–49, then draw the histogram.', draw:true, tips:['Tally each value into its class.','Check the frequencies add up to 20.','Use the class boundaries (9.5, 19.5, …) on the horizontal axis.','Bars touch: no gaps in a histogram.']},
+    {q:'From your table: add the midpoints and cumulative frequencies, then draw the ogive. How many students commute less than 29.5 minutes?', draw:true, tips:['Midpoint = (lower + upper) ÷ 2.','Cumulative frequency: keep adding.','Plot each cumulative frequency at the upper boundary.']}]},
   takeaways:{label:'Week 2 on one page', mindmap:{center:'Week 2', branches:[
     {t:'Categories',items:['rf = f ÷ n','Bar: compare','Pie: part of 100%']},
     {t:'Classes',items:['Width = range ÷ k, round up','Midpoint = (lower + upper) ÷ 2','Boundaries: ± 0.5']},

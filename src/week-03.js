@@ -44,12 +44,15 @@ Lesson.mount({
     life:{text:'Salaries in a small company: most earn 42–62 thousand, three managers earn 150–200 thousand. Data: Week 1–2 slides.'},
     meaning:{text:'For skewed data or outliers, report the <b>median</b>. For symmetric data, the mean.', fig:{label:'Three data sets', build:threeCases}} },
 
-  { id:'quartiles', title:'Percentiles and quartiles',
+  { id:'quartiles', demo:'Your professor finds Q1, the median and Q3 on the board.', title:'Percentiles and quartiles',
     def:'A <b>percentile</b> gives the position of a value: P25 = Q1, P50 = median, P75 = Q3.',
     life:{text:'“Your score is at the 75th percentile” means 75% of the class scored at or below you.'},
     meaning:{text:'Sort, find the median, then the median of each half. When n is odd, leave the median out of both halves.',
       fig:{label:'Data: 3, 5, 7, 8, 9, 11, 13, 15, 18 (n = 9)', html:`<div class="keys">${[3,5,7,8,9,11,13,15,18].map((x,i)=>`<kbd class="${i===4?'eq':''}">${x}</kbd>`).join('')}</div><div class="steps" style="margin-top:10px">Median: position (9 + 1) ÷ 2 = 5 → <b>9</b><br>Lower half 3, 5, 7, 8 → Q1 = (5 + 7) ÷ 2 = <b>6</b><br>Upper half 11, 13, 15, 18 → Q3 = (13 + 15) ÷ 2 = <b>14</b></div>`}} }
   ],
+  inClass:{intro:'We find the centre and the quartiles together, step by step on the board.', items:[
+    {q:'Exam scores of 10 students: 55, 62, 68, 70, 71, 74, 78, 81, 85, 96. Find the mean, the median, Q1 and Q3.', tips:['The data are already sorted.','n = 10 is even: the median is the mean of the two middle values.','Split into a lower half and an upper half of 5 values each.']},
+    {q:'Hours of sleep of 20 students: 4–5 h: 3 students, 6–7 h: 10 students, 8–9 h: 7 students. Estimate the mean using midpoints.', tips:['Midpoints: 4.5, 6.5, 8.5.','Multiply each midpoint by its frequency.','Divide the total by 20.']}]},
   takeaways:{label:'Week 3 on one page', mindmap:{center:'Week 3', branches:[
     {t:'Mean',items:['x̄ = Σx ÷ n']},{t:'Median',items:['Sort first','Position (n + 1) ÷ 2']},{t:'Mode',items:['Most frequent','Only centre for nominal data']},
     {t:'Skew',items:['Mean pulled to the tail','Skewed data → median']},{t:'Position',items:['Q1 = P25, median = P50, Q3 = P75']}]}},

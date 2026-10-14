@@ -25,6 +25,7 @@ TPL = """<!doctype html>
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
 <script src="assets/lesson.js"></script>
+<script src="assets/pad.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>

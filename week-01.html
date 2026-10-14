@@ -21,6 +21,7 @@
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
 <script src="assets/lesson.js"></script>
+<script src="assets/pad.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -125,6 +126,9 @@ Lesson.mount({
       ans:`<div class="m">x̄ = <b>20</b> min</div>`, ansRaw:true, ansNote:'The median is 14 min. Four of five deliveries took 15 min or less.'},
     meaning:{text:'The outlier pulls the mean up to 20; the median stays at 14. With outliers, report the median.', fig:{label:'Add or remove the outlier', build:outlierTool}} }
   ],
+  inClass:{intro:'Two exercises we solve together. Work on paper first; the writing box is for practice at home.', items:[
+    {q:'A researcher wants to know the average daily screen time of CUD students. Name (a) the population, (b) a good sample, (c) the variable and its type, (d) one possible source of bias.', tips:['Population = everyone the question is about.','A good sample is chosen at random from the whole population.','Screen time is measured: decide discrete or continuous.','Bias: who might be left out, or answer differently?']},
+    {q:'Daily water intake (litres) of 7 students: 1.5, 2.0, 1.8, 2.2, 1.6, 2.1, 6.0. Find the mean and the median. Which describes a typical student better, and why?', tips:['Add all seven values, divide by 7.','Sort the values before finding the middle.','Look for a value far from the others.']}]},
   takeaways:{label:'Week 1 on one page', mindmap:{center:'Week 1', branches:[
     {t:'Statistics',items:['Collect, organize, analyze, interpret, communicate','Descriptive vs inferential']},
     {t:'Population and sample',items:['N → parameters μ, σ, p','n → statistics x̄, s, p̂']},

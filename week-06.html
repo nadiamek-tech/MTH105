@@ -21,6 +21,7 @@
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
 <script src="assets/lesson.js"></script>
+<script src="assets/pad.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -58,7 +59,7 @@ Lesson.mount({
       sub:'E(X) = 0(0.1) + 1(0.3) + 2(0.4) + 3(0.2)', keys:'0 × 0 . 1 + 1 × 0 . 3 + 2 × 0 . 4 + 3 × 0 . 2 =', ans:`<div class="m">E(X) = <b>1.7</b> buses</div>`, ansRaw:true},
     meaning:{text:'Over many hours, the stop gets 1.7 buses per hour on average. E(X) need not be a possible value of X.'} },
 
-  { id:'variance-x', title:'Variance and standard deviation of X',
+  { id:'variance-x', demo:'Your professor completes the E(X) and Var(X) table on the board.', title:'Variance and standard deviation of X',
     def:'<b>Var(X)</b> measures how far X typically lands from E(X). <b>SD = √Var(X)</b>, in the units of X.',
     life:{text:'Same bus stop, with μ = 1.7.'},
     formula:{f:`${T('v','Var('+v('X')+')')} = ${T('S',SG)} ${T('d','('+v('x')+' − μ)<sup>2</sup>')} · ${T('p',v('P')+'('+v('x')+')')}`,
@@ -68,6 +69,9 @@ Lesson.mount({
     meaning:{text:'In a typical hour, the number of buses is about 0.9 away from the average of 1.7. Bigger SD = less predictable.',
       fig:{label:'Buses per hour · P(x)', html:`<svg viewBox="0 0 520 170" role="img" aria-label="Probability distribution of buses per hour"><line x1="60" x2="480" y1="140" y2="140" stroke="var(--ink)"/>${[[0,.1],[1,.3],[2,.4],[3,.2]].map(([x,p])=>`<rect x="${90+x*100}" y="${140-p*280}" width="60" height="${p*280}" fill="var(--wk)" opacity=".8"/><text x="${120+x*100}" y="${132-p*280}" text-anchor="middle" ${MONO} font-size="12" fill="var(--ink)">${p}</text><text x="${120+x*100}" y="160" text-anchor="middle" ${MONO} font-size="12" fill="var(--ink)">${x}</text>`).join('')}<line x1="${120+1.7*100}" x2="${120+1.7*100}" y1="20" y2="140" stroke="var(--ink)" stroke-dasharray="5 4"/><text x="${126+1.7*100}" y="30" ${MONO} font-size="12" fill="var(--ink)">μ = 1.7</text></svg>`}} }
   ],
+  inClass:{intro:'We complete the table and draw the distribution together on the board.', items:[
+    {q:'X = number of phone notifications in 10 minutes. x: 0, 1, 2, 3, 4 with P(x): 0.10, 0.25, 0.30, k, 0.10. Find k, E(X), Var(X) and the SD. Interpret the SD in one sentence.', tips:['k = 1 − (sum of the others).','E(X): multiply each x by P(x) and add.','Var(X): (x − μ)² × P(x), then add.']},
+    {q:'Draw the probability histogram of X from Exercise 1 and mark μ on it.', draw:true, tips:['One bar per value of x.','Bar height = P(x).','Mark μ with a vertical line.']}]},
   takeaways:{label:'Week 6 on one page', mindmap:{center:'Discrete X', branches:[
     {t:'Discrete',items:['Countable values 0, 1, 2 …']},{t:'Valid',items:['0 ≤ P(x) ≤ 1','ΣP(x) = 1','k = 1 − others']},
     {t:'Summaries',items:['E(X) = Σx·P(x)','Var(X) = Σ(x − μ)²·P(x)','SD = √Var(X)']}]}},

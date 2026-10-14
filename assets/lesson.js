@@ -30,7 +30,7 @@
     const builds=[];
     /* top bar: back link, contents, voice, theme */
     const bar=el('header',{class:'lbar'});
-    const secs=cfg.topics.map(t=>({id:t.id,t:t.title})).concat([{id:'takeaways',t:'Takeaways'},{id:'practice',t:'Practice'}]);
+    const secs=cfg.topics.map(t=>({id:t.id,t:t.title})).concat(cfg.inClass?[{id:'in-class',t:'In class'}]:[]).concat([{id:'takeaways',t:'Takeaways'},{id:'practice',t:'Practice'}]);
     bar.innerHTML=`<div class="lbar-in"><a class="brand" href="${cfg.home||'lectures.html'}"><b>MTH 105</b><span>← Lectures · Week ${cfg.week}</span></a>
       <nav class="lchips" aria-label="In this lecture">${secs.map((s,i)=>`<a href="#${s.id}" data-id="${s.id}"><span>${i+1}</span>${esc(s.t)}</a>`).join('')}</nav>
       <div class="lctl">${LS.on('voice')?'<button type="button" class="pill listen" id="listen">▶ Listen</button>':''}<button type="button" class="pill" id="theme" title="Light or dark">◐</button></div></div><div class="progress"><i></i></div>`;
@@ -48,6 +48,7 @@
 
     cfg.topics.forEach((t,i)=>{
       const s=el('section',{class:'lsec',id:t.id}); s.appendChild(el('h2',{},`<span class="no">${i+1}</span>${esc(t.title)}`));
+      if(t.demo) s.appendChild(el('div',{class:'ldemo'},`<b>Demonstrated in class</b><span>${t.demo}</span>`));
       if(t.def) s.appendChild(part('def',t.def,null,builds));
       if(t.life) s.appendChild(part('life',t.life.text,t.life.fig,builds));
       if(t.formula){ const p=el('div',{class:'lpart lp-formula','data-part':'formula'}); p.appendChild(el('span',{class:'ltag'},PARTS.formula));
@@ -56,6 +57,32 @@
       if(t.meaning) s.appendChild(part('meaning',t.meaning.text,t.meaning.fig,builds));
       main.appendChild(s);
     });
+
+    if(cfg.inClass){
+      const ic=cfg.inClass, sec=el('section',{class:'lsec lclass',id:'in-class'});
+      sec.appendChild(el('h2',{},`<span class="no">${cfg.topics.length+1}</span>In class`));
+      sec.appendChild(el('div',{class:'lc-paper'},`<span class="lc-stamp">On the board · on paper</span>
+        <p class="lc-lead say">${ic.intro||'We solve these together in class. Bring the handout, or write in the box below each exercise.'}</p>
+        <ol class="lc-how"><li><b>Watch</b> your professor demonstrate the method on the board.</li><li><b>Try</b> it yourself on the handout or in the writing box.</li><li><b>Check</b> the answer together in class. It is not posted online.</li></ol>
+        <button type="button" class="lc-print">Print handout</button>`));
+      ic.items.forEach((x,i)=>{ const card=el('div',{class:'lc-ex'});
+        card.innerHTML=`<div class="lc-exh"><b>Exercise ${i+1}</b>${x.draw?'<span class="lc-tag">Draw</span>':''}</div><p class="lc-q say">${x.q}</p>${x.tips?`<details class="lc-tips"><summary>Before you start</summary><ol>${x.tips.map(t=>`<li>${t}</li>`).join('')}</ol></details>`:''}<div class="lc-pad"></div><p class="lc-ans">Answer: solved together in class.</p>`;
+        sec.querySelector('.lc-paper').appendChild(card);
+        builds.push(()=>{ if(window.Pad) Pad.create(card.querySelector('.lc-pad'),{key:'inclass-'+i,bg:x.draw?'grid':'lines',height:x.draw?360:240,name:`week${cfg.week}-exercise${i+1}`}); }); });
+      sec.querySelector('.lc-print').addEventListener('click',()=>{
+        const w=window.open('','_blank'); if(!w) return;
+        w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>MTH 105 · Week ${cfg.week} · In-class handout</title><style>
+          body{font-family:Arial,sans-serif;margin:18mm;color:#111}h1{font-size:18px;margin:0}p.m{margin:4px 0 14px;color:#444;font-size:12px}
+          .nm{display:flex;gap:24px;font-size:13px;margin-bottom:16px}.nm span{flex:1;border-bottom:1px solid #999;padding-bottom:2px}
+          .ex{page-break-inside:avoid;margin-bottom:14px}.ex b{font-size:14px}.ex p{font-size:13px;margin:4px 0 6px}
+          .box{border:1px solid #999;height:85mm}.grid{background-image:linear-gradient(#ccc 1px,transparent 1px),linear-gradient(90deg,#ccc 1px,transparent 1px);background-size:5mm 5mm}
+          .lines{background-image:linear-gradient(transparent 7mm,#ccc 7mm);background-size:100% 7.25mm}
+          @page{size:A4;margin:0}</style></head><body><h1>MTH 105 · Week ${cfg.week} · ${esc(cfg.title)}</h1><p class="m">In-class handout · Eng. Nadia Mek · solved together on the board</p>
+          <div class="nm"><span>Name:</span><span>Student ID:</span><span>Section:</span></div>
+          ${ic.items.map((x,i)=>`<div class="ex"><b>Exercise ${i+1}</b><p>${x.q}</p><div class="box ${x.draw?'grid':'lines'}"></div></div>`).join('')}
+          <script>setTimeout(()=>print(),300)<\/script></body></html>`); w.document.close(); });
+      main.appendChild(sec);
+    }
 
     const tk=el('section',{class:'lsec',id:'takeaways'}); tk.appendChild(el('h2',{},`<span class="no">${secs.length-1}</span>Takeaways`));
     const tkb=el('div',{class:'lpart','data-part':'takeaways'}); const tkf=figure(cfg.takeaways); tkb.appendChild(tkf.fig); builds.push(tkf.build); tk.appendChild(tkb); main.appendChild(tk);

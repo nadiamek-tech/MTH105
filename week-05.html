@@ -21,6 +21,7 @@
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
 <script src="assets/lesson.js"></script>
+<script src="assets/pad.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -67,7 +68,7 @@ Lesson.mount({
       sub:'P(on time) = 1 − 0.20', keys:'1 − 0 . 2 =', ans:`<div class="m">P(on time) = <b>0.80</b></div>`, ansRaw:true},
     meaning:{text:'Use the complement when “not A” or “at least one” is easier to count the other way round.'} },
 
-  { id:'addition', title:'The addition rule (OR)',
+  { id:'addition', demo:'Your professor draws the Venn diagram on the board.', title:'The addition rule (OR)',
     def:'“A or B” means at least one happens. Add, then subtract the overlap so it is not counted twice. If A and B are <b>mutually exclusive</b> (no overlap), just add.',
     life:{text:'Of 60 students, 35 take Arabic, 25 take French and 10 take both. Data: illustrative.'},
     formula:{f:`${T('or','P('+v('A')+' or '+v('B')+')')} = ${T('a','P('+v('A')+')')} + ${T('b','P('+v('B')+')')} − ${T('ab','P('+v('A')+' and '+v('B')+')')}`,
@@ -75,7 +76,7 @@ Lesson.mount({
       sub:`P(Arabic or French) = ${fr('35','60')} + ${fr('25','60')} − ${fr('10','60')}`, keys:'( 3 5 + 2 5 − 1 0 ) ÷ 6 0 =', ans:`<div class="m">= 50/60 ≈ <b>0.833</b></div>`, ansRaw:true},
     meaning:{text:'In a Venn diagram, the overlap sits inside both circles. Change the counts and watch the rule.', fig:{label:'Change the counts', build:ST.vennTool, caption:'P(A or B) = P(A) + P(B) − P(A and B).'}} },
 
-  { id:'multiplication', title:'The multiplication rule (AND) and tree diagrams',
+  { id:'multiplication', demo:'Your professor draws the tree diagram on the board.', title:'The multiplication rule (AND) and tree diagrams',
     def:'For <b>independent</b> events, P(A and B) = P(A) × P(B). In a tree, multiply along a path; add paths for “or”.',
     life:{text:'A student is assigned a group (Male or Female) and a lab session (Morning or Evening) at random. Each split is 1/2.'},
     formula:{f:`${T('and','P('+v('A')+' and '+v('B')+')')} = ${T('a','P('+v('A')+')')} × ${T('b','P('+v('B')+')')}`,
@@ -95,6 +96,9 @@ Lesson.mount({
       {t:'Pass the exam / fail the same exam',a:3,why:'Opposites of each other.'}]})}},
     meaning:{text:'The relationship decides the rule: OR → add (minus the overlap); AND → multiply; NOT → 1 minus.'} }
   ],
+  inClass:{intro:'We draw the tree and the Venn diagram together on the board.', items:[
+    {q:'A café gives each customer a random drink size (small or large) and a random topping (yes or no), each with probability 1/2. Draw the tree, list the sample space, and find P(large and topping) and P(large or topping).', draw:true, tips:['Two steps, two branches each: 4 paths.','AND: multiply along one path.','OR: add the paths where at least one happens.']},
+    {q:'In a class of 40 students, 22 play football, 15 play basketball and 8 play both. Draw the Venn diagram. Find P(football or basketball) and P(neither).', draw:true, tips:['Start with the overlap: 8.','Football only = 22 − 8.','Neither = 40 − everyone inside the circles.']}]},
   takeaways:{label:'Week 5 on one page', mindmap:{center:'Probability', branches:[
     {t:'Words',items:['Experiment, outcome','Sample space S','Event E']},
     {t:'Basic rule',items:['P(E) = favourable ÷ total','0 ≤ P ≤ 1']},

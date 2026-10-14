@@ -6,7 +6,7 @@ Lesson.mount({
   week:4, clo:'CLO 1', title:'Measures of Dispersion', chapter:'Ch.3: Numerical Summaries of Center and Variation · Gould, Ryan & Wong (2020)',
   intro:'The same mean can hide very different spreads. This week: one number for the spread.',
   topics:[
-  { id:'range-iqr', title:'Range, IQR and the boxplot',
+  { id:'range-iqr', demo:'Your professor draws a boxplot on the board, with fences and outliers.', title:'Range, IQR and the boxplot',
     def:'The <b>range</b> is max − min. The <b>IQR</b> (interquartile range) is Q3 − Q1: the spread of the middle 50%.',
     life:{text:'Two bus routes both average 30 minutes. On one, trips take 28–32 min; on the other, 15–60 min. Same mean, very different reliability. Data: illustrative.'},
     formula:{f:`${T('iqr','IQR')} = ${T('q3','Q3')} − ${T('q1','Q1')}`,
@@ -15,7 +15,7 @@ Lesson.mount({
       ans:`<div class="m">IQR = <b>10.5</b></div><p class="calcnote">Range = 31 − 12 = 19.</p>`, ansRaw:true, ansNote:'Outliers: below Q1 − 1.5·IQR or above Q3 + 1.5·IQR.'},
     meaning:{text:'The boxplot draws the five-number summary: min, Q1, median, Q3, max. A long whisker or a dot beyond the fences shows skew or outliers.', fig:{label:'Type data, see the boxplot', build:ST.boxTool}} },
 
-  { id:'variance', title:'Sample variance',
+  { id:'variance', demo:'Your professor builds a deviation table on the board.', title:'Sample variance',
     def:'The <b>variance</b> s² is the average squared distance from the mean. For a sample, divide by n − 1.',
     life:{text:'Five students’ quiz scores: 4, 6, 7, 9, 14. Mean = 8. How far are they from 8, on average?'},
     formula:{f:`${T('s2',v('s')+'<sup>2</sup>')} = ${fr(`${T('S',SG)}${T('d','('+v('x')+' − '+XB+')<sup>2</sup>')}`,T('n1',v('n')+' − 1'))}`,
@@ -41,6 +41,9 @@ Lesson.mount({
       ans:`<div class="m">40% vs 30%</div>`, ansRaw:true},
     meaning:{text:'CV has no units, so it compares spread across different means or units. Smaller CV = more consistent. Here temperature varies more, relative to its mean.'} }
   ],
+  inClass:{intro:'Your professor draws the boxplot on the board. Draw it with them, then compute the spread.', items:[
+    {q:'Data: 8, 11, 12, 14, 15, 17, 18, 20, 21, 35. Find the five-number summary, the IQR and the outlier fences, then draw the boxplot.', draw:true, tips:['Five numbers: min, Q1, median, Q3, max.','Fences: Q1 − 1.5 × IQR and Q3 + 1.5 × IQR.','A value beyond a fence is drawn as a dot; the whisker stops at the last value inside.']},
+    {q:'Data: 3, 5, 7, 9, 11. Build the deviation table and find s², s and the CV.', tips:['Find the mean first.','Columns: x, x − x̄, (x − x̄)².','Divide the total of the squares by n − 1.']}]},
   takeaways:{label:'Week 4 on one page', mindmap:{center:'Week 4', branches:[
     {t:'Range and IQR',items:['Range = max − min','IQR = Q3 − Q1','Fences: Q1 − 1.5·IQR, Q3 + 1.5·IQR']},
     {t:'Variance',items:['s² = Σ(x − x̄)² ÷ (n − 1)','Subtract, square, add, divide']},
