@@ -5,7 +5,7 @@
   const KEY='learning-supports', root=document.documentElement;
   /* [key, label, what changes, why (evidence), method?] method = changes how practice works (page reloads) */
   const SW=[
-    ['guided','Guided steps','Each practice question becomes Read → Plan → Estimate → Solve → Check, with the model working shown one step at a time.','Problem-solving routines (Montague, 2008) and step-by-step worked examples with “which rule is this?” prompts (Atkinson, Renkl & Merrill, 2003).',1],
+    ['guided','Guided steps','Each practice question becomes a short step-by-step routine, with the model answer shown one step at a time.','Problem-solving routines (Montague, 2008) and step-by-step worked examples with “which rule is this?” prompts (Atkinson, Renkl & Merrill, 2003).',1],
     ['single','One question at a time','Practice shows one question, a progress count and a short self-check before moving on.','Smaller chunks reduce working-memory load; self-monitoring improved results for college students with ADHD (Scheithauer & Kelley, 2017).',1],
     ['calmstart','Calm start','A 2-minute “write your worries” box before practice; answers become “compare with model working”.','Expressive writing before a test raised anxious students’ scores (Ramirez & Beilock, 2011); low-stakes retrieval practice lowers test anxiety (Agarwal et al., 2014).',1],
     ['voice','Read aloud (AI voice)','Adds a Listen button to lectures and a speaker button to each practice question and step, with symbols in words (x̄ = “x bar”).','Hearing and seeing the text together reduces the reading load of word problems.',1],
@@ -136,5 +136,9 @@ html[data-sup-focus] .chips .chip:not(:first-child){display:none}
     document.body.append(b,dlg); apply();
     b.onclick=()=>{ render(); if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open',''); const f=dlg.querySelector('.ls-pre button'); if(f) f.focus(); };
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',build); else build();
+  function note(){ if(document.body.textContent.includes('does not replace classes')) return;
+    const n=document.createElement('p'); n.className='support-note'; n.textContent='This website is interactive course support. It does not replace classes, attendance or class activities.';
+    n.style.cssText='max-width:1180px;margin:0 auto;padding:14px 20px 90px;border-top:1px solid var(--line,#ddd);font-family:var(--f-display,Arial);font-size:.84rem;color:var(--muted,#666);text-align:center'; document.body.appendChild(n); }
+  const start=()=>{ build(); setTimeout(note,300); };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
 })();
