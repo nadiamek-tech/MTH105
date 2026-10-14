@@ -19,6 +19,7 @@ TPL = """<!doctype html>
 </style>
 </head>
 <body>
+<script src="assets/supports.js"></script>
 <script src="assets/course.js"></script>
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
