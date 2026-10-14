@@ -13,47 +13,13 @@
 <link rel="stylesheet" href="assets/portal.css">
 <style>:root{--wk:#C8102E;--wk-soft:rgba(200,16,46,.08);--wk-d:#FF7A7F;--wk-soft-d:rgba(255,122,127,.14)}</style>
 <title>MTH 105 Exams</title>
-<style>
-.next{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;border:2px solid var(--wk);background:linear-gradient(150deg,var(--wk-soft),transparent 70%);border-radius:16px;padding:16px 18px}
-.next .day{font-family:var(--f-mono);text-align:center;line-height:1.1;border-right:1px solid var(--line);padding-right:16px}
-.next .day b{display:block;font-size:2.4rem;color:var(--wk);font-family:var(--f-display)}
-.next h3{font-size:1.2rem;margin:0}.next p{margin:4px 0 0;color:var(--muted)}
-.cd{font-family:var(--f-mono);font-size:.85rem;color:var(--wk)!important;font-weight:600}
-tr.soon td:first-child{box-shadow:inset 4px 0 0 var(--wk)}
-@media (max-width:700px){.next{grid-template-columns:minmax(0,1fr)}.next .day{border-right:0;padding-right:0;text-align:left}}
-</style>
 </head>
 <body>
 <div id="hub" data-cur="exams"></div>
 <main class="wrap">
   <h1 class="pg">Exams</h1>
-  <p class="lead">Dates, what each exam covers, revision pages and past papers.</p>
-  <h2 class="sec" id="next">Next exam</h2>
-  <div class="next"><div class="day">MON<b>19</b>OCT 2026</div><div><h3>Midterm Examination · 20%</h3><p>9:30–11:00 AM (90 minutes) · HUB-Yard Zones A, B, D</p><p>Section 1: Descriptive Statistics (CLO 1) · Section 2: Probability (CLO 2) · Weeks 1–7</p><p>Closed book · standard calculator only · no phones</p><p><a href="midterm-practice.html"><b>Start the midterm revision →</b></a></p><p class="cd" id="cd"></p></div></div>
-
-  <h2 class="sec" id="dates">All assessments</h2>
-  <p class="lead" style="margin-bottom:10px">Click one to see what it includes.</p>
+  <p class="lead">Click an assessment for what it includes. The flags open its revision.</p>
   <div class="pt-exams pt" id="examcards"></div>
-
-  <h2 class="sec" id="assess">Assessment and CLOs</h2>
-  <div class="tblwrap"><table class="tbl"><tr><th>Assessment Items</th><th class="c">Grade Weight %</th><th class="c">CLO 1</th><th class="c">CLO 2</th><th class="c">CLO 3</th><th class="c">CLO 4</th><th class="c">CLO 5</th></tr>
-    <tr><td>Quiz 1</td><td class="c">10</td><td class="c tick">✓</td><td class="c tick">✓</td><td></td><td></td><td></td></tr>
-    <tr><td>Quiz 2</td><td class="c">10</td><td></td><td></td><td class="c tick">✓</td><td class="c tick">✓</td><td></td></tr>
-    <tr><td>Lab Project</td><td class="c">20</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td></tr>
-    <tr><td>Lab Quiz (Lab Exam)</td><td class="c">10</td><td class="c tick">✓</td><td></td><td class="c tick">✓</td><td></td><td class="c tick">✓</td></tr>
-    <tr><td>Midterm Examination</td><td class="c">20</td><td class="c tick">✓</td><td class="c tick">✓</td><td></td><td></td><td></td></tr>
-    <tr><td>Final Examination</td><td class="c">30</td><td></td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td></tr></table></div>
-
-  <h2 class="sec" id="revision">Revision</h2>
-  <div class="cards">
-    <a class="card" href="midterm-practice.html"><span class="no">Midterm · CLO 1, CLO 2</span><h3>Midterm revision</h3><p>5 parts, 50 exercises: graphs, calculations, probability rules, tree diagrams, discrete distributions. Model answers step by step.</p></a>
-    <a class="card dash" href="https://nadiamek-tech.github.io/MindTheGap/" target="_blank" rel="noopener"><span class="no">Workshops</span><h3>Mind the Gap ↗</h3><p>Read the question, read the formula, use the calculator.</p></a>
-    <div class="card dash"><span class="no">Final · CLO 2–5</span><h3>Final exam practice</h3><p>Coming after the midterm. Until then, use the Practice scene of each lecture.</p></div>
-  </div>
-
-  <h2 class="sec" id="past">Past papers</h2>
-  <div class="note">Past papers will be posted here.</div>
-
   <h2 class="sec">Exam rules</h2>
   <div id="rules"></div>
 </main>
@@ -70,9 +36,8 @@ Portal.examCards(document.getElementById('examcards'));
 Lecture.W.accordion(document.getElementById('rules'),[
  {t:'What to bring',d:'Your CUD ID and a standard calculator. Programmable calculators with graphing capabilities are not allowed.'},
  {t:'Not allowed',d:'Mobile phones, books, or other communication devices. Any violation of the academic integrity policy is sanctioned as per the Student Handbook.'},
- {t:'Final exam',d:'Closed book and comprehensive, with more emphasis on the material covered after the midterm. Students absent for 25% or more of the classes cannot sit the final.'}]);
+ {t:'Final exam',d:'Closed book and comprehensive, with more emphasis on the material covered after the midterm.'}]);
 document.querySelectorAll('#rules details').forEach((d,i)=>{ if(i) d.open=false; });
-(function(){ const t=new Date('2026-10-19T09:30:00+04:00').getTime(), d=Math.ceil((t-Date.now())/86400000), el=document.getElementById('cd'); el.textContent=d>1?d+' days to go':d===1?'Tomorrow':d===0?'Today':''; })();
 </script>
 </body>
 </html>

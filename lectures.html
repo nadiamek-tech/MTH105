@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="assets/stats.css">
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/banner.css">
+<link rel="stylesheet" href="assets/portal.css">
+<style>.lc{cursor:pointer}.lc h3 a{color:var(--ink);text-decoration:none}.lc:hover{border-color:var(--wk)}.flags{display:flex;gap:6px;flex-wrap:wrap}.soonline{color:var(--muted);margin:14px 0 0}</style>
 <style>:root{--wk:#C8102E;--wk-soft:rgba(200,16,46,.08);--wk-d:#FF7A7F;--wk-soft-d:rgba(255,122,127,.14)}</style>
 <title>MTH 105 Lectures</title>
 </head>
@@ -17,16 +19,13 @@
 <div id="hub" data-cur="lectures"></div>
 <main class="wrap">
   <h1 class="pg">Lectures</h1>
-  <p class="lead">Each lecture: short explanations, formulas broken down symbol by symbol, a working tool and calculation practice with answers. Press ▶ Listen to hear it.</p>
+  <p class="lead">Short explanations, formulas step by step, practice with answers. Press ▶ Listen to hear a lecture.</p>
   <div class="cards" id="lec"></div>
-  <h2 class="sec" id="practice">Practice</h2>
-  <p class="lead">New exercises with hidden answers, from easy to hard.</p>
-  <div class="cards" id="prac"></div>
-  <h2 class="sec" id="tools">Calculator and tools</h2>
+  <p class="soonline">Week 7 onwards is in preparation. <a href="index.html#calendar">See the plan in the semester calendar →</a></p>
+  <h2 class="sec" id="tools">Tools</h2>
   <div class="cards">
-    <a class="card" href="tools.html#calc"><span class="no">Tool</span><h3>Scientific calculator</h3><p>x², √, xʸ, n!, nCr, ln, log, Ans: the keys you need in exams.</p></a>
-    <a class="card" href="tools.html#stats"><span class="no">Tools</span><h3>Statistics checkers</h3><p>Mean and SD, boxplot, frequency table, Venn, tree, discrete distributions.</p></a>
-    <a class="card dash" href="https://nadiamek-tech.github.io/MindTheGap/" target="_blank" rel="noopener"><span class="no">Workshops</span><h3>Mind the Gap ↗</h3><p>Read the question, read the formula, use the calculator.</p></a>
+    <a class="card" href="tools.html"><span class="no">Tools</span><h3>Calculator and statistics checkers</h3><p>Scientific calculator, mean and SD, boxplot, frequency table, Venn, tree, discrete distributions.</p></a>
+    <a class="card" href="https://nadiamek-tech.github.io/MindTheGap/" target="_blank" rel="noopener"><span class="no">Workshops</span><h3>Mind the Gap ↗</h3><p>Read the question, read the formula, use the calculator.</p></a>
   </div>
 </main>
 <footer style="max-width:1100px;margin:0 auto;padding:18px 16px 30px;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted);text-align:center">Created and owned by <b>Eng. Nadia Mek</b> · <a href="https://github.com/nadiamek-tech/MTH105">github.com/nadiamek-tech/MTH105</a></footer>
@@ -44,14 +43,8 @@ const WEEKS=[
  ['week-04.html','Week 4','Measures of Central Tendency, Position, & Dispersion',['Variance and standard deviation','Coefficient of variation'],'CLO 1','Ch.3: Numerical Summaries of Center and Variation','',6],
  ['week-05.html','Week 5','Probability Theory',['Definitions of events and sample space','Operations on probabilities'],'CLO 2','Ch 5: Modeling Variation with Probability','Quiz 1 · End of Week 5',8],
  ['week-06.html','Week 6','Discrete Probability Distributions',['Definition of discrete random variables','Expected value, variance and standard deviation of discrete random variables'],'CLO 2','Ch 6: Modelling Random Events: The Normal and Binomial Models','',4]];
-const SOON=[['Week 7','Discrete Probability Distributions',['Examples of discrete random variables:','Bernoulli and Binomial distributions'],'CLO 2'],
- ['Weeks 8–9','The Normal and Standard Normal Distribution',['Usage of Histogram to introduce continuous random variables and their density functions','The normal distribution','The standard normal distribution','Interpreting the standard deviation: Z-scores'],'CLO 2'],
- ['Weeks 10–11','Sampling Distribution of the Mean',['Definitions of sampling distribution of the mean','Confidence intervals of the mean and that of a proportion'],'CLO 3'],
- ['Week 12','Contingency Tables',['Tests of independence of the 2 variables using Chi-square test'],'CLO 4'],
- ['Weeks 13–15','Simple Linear Regression',['Equation of regression line','Correlation between two variables','Interpretation of Coefficient of Determination and Correlation Coefficient','Interpretation of Regression Coefficients'],'CLO 5']];
-document.getElementById('lec').innerHTML=WEEKS.map(([f,wk,t,subs,clo,ch,as])=>'<a class="card" href="'+f+'"><span class="no">'+wk+' · '+clo+'</span><h3>'+esc(t)+'</h3><ul>'+subs.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul><div class="meta"><span>'+esc(ch)+'</span>'+(as?'<span class="as">'+esc(as)+'</span>':'')+'</div></a>').join('')
- +SOON.map(([wk,t,subs,clo])=>'<div class="card dash" aria-disabled="true"><span class="no">'+wk+' · '+clo+'</span><h3>'+esc(t)+'</h3><ul>'+subs.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul><div class="meta"><span>In preparation</span></div></div>').join('');
-document.getElementById('prac').innerHTML=WEEKS.map(([f,wk,t,,,,,s])=>'<a class="card" href="'+f+'#s'+s+'"><span class="no">'+wk+'</span><h3>Practice · '+esc(t)+'</h3></a>').join('')+'<a class="card" href="midterm-practice.html"><span class="no">Midterm</span><h3>Midterm revision · 5 parts, 50 exercises</h3></a>';
+document.getElementById('lec').innerHTML=WEEKS.map(([f,wk,t,subs,clo,ch,as,pr])=>'<div class="card lc" data-href="'+f+'"><span class="no">'+wk+' · '+clo+'</span><h3><a href="'+f+'">'+esc(t)+'</a></h3><ul>'+subs.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><div class="meta"><span>'+esc(ch)+'</span></div><div class="flags"><a class="pt-flag" href="'+f+'#s'+pr+'">Practice →</a></div></div>').join('');
+document.querySelectorAll('.lc').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('a')) location.href=c.dataset.href; }));
 </script>
 </body>
 </html>

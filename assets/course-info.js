@@ -62,7 +62,6 @@ window.COURSE={
   ],
 
   faqExtra:[
-    ['Which calculator can I use?','A standard scientific calculator. Graphing or programmable calculators and phones are not allowed. Practise with the <a href="tools.html#calc">course calculator</a>.'],
     ['What is the textbook?','Gould, Ryan &amp; Wong (2020) <i>Introductory Statistics: Exploring the World Through Data</i>, 3rd edition.'],
     ['What is the grading scale?','90–100 A+ · 80–89 A · 75–79 B+ · 70–74 B · 65–69 C+ · 60–64 C · 55–59 D+ · 50–54 D · below 50 F.'],
     ['What about academic integrity?','Cheating and plagiarism are sanctioned as per the CUD Academic Integrity Policy. Turnitin similarity must stay under 20%.']

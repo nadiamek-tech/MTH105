@@ -19,9 +19,7 @@
 <main class="wrap">
   <h1 class="pg">Labs · Excel</h1>
   <p class="lead">One workbook per session. Open it, follow the steps, answer in the yellow cells, then upload it on Moodle.</p>
-  <h2 class="sec" id="submit">Lab submissions · 30%</h2>
-  <div class="pt-subs pt" id="subs"></div>
-  <h2 class="sec" id="guides">Lab guides</h2>
+  <p><a class="pt-flag" href="index.html#submissions">Submit the Lab Project and Lab Quiz on Moodle →</a></p>
   <h2 class="sec">Lab / Non-Lecture Schedule</h2>
   <div id="labs"></div>
   <h2 class="sec">Before you start</h2>
@@ -37,16 +35,13 @@
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
 <script src="assets/lab-data.js"></script>
-<script src="assets/course-info.js"></script>
-<script src="assets/portal.js"></script>
 <script>
 const esc=Lecture.W.esc;
 const grid=g=>{ const cols=['','A','B','C','D'].slice(0,g.cells[0].length+1); return '<div class="xlwrap"><div class="xl"><div class="bar"><span class="nm">'+String.fromCharCode(65+g.sel[1])+(g.sel[0]+1)+'</span><i>fx</i><span>'+esc(g.f)+'</span></div><table><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>'+g.cells.map((r,i)=>'<tr><th>'+(i+1)+'</th>'+r.map((c,j)=>'<td class="'+(i===g.sel[0]&&j===g.sel[1]?'sel':'')+'">'+esc(c)+'</td>').join('')+'</tr>').join('')+'</table></div></div>'; };
-document.getElementById('labs').innerHTML=MTH105_LABS.map((L,i)=>'<details class="lab" id="'+L.id+'"'+(i===0?' open':'')+'><summary><span class="wk">Week '+esc(L.week)+'</span><span class="tt"><b>'+esc(L.title)+'</b><small>'+esc(L.subs)+(L.clo?' · '+esc(L.clo):'')+(L.assess?' · '+esc(L.assess):'')+'</small></span><span class="chev">▶</span></summary>'
+document.getElementById('labs').innerHTML=MTH105_LABS.map((L,i)=>'<details class="lab" id="'+L.id+'"'+(i===0?' open':'')+'><summary><span class="wk">Week '+esc(L.week)+'</span><span class="tt"><b>'+esc(L.title)+'</b><small>'+esc(L.subs)+(L.clo?' · '+esc(L.clo):'')+'</small></span><span class="chev">▶</span></summary>'
   +'<div class="lab-body"><div><p><b>Goal:</b> '+esc(L.goal)+'</p><div class="fx">'+L.fx.map(f=>'<code>'+esc(f)+'</code>').join('')+'</div><ol>'+L.steps.map(s=>'<li>'+s+'</li>').join('')+'</ol></div>'
   +'<div><p class="eyebrow" style="margin:0 0 6px">What it looks like</p>'+grid(L.grid)+'<p style="margin:14px 0 0"><a class="dl" href="lab/'+L.id+'.xlsx" download>⬇ '+L.id+'.xlsx</a>'+(L.csv?' <a href="lab/lab-01-students.csv" download style="margin-left:8px">CSV version</a>':'')+'</p><p class="sub">Upload the completed file on Moodle.</p></div></div></details>').join('');
 if(location.hash){ const d=document.querySelector(location.hash); if(d&&d.tagName==='DETAILS'){ d.open=true; d.scrollIntoView(); } }
-Portal.submissions(document.getElementById("subs"));
 </script>
 </body>
 </html>
