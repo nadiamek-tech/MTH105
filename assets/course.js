@@ -90,8 +90,38 @@
     },
     practice(el, items, opts={}){
       const label=opts.label||'Show hint', prefix=opts.prefix===undefined?'<b>A strong answer includes:</b> ':opts.prefix, qn=opts.numbered===false?'':'Q';
-      el.innerHTML=`<div class="prac">${items.map((it,i)=>`<div class="pq"><div class="row"><span>${qn?`<b>Q${i+1}</b> `:''}${it.type?`<span class="tag">${it.type}</span> `:''}${it.q}</span><button type="button" class="btn ghost" data-i="${i}">${label}</button></div><div class="hint" hidden>${prefix}${it.hint}</div></div>`).join('')}</div>`;
-      el.querySelectorAll('.pq button').forEach(b=>b.addEventListener('click',()=>{ const h=b.closest('.pq').querySelector('.hint'); h.hidden=!h.hidden; b.textContent=h.hidden?label:'Hide'; }));
+      const LS=window.LearningSupports, on=k=>!!(LS&&LS.on(k));
+      const guided=on('guided'), single=on('single'), calm=on('calmstart'), aloud=on('aloud');
+      const say=t=>{ if(!window.speechSynthesis) return; speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(t.replace(/x̄/g,'x bar').replace(/σ/g,'sigma').replace(/Σ/g,'sum of').replace(/√/g,'square root of').replace(/≤/g,'less than or equal to').replace(/≥/g,'greater than or equal to').replace(/−/g,' minus ').replace(/×/g,' times ').replace(/÷/g,' divided by ')); speechSynthesis.speak(u); };
+      const spk=`<button type="button" class="btn ghost say" title="Read aloud" aria-label="Read aloud"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg></button>`;
+      el.innerHTML=`<div class="prac${single?' single':''}">${calm?`<details class="calm-start" open><summary>Before you start · 2 minutes</summary><p>Write down any worries about this topic. Nobody sees it and it is not saved. Writing worries down before a test frees working memory for the maths (Ramirez &amp; Beilock, 2011).</p><textarea rows="3" aria-label="Your worries (not saved)"></textarea><p class="re">A faster heartbeat means your body is getting ready to perform. Mistakes here are expected: this is practice, not a test.</p><button type="button" class="btn calm-go">Start</button></details>`:''}${single?`<div class="pnav"><button type="button" class="btn ghost pv">← Previous</button><span class="pc"></span><button type="button" class="btn ghost nx">Next →</button></div>`:''}${items.map((it,i)=>`<div class="pq" data-i="${i}"><div class="row"><span class="qt">${qn?`<b>Q${i+1}</b> `:''}${it.type?`<span class="tag">${it.type}</span> `:''}${it.q}</span><span class="qb">${aloud?spk:''}${guided?'':`<button type="button" class="btn ghost show" data-i="${i}">${calm?'Compare with model working':label}</button>`}</span></div>${guided?'<div class="guide"></div>':''}<div class="hint" hidden>${prefix}${it.hint}</div>${single?`<div class="selfmon"><span>Before moving on:</span><label><input type="checkbox"> I wrote what is given and what is asked</label><label><input type="checkbox"> I wrote the formula before the numbers</label><label><input type="checkbox"> I checked my answer makes sense</label></div>`:''}</div>`).join('')}</div>`;
+      el.querySelectorAll('.pq .show').forEach(b=>b.addEventListener('click',()=>{ const h=b.closest('.pq').querySelector('.hint'); h.hidden=!h.hidden; b.textContent=h.hidden?(calm?'Compare with model working':label):'Hide'; }));
+      el.querySelectorAll('.pq .say').forEach(b=>b.addEventListener('click',()=>{ const pq=b.closest('.pq'); say(pq.querySelector('.qt').innerText); }));
+      if(calm){ const c=el.querySelector('.calm-go'); c.addEventListener('click',()=>{ const d=el.querySelector('.calm-start'); d.querySelector('textarea').value=''; d.open=false; }); }
+      if(guided) el.querySelectorAll('.pq').forEach(pq=>{
+        const hint=pq.querySelector('.hint'), g=pq.querySelector('.guide');
+        const tmp=document.createElement('div'); tmp.innerHTML=hint.innerHTML;
+        let parts; const mg=tmp.querySelector('.mg');
+        if(mg) parts=[...mg.children].filter(c=>!c.classList.contains('how')).map(c=>c.outerHTML);
+        else { const blocks=[...tmp.children].filter(c=>/^(DIV|P|UL|OL|TABLE)$/.test(c.tagName)); parts=blocks.length>1?blocks.map(c=>c.outerHTML):tmp.innerHTML.split(/(?<=[.:])\s+(?=[A-Z<])/).filter(x=>x.trim()); }
+        const stages=[
+          ['Read','What is given? What is asked? Say it in your own words.'],
+          ['Plan','Which formula or rule fits? Write it in symbols before using any numbers.'],
+          ['Estimate','Roughly how big should the answer be?'],
+          ['Solve','Work it out on paper, then compare one step at a time. For each step, say which rule it uses.'],
+          ['Check','Does your answer match your estimate? Are the units right?']];
+        let st=0, k=0;
+        const draw=()=>{ g.innerHTML=`<ol class="gsteps">${stages.map(([t,d],i)=>`<li class="${i<st?'done':i===st?'cur':'todo'}"><b>${t}</b>${i<=st?` <span>${d}</span>`:''}${i===3&&st>=3?`<div class="wsteps">${parts.slice(0,k).map(x=>`<div class="ws">${x}</div>`).join('')}</div>`:''}</li>`).join('')}</ol><div class="gbtn">${
+            st<3?`<button type="button" class="btn g-next">Done: next stage →</button>`:st===3?(k<parts.length?`<button type="button" class="btn g-step">Show worked step ${k+1} of ${parts.length}</button>`:`<button type="button" class="btn g-next">Done: check →</button>`):'<span class="gok">Finished. Try the next question without the steps.</span>'}${aloud?' '+spk:''}</div>`;
+          const n=g.querySelector('.g-next'); if(n) n.onclick=()=>{ st++; draw(); };
+          const s2=g.querySelector('.g-step'); if(s2) s2.onclick=()=>{ k++; draw(); };
+          const sp=g.querySelector('.say'); if(sp) sp.onclick=()=>{ const c=g.querySelector('li.cur')||g.querySelector('li:last-child'); say(c.innerText); };
+        };
+        draw();
+      });
+      if(single){ const qs=[...el.querySelectorAll('.pq')]; let c=0; const pc=el.querySelector('.pc');
+        const show=()=>{ qs.forEach((q,i)=>q.hidden=i!==c); pc.textContent=`Question ${c+1} of ${qs.length}`; el.querySelector('.pv').disabled=c===0; el.querySelector('.nx').disabled=c===qs.length-1; };
+        el.querySelector('.pv').onclick=()=>{ if(c>0){ c--; show(); } }; el.querySelector('.nx').onclick=()=>{ if(c<qs.length-1){ c++; show(); } }; show(); }
     },
     flashcards(el, cards){
       el.innerHTML=`<div class="fc-tools"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" class="fc-mode"> Self-test: hide the meanings</label><span class="mono fc-score"></span></div><div class="fc">${cards.map(([t,d])=>`<button type="button"><b>${t}</b><span>${d}</span></button>`).join('')}</div>`;

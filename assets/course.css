@@ -275,3 +275,31 @@ textarea,input[type=text]{width:100%;border:1px solid var(--line);background:var
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 .support-note{max-width:1440px;margin:0 auto;padding:14px 20px 90px;border-top:1px solid var(--line);font-family:var(--f-display);font-size:.84rem;color:var(--muted);text-align:center}
+
+/* learning supports: practice methods */
+.prac .qb{display:flex;gap:6px;flex:none}
+.prac .say{padding:4px 9px}
+.calm-start{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:10px 12px;font-family:var(--f-display);font-size:.92rem}
+.calm-start summary{cursor:pointer;font-weight:700}
+.calm-start textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;background:var(--bg);color:var(--ink)}
+.calm-start .re{color:var(--muted)}
+.prac .pnav{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--f-display)}
+.prac .pnav .pc{font-weight:700}
+.prac .selfmon{display:grid;gap:4px;margin-top:10px;padding-top:8px;border-top:1px dashed var(--line);font-size:.86rem;color:var(--muted)}
+.prac .selfmon label{display:flex;gap:8px;align-items:center;color:var(--ink)}
+.guide{margin-top:8px}
+.gsteps{margin:0;padding-left:22px;display:grid;gap:6px}
+.gsteps li.todo{color:var(--muted)}
+.gsteps li.done{color:var(--muted)}
+.gsteps>li.done>b::after{content:" ✓";color:var(--good)}
+.gsteps>li>b{color:inherit}
+.gsteps>li.cur>b{color:var(--wk)}
+.gsteps>li{display:list-item}
+.wsteps .ws{display:block}
+.wsteps .ws b{display:inline;color:var(--ink);font-size:inherit}
+.wsteps{display:grid;gap:6px;margin-top:6px}
+.wsteps .ws{border-left:3px solid var(--wk);padding:4px 10px;background:var(--wk-soft);border-radius:4px}
+.wsteps .ws > div{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px}
+.wsteps .ws span:first-child{font-weight:700}
+.gbtn{margin-top:8px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.gok{color:var(--good);font-weight:700}
