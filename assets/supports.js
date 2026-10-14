@@ -8,7 +8,7 @@
     ['guided','Guided steps','Each practice question becomes Read → Plan → Estimate → Solve → Check, with the model working shown one step at a time.','Problem-solving routines (Montague, 2008) and step-by-step worked examples with “which rule is this?” prompts (Atkinson, Renkl & Merrill, 2003).',1],
     ['single','One question at a time','Practice shows one question, a progress count and a short self-check before moving on.','Smaller chunks reduce working-memory load; self-monitoring improved results for college students with ADHD (Scheithauer & Kelley, 2017).',1],
     ['calmstart','Calm start','A 2-minute “write your worries” box before practice; answers become “compare with model working”.','Expressive writing before a test raised anxious students’ scores (Ramirez & Beilock, 2011); low-stakes retrieval practice lowers test anxiety (Agarwal et al., 2014).',1],
-    ['aloud','Read aloud','A speaker button reads each question and each step, with symbols in words (x̄ = “x bar”).','Hearing and seeing the text together reduces the reading load of word problems.',1],
+    ['voice','Read aloud (AI voice)','Adds a Listen button to lectures and a speaker button to each practice question and step, with symbols in words (x̄ = “x bar”).','Hearing and seeing the text together reduces the reading load of word problems.',1],
     ['font','Readable font','Clearer letter shapes.'],
     ['space','Extra spacing','More space between lines and words.'],
     ['numbers','Bigger numbers and formulas','Formulas and figures easier to read.'],
@@ -23,13 +23,13 @@
     ['Number support','Step-by-step solving',['guided','numbers','space']],
     ['Focus support','One thing at a time',['single','focus','motion','resume']],
     ['Calm mode','Maths anxiety',['calmstart','calm','motion']],
-    ['Reading support','Reading and dyslexia',['aloud','font','space','large']],
-    ['Vision support','Low vision',['large','contrast','aloud']]
+    ['Reading support','Reading and dyslexia',['voice','font','space','large']],
+    ['Vision support','Low vision',['large','contrast','voice']]
   ];
   const load=()=>{ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } };
   const save=s=>{ try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){} };
   let st=load();
-  window.LearningSupports={on:k=>!!st[k]};
+  window.LearningSupports={on:k=>!!st[k],get:k=>st[k]};
 
   /* styles */
   const css=`
@@ -97,9 +97,9 @@ html[data-sup-focus] .chips .chip:not(:first-child){display:none}
   const pg='ls-last:'+location.pathname;
   if(st.resume&&!location.hash){ try{ const h=localStorage.getItem(pg); if(h) history.replaceState(null,'',h); }catch(e){} }
   const rs=history.replaceState;
-  const keep=()=>{ try{ if(/^#s\d+$/.test(location.hash)) localStorage.setItem(pg,location.hash); }catch(e){} };
+  const keep=()=>{ try{ if(/^#[\w-]+$/.test(location.hash)) localStorage.setItem(pg,location.hash); }catch(e){} };
   keep(); addEventListener('hashchange',keep);
-  history.replaceState=function(a,b,url){ const r=rs.apply(this,arguments); try{ if(url&&String(url).startsWith('#s')) localStorage.setItem(pg,String(url)); }catch(e){} return r; };
+  history.replaceState=function(a,b,url){ const r=rs.apply(this,arguments); try{ if(url&&/^#[\w-]+$/.test(String(url))) localStorage.setItem(pg,String(url)); }catch(e){} return r; };
 
   /* panel */
   let dlg;
@@ -114,14 +114,17 @@ html[data-sup-focus] .chips .chip:not(:first-child){display:none}
 <div class="ls-sw">${SW.filter(x=>x[4]).map(row).join('')}</div>
 <p class="ls-h">How the page looks</p>
 <div class="ls-sw">${SW.filter(x=>!x[4]).map(row).join('')}</div>
-<div class="ls-speed"><span class="ls-h" style="margin-right:6px">Narration speed</span>${[[0.8,'Slower'],[1,'Normal'],[1.2,'Faster']].map(([r,t])=>`<button type="button" data-r="${r}" aria-pressed="${rate()===r}">${t}</button>`).join('')}</div>
+<p class="ls-h">How a lecture is shown</p>
+<div class="ls-speed" role="group" aria-label="Lecture view">${[['page','Whole lecture on one page'],['section','One topic at a time'],['part','One step at a time']].map(([v,t])=>`<button type="button" data-v="${v}" aria-pressed="${(st.view||'page')===v}">${t}</button>`).join('')}</div>
+<div class="ls-speed"><span class="ls-h" style="margin-right:6px">Voice speed</span>${[[0.8,'Slower'],[1,'Normal'],[1.2,'Faster']].map(([r,t])=>`<button type="button" data-r="${r}" aria-pressed="${rate()===r}">${t}</button>`).join('')}</div>
 <div class="ls-foot"><span>Practice changes apply when you close this panel.</span><button type="button" class="ls-reset">Reset all</button></div></div>`;
     dlg.querySelector('.ls-x').onclick=()=>dlg.close();
-    const isM=k=>SW.some(x=>x[0]===k&&x[4]);
-    dlg.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ const ks=PRESETS[b.dataset.p][2], all=ks.every(on); ks.forEach(k=>{ st[k]=!all; if(isM(k)) methodChanged=true; }); commit(); });
+    const isM=k=>SW.some(x=>x[0]===k&&x[4])||k==='focus';
+    dlg.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ const ks=PRESETS[b.dataset.p][2], all=ks.every(on); ks.forEach(k=>{ st[k]=!all; if(isM(k)) methodChanged=true; }); if(PRESETS[b.dataset.p][0]==='Focus support'){ st.view=all?'page':'section'; methodChanged=true; } commit(); });
     dlg.querySelectorAll('[data-k]').forEach(c=>c.onchange=()=>{ st[c.dataset.k]=c.checked; if(isM(c.dataset.k)) methodChanged=true; commit(); });
     dlg.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ st.rate=+b.dataset.r; commit(); document.querySelectorAll('audio,video').forEach(m=>{ try{ m.playbackRate=rate(); }catch(e){} }); });
-    dlg.querySelector('.ls-reset').onclick=()=>{ if(SW.some(x=>x[4]&&st[x[0]])) methodChanged=true; st={}; commit(); };
+    dlg.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{ st.view=b.dataset.v; methodChanged=true; commit(); });
+    dlg.querySelector('.ls-reset').onclick=()=>{ if(SW.some(x=>x[4]&&st[x[0]])||st.view) methodChanged=true; st={}; commit(); };
   }
   function commit(){ save(st); apply(); const f=document.activeElement&&document.activeElement.dataset; const key=f&&(f.k||f.p||f.r); render(); if(key!=null){ const el=dlg.querySelector(`[data-k="${key}"],[data-p="${key}"],[data-r="${key}"]`); if(el) el.focus(); } }
   function build(){
@@ -129,7 +132,7 @@ html[data-sup-focus] .chips .chip:not(:first-child){display:none}
     b.innerHTML='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="4.5" r="1.8"/><path d="M5 8.5l7 1.5 7-1.5M12 10v5l-3 6M12 15l3 6"/></svg><span>Learning supports</span>';
     dlg=document.createElement('dialog'); dlg.className='ls-dlg'; dlg.setAttribute('aria-label','Learning supports');
     dlg.addEventListener('click',e=>{ if(e.target===dlg) dlg.close(); });
-    dlg.addEventListener('close',()=>{ if(methodChanged){ methodChanged=false; if(document.querySelector('.prac')) location.reload(); } });
+    dlg.addEventListener('close',()=>{ if(methodChanged){ methodChanged=false; if(document.querySelector('.prac,.lmain')) location.reload(); } });
     document.body.append(b,dlg); apply();
     b.onclick=()=>{ render(); if(dlg.showModal) dlg.showModal(); else dlg.setAttribute('open',''); const f=dlg.querySelector('.ls-pre button'); if(f) f.focus(); };
   }

@@ -13,70 +13,53 @@ function barPie(el){
 }
 const H_AGE = ST.hist([4,9,8,5,3,1],['9.5','19.5','29.5','39.5','49.5','59.5','69.5'],{xlabel:'Age (years)',aria:'Histogram of visitor ages',ymax:10});
 
-Lecture.mount({
-  id:'mth105-w2', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Week 2 · Organizing data', eyebrow:'Week 2 · CLO 1', noTeacher:true,
-  title:'Describing and Organizing Data', meta:'Ch.2: Picturing Variation with Graphs · Gould, Ryan & Wong (2020)', endLabel:'Week 3 →',
-  scenes:[
-  { nav:'Start here', title:'Organize before you analyze', minutes:3,
-    narration:[`Raw data are hard to read. Tables and graphs show the pattern. <span class="mono">Topics: Frequency distributions · Histograms and frequency polygons · Cumulative frequency distributions. CLO 1.</span>`],
-    src:'Reading: Gould, Ryan &amp; Wong (2020), Ch.2: Picturing Variation with Graphs.',
-    fig:{label:'From raw data to a picture', flow:[{t:'Raw data',s:'a list',d:'Hard to see any pattern.'},{t:'Frequency table',s:'count',d:'How many in each category or class.'},{t:'Graph',s:'see it',d:'Bar, pie, histogram, polygon, ogive.'},{t:'Describe',s:'shape, centre, spread',d:'What the picture tells us.'}]} },
-
-  { nav:'Relative frequency', title:'Frequency and relative frequency', minutes:8,
-    narration:[`Count each category (f), then divide by the total (n) to get the share.`],
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('rf',v('rf'))} = ${fr(T('f',v('f')),T('n',v('n')))}`,
+Lesson.mount({
+  week:2, clo:'CLO 1', title:'Describing and Organizing Data', chapter:'Ch.2: Picturing Variation with Graphs · Gould, Ryan & Wong (2020)',
+  intro:'Raw data are hard to read. Tables and graphs show the pattern.',
+  topics:[
+  { id:'frequency', title:'Frequency and relative frequency',
+    def:'The <b>frequency</b> f is how many times a category occurs. The <b>relative frequency</b> rf is its share of the total: f ÷ n.',
+    life:{text:'40 students record how they get to campus: car 16, Metro 12, bus 8, walk 4. Data: illustrative.'},
+    formula:{f:`${T('rf',v('rf'))} = ${fr(T('f',v('f')),T('n',v('n')))}`,
       parts:[['rf','<b>rf</b>: relative frequency, the share of the total (0 to 1).'],['f','<b>f</b>: frequency, how many in this category.'],['n','<b>n</b>: total number of observations.']],
-      sub:`${v('rf')}<sub>Car</sub> = ${fr('16','40')}`, subNote:'40 students: 16 come by car.',
-      keys:'1 6 ÷ 4 0 =', ans:`<div class="m">rf = <b>0.40</b> = 40%</div>`, ansRaw:true, ansNote:'All the rf values add up to 1.'})} },
+      sub:`${v('rf')}<sub>Car</sub> = ${fr('16','40')}`, subNote:'16 of 40 students come by car.', keys:'1 6 ÷ 4 0 =',
+      ans:`<div class="m">rf = <b>0.40</b> = 40%</div>`, ansRaw:true, ansNote:'All the rf values add up to 1.'},
+    meaning:{text:'For categories, a <b>bar chart</b> compares sizes; a <b>pie chart</b> shows parts of a whole (100%).', fig:{label:'Same data, two charts', build:barPie}} },
 
-  { nav:'Bar and pie', title:'Bar charts and pie charts', minutes:6,
-    narration:[`For categories: a <b>bar chart</b> compares sizes (bars with gaps); a <b>pie chart</b> shows parts of a whole (100%).`],
-    src:'Data: how 40 students get to campus (illustrative).',
-    fig:{label:'Same data, two charts', build:barPie} },
-
-  { nav:'Class width', title:'Grouping numbers into classes', minutes:8,
-    narration:[`For many numbers, group them into classes of equal width. Width = range ÷ number of classes, rounded <b>up</b>.`],
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('w','Width')} = ${fr(T('r','Max − Min'),T('k','k'))}`,
+  { id:'classes', title:'Grouping numbers into classes',
+    def:'Many numbers are grouped into <b>classes</b> of equal width. Each class has limits, boundaries (± 0.5) and a midpoint.',
+    life:{text:'25 test scores range from 42 to 98. Listing all 25 shows little; six classes show the pattern.'},
+    formula:{f:`${T('w','Width')} = ${fr(T('r','Max − Min'),T('k','k'))}`,
       parts:[['w','<b>Width</b>: the size of each class.'],['r','<b>Max − Min</b>: the range of the data.'],['k','<b>k</b>: the number of classes you choose (usually 5 to 10).']],
-      sub:`Width = ${fr('98 − 42','6')}`, subNote:'25 test scores: lowest 42, highest 98, 6 classes.',
-      keys:'( 9 8 − 4 2 ) ÷ 6 =', ans:`<div class="m">9.33 → round up → <b>10</b></div><p class="calcnote">Classes: 40–49, 50–59, 60–69, 70–79, 80–89, 90–99</p>`, ansRaw:true})} },
+      sub:`Width = ${fr('98 − 42','6')}`, subNote:'Lowest 42, highest 98, 6 classes.', keys:'( 9 8 − 4 2 ) ÷ 6 =',
+      ans:`<div class="m">9.33 → round up → <b>10</b></div><p class="calcnote">Classes: 40–49, 50–59, 60–69, 70–79, 80–89, 90–99</p>`, ansRaw:true, ansNote:'Always round the width up.'},
+    meaning:{text:'Build the frequency table: class, boundaries, midpoint, f, rf and cumulative frequency. Type your own data.', fig:{label:'Build your own table', build:el=>ST.freqTool(el)}} },
 
-  { nav:'Frequency table', title:'Frequency distribution and histogram', minutes:12,
-    narration:[`Build the table: class, boundaries, midpoint, frequency, relative and cumulative frequency. A <b>histogram</b> draws it with touching bars.`],
-    src:'Default data: 20 final exam scores, from the Week 3 slides. Type your own.',
-    fig:{label:'Build your own table', build:el=>ST.freqTool(el)} },
+  { id:'histogram', title:'Histograms and shape',
+    def:'A <b>histogram</b> draws a frequency table as touching bars, one per class. Its <b>shape</b> is symmetric, right-skewed or left-skewed.',
+    life:{text:'Ages of 30 visitors to a science museum: most are 10–39, a few are older. Data: illustrative.', fig:{label:'Visitor ages', html:H_AGE}},
+    meaning:{text:'Follow the tail. Tail to the right: <b>positively skewed</b>. Tail to the left: <b>negatively skewed</b>. No long tail: <b>symmetric</b>.', fig:{label:'Switch the shape', build:ST.shapeTool}} },
 
-  { nav:'Shape', title:'The shape of a histogram', minutes:6,
-    narration:[`Follow the tail. Tail to the right: <b>positively skewed</b>. Tail to the left: <b>negatively skewed</b>. No long tail: <b>symmetric</b>.`],
-    fig:{label:'Switch the shape', build:ST.shapeTool} },
-
-  { nav:'Polygon and ogive', title:'Frequency polygons and cumulative frequency', minutes:8,
-    narration:[`A <b>frequency polygon</b> joins the midpoints and closes on the axis. An <b>ogive</b> plots cumulative frequency at each upper boundary.`],
-    fig:{label:'Same data, two graphs', build:ST.polyTool} },
-
-  { nav:'Practice', title:'Practice', kind:'activity', minutes:20,
-    narration:[`New data. Answer on paper first.`], src:'Data: illustrative.',
-    fig:{label:'5 questions', build:practice([
-      {type:'Easy',q:'Blood types of 50 donors at a Sharjah blood drive: O 22, A 14, B 10, AB 4. Find each relative frequency and the mode.',hint:'O 0.44, A 0.28, B 0.20, AB 0.08 (sum = 1). Mode: <b>O</b>.'},
-      {type:'Easy',q:'For the classes 100–149 and 150–199, find each midpoint and the boundary between them.',hint:'Midpoints <b>124.5</b> and <b>174.5</b>. Boundary <b>149.5</b>.'},
-      {type:'Medium',q:'Daily PM10 readings range from 31 to 88. Make 6 classes. What is the width and what are the classes?',hint:'(88 − 31) ÷ 6 = 9.5 → <b>10</b>. Classes 31–40, 41–50, 51–60, 61–70, 71–80, 81–90.'},
-      {type:'Medium',q:`Ages of 30 visitors to a science museum:${H_AGE}Find the midpoints, the cumulative frequencies and the shape.`,hint:'Classes 10–19 … 60–69, f = 4, 9, 8, 5, 3, 1. Midpoints 14.5, 24.5, 34.5, 44.5, 54.5, 64.5. Cum. f = 4, 13, 21, 26, 29, 30. <b>Right-skewed</b>.'},
-      {type:'Hard',q:'Using the same data: what percentage of visitors were younger than 49.5? Which graph shows this directly?',hint:'Cum. f at 49.5 = 26 → 26 ÷ 30 ≈ <b>86.7%</b>. The <b>ogive</b>.'}])} },
-
-  { nav:'Quick check', title:'Quick check', kind:'check', minutes:5, narration:[`Calculate, then open the answer.`],
-    fig:{label:'4 calculations', build:practice([
-      {q:'12 of 48 students walk to campus. Find the relative frequency.',hint:'rf = 12 ÷ 48 = <b>0.25</b> (25%).'},
-      {q:'Data range from 18 to 76. You want 6 classes. Find the class width.',hint:'(76 − 18) ÷ 6 = 9.67 → round up → <b>10</b>.'},
-      {q:'For the class 40–49, find the midpoint and the class boundaries.',hint:'Midpoint = (40 + 49) ÷ 2 = <b>44.5</b>. Boundaries <b>39.5 – 49.5</b>.'},
-      {q:'Frequencies: 3, 8, 12, 5. Find the cumulative frequencies.',hint:'<b>3, 11, 23, 28</b>. The last one equals n = 28.'}])} },
-
-  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 3, Ch.3: Numerical Summaries of Center and Variation.`],
-    fig:{label:'Week 2 on one page', mindmap:{center:'Week 2', branches:[
-      {t:'Categories',items:['rf = f ÷ n','Bar: compare','Pie: part of 100%']},
-      {t:'Classes',items:['Width = range ÷ k, round up','Midpoint = (lower + upper) ÷ 2','Boundaries: ± 0.5']},
-      {t:'Graphs for numbers',items:['Histogram: touching bars','Polygon: midpoints, closes on axis','Ogive: cumulative, upper boundaries']},
-      {t:'Shape',items:['Symmetric','Right tail → positive skew','Left tail → negative skew']}]}} }
-  ]
+  { id:'polygon', title:'Frequency polygon and ogive',
+    def:'A <b>frequency polygon</b> joins the class midpoints. An <b>ogive</b> plots cumulative frequency at each upper boundary.',
+    life:{text:'From the museum data: how many visitors were younger than 49.5? The ogive answers directly: 26 of 30.'},
+    formula:{f:`${T('m','Midpoint')} = ${fr(`${T('l','lower')} + ${T('u','upper')}`,'2')}`,
+      parts:[['m','<b>Midpoint</b>: the centre of a class, used for the polygon.'],['l','<b>lower</b>: the lower class limit.'],['u','<b>upper</b>: the upper class limit.']],
+      sub:`Midpoint = ${fr('40 + 49','2')}`, keys:'( 4 0 + 4 9 ) ÷ 2 =', ans:`<div class="m">Midpoint = <b>44.5</b></div>`, ansRaw:true, ansNote:'Boundaries of 40–49: 39.5 and 49.5.'},
+    meaning:{text:'The polygon shows the shape. The ogive answers “how many below a value?”.', fig:{label:'Same data, two graphs', build:ST.polyTool}} }
+  ],
+  takeaways:{label:'Week 2 on one page', mindmap:{center:'Week 2', branches:[
+    {t:'Categories',items:['rf = f ÷ n','Bar: compare','Pie: part of 100%']},
+    {t:'Classes',items:['Width = range ÷ k, round up','Midpoint = (lower + upper) ÷ 2','Boundaries: ± 0.5']},
+    {t:'Graphs for numbers',items:['Histogram: touching bars','Polygon: midpoints','Ogive: cumulative, upper boundaries']},
+    {t:'Shape',items:['Symmetric','Right tail → positive skew','Left tail → negative skew']}]}},
+  practice:[
+    {type:'Easy',q:'12 of 48 students walk to campus. Find the relative frequency.',hint:'rf = 12 ÷ 48 = <b>0.25</b> (25%).'},
+    {type:'Easy',q:'Blood types of 50 donors: O 22, A 14, B 10, AB 4. Find each relative frequency and the mode.',hint:'O 0.44, A 0.28, B 0.20, AB 0.08 (sum = 1). Mode: <b>O</b>.'},
+    {type:'Easy',q:'For the class 40–49, find the midpoint and the class boundaries.',hint:'Midpoint = (40 + 49) ÷ 2 = <b>44.5</b>. Boundaries <b>39.5 – 49.5</b>.'},
+    {type:'Medium',q:'Daily PM10 readings range from 31 to 88. Make 6 classes. What is the width and what are the classes?',hint:'(88 − 31) ÷ 6 = 9.5 → <b>10</b>. Classes 31–40, 41–50, 51–60, 61–70, 71–80, 81–90.'},
+    {type:'Medium',q:'Frequencies: 3, 8, 12, 5. Find the cumulative frequencies.',hint:'<b>3, 11, 23, 28</b>. The last one equals n = 28.'},
+    {type:'Medium',q:`Ages of 30 visitors:${H_AGE}Find the midpoints, the cumulative frequencies and the shape.`,hint:'Classes 10–19 … 60–69, f = 4, 9, 8, 5, 3, 1. Midpoints 14.5, 24.5, 34.5, 44.5, 54.5, 64.5. Cum. f = 4, 13, 21, 26, 29, 30. <b>Right-skewed</b>.'},
+    {type:'Hard',q:'Same data: what percentage of visitors were younger than 49.5? Which graph shows this directly?',hint:'Cum. f at 49.5 = 26 → 26 ÷ 30 ≈ <b>86.7%</b>. The <b>ogive</b>.'}],
+  next:'Next: Week 3, Ch.3 Numerical Summaries of Center and Variation. <a href="week-03.html">Open Week 3 →</a>'
 });

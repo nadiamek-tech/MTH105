@@ -10,82 +10,74 @@ function dieTool(el){
   el.querySelectorAll('.seg2 button').forEach(b=>b.addEventListener('click',()=>{ el.querySelectorAll('.seg2 button').forEach(x=>x.setAttribute('aria-pressed',x===b)); draw(b.textContent); })); draw('Even number');
 }
 
-Lecture.mount({
-  id:'mth105-w5', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Week 5 · Probability', eyebrow:'Week 5 · CLO 2', noTeacher:true,
-  title:'Probability Theory', meta:'Ch 5: Modeling Variation with Probability · Gould, Ryan & Wong (2020)', endLabel:'Week 6 →',
-  scenes:[
-  { nav:'Start here', title:'From describing to predicting', minutes:3,
-    narration:[`Weeks 1–4 described data we have. Probability measures how likely something is before it happens: a number from 0 (impossible) to 1 (certain). <span class="mono">Topics: Definitions of events and sample space · Operations on probabilities. CLO 2.</span>`],
-    src:'Reading: Gould, Ryan &amp; Wong (2020), Ch 5: Modeling Variation with Probability. Quiz 1: end of Week 5.',
-    fig:{label:'The probability scale', html:`<svg viewBox="0 0 520 90" role="img" aria-label="Probability scale from 0 to 1"><defs><linearGradient id="pg" x1="0" x2="1"><stop offset="0" stop-color="var(--muted)"/><stop offset="1" stop-color="var(--wk)"/></linearGradient></defs><rect x="20" y="30" width="480" height="12" rx="6" fill="url(#pg)"/>${[[0,'0','impossible'],[.5,'0.5','even chance'],[1,'1','certain']].map(([p,t,s])=>`<text x="${20+480*p}" y="22" text-anchor="${p===0?'start':p===1?'end':'middle'}" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--ink)">${t}</text><text x="${20+480*p}" y="62" text-anchor="${p===0?'start':p===1?'end':'middle'}" font-family="Schibsted Grotesk,Arial" font-size="12" fill="var(--muted)">${s}</text>`).join('')}</svg>`} },
+Lesson.mount({
+  week:5, clo:'CLO 2', title:'Probability Theory', chapter:'Ch 5: Modeling Variation with Probability · Gould, Ryan & Wong (2020)',
+  intro:'Probability measures how likely something is before it happens: a number from 0 (impossible) to 1 (certain).',
+  topics:[
+  { id:'sample-space', title:'Sample space and events',
+    def:'An <b>experiment</b> has uncertain results; each result is an <b>outcome</b>. All outcomes form the <b>sample space S</b>. An <b>event</b> is a set of outcomes.',
+    life:{text:'Roll one die: S = {1, 2, 3, 4, 5, 6}. “Even number” is the event {2, 4, 6}.', fig:{label:'Roll one fair die', build:dieTool}},
+    meaning:{text:'Before calculating any probability, list S and the outcomes in the event.'} },
 
-  { nav:'Sample space and events', title:'Experiment, outcome, sample space, event', minutes:8,
-    narration:[`An <b>experiment</b> has uncertain results. Each result is an <b>outcome</b>. All outcomes form the <b>sample space S</b>. An <b>event</b> is a set of outcomes we care about.`],
-    fig:{label:'Roll one fair die', build:dieTool} },
-
-  { nav:'Basic rule', title:'The basic rule', minutes:8,
-    narration:[`When outcomes are equally likely, count: favourable outcomes over all outcomes. Every probability is between 0 and 1, and all outcomes add up to 1.`],
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('p','P('+v('E')+')')} = ${fr(T('f','favourable outcomes'),T('t','total outcomes'))}`,
+  { id:'basic-rule', title:'The basic rule',
+    def:'When outcomes are equally likely, P(E) = favourable outcomes ÷ total outcomes. Every probability is between 0 and 1.',
+    life:{text:'A bag holds 5 red, 3 blue and 2 green balls. Pick one without looking. Data: illustrative.'},
+    formula:{f:`${T('p','P('+v('E')+')')} = ${fr(T('f','favourable outcomes'),T('t','total outcomes'))}`,
       parts:[['p','<b>P(E)</b>: probability of event E.'],['f','Outcomes where E happens.'],['t','All possible outcomes (the size of S).']],
-      sub:`P(red) = ${fr('5','5 + 3 + 2')}`, subNote:'A bag holds 5 red, 3 blue and 2 green balls.',
-      keys:'5 ÷ ( 5 + 3 + 2 ) =', ans:`<div class="m">P(red) = <b>0.5</b></div>`, ansRaw:true})} },
+      sub:`P(red) = ${fr('5','5 + 3 + 2')}`, keys:'5 ÷ ( 5 + 3 + 2 ) =', ans:`<div class="m">P(red) = <b>0.5</b></div>`, ansRaw:true},
+    meaning:{text:'0.5 means red comes up in about half of many repeated picks. All outcomes together add up to 1.',
+      fig:{label:'The probability scale', html:`<svg viewBox="0 0 520 90" role="img" aria-label="Probability scale from 0 to 1"><defs><linearGradient id="pg" x1="0" x2="1"><stop offset="0" stop-color="var(--muted)"/><stop offset="1" stop-color="var(--wk)"/></linearGradient></defs><rect x="20" y="30" width="480" height="12" rx="6" fill="url(#pg)"/>${[[0,'0','impossible'],[.5,'0.5','even chance'],[1,'1','certain']].map(([p,t,s])=>`<text x="${20+480*p}" y="22" text-anchor="${p===0?'start':p===1?'end':'middle'}" font-family="JetBrains Mono,monospace" font-size="13" fill="var(--ink)">${t}</text><text x="${20+480*p}" y="62" text-anchor="${p===0?'start':p===1?'end':'middle'}" font-family="Schibsted Grotesk,Arial" font-size="12" fill="var(--muted)">${s}</text>`).join('')}</svg>`}} },
 
-  { nav:'Complement', title:'The complement rule', minutes:6,
-    narration:[`“Not A” is everything outside A. The two always add to 1.`],
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('n','P(not '+v('A')+')')} = ${T('one','1')} − ${T('a','P('+v('A')+')')}`,
+  { id:'complement', title:'The complement rule',
+    def:'“Not A” is everything outside A. P(A) and P(not A) always add to 1.',
+    life:{text:'20% of deliveries arrive late. What share arrives on time? Data: illustrative.'},
+    formula:{f:`${T('n','P(not '+v('A')+')')} = ${T('one','1')} − ${T('a','P('+v('A')+')')}`,
       parts:[['n','<b>P(not A)</b>: A does not happen.'],['one','<b>1</b>: the whole sample space.'],['a','<b>P(A)</b>: A happens.']],
-      sub:`P(on time) = 1 − 0.20`, subNote:'20% of deliveries are late.',
-      keys:'1 − 0 . 2 =', ans:`<div class="m">P(on time) = <b>0.80</b></div>`, ansRaw:true})} },
+      sub:'P(on time) = 1 − 0.20', keys:'1 − 0 . 2 =', ans:`<div class="m">P(on time) = <b>0.80</b></div>`, ansRaw:true},
+    meaning:{text:'Use the complement when “not A” or “at least one” is easier to count the other way round.'} },
 
-  { nav:'Addition rule', title:'The addition rule and Venn diagrams', minutes:12,
-    narration:[`“A or B” = at least one happens. Subtract the overlap so it is not counted twice. If A and B are <b>mutually exclusive</b> (no overlap), just add.`],
-    fig:{label:'Change the counts', build:ST.vennTool, caption:'P(A or B) = P(A) + P(B) − P(A and B).'} },
+  { id:'addition', title:'The addition rule (OR)',
+    def:'“A or B” means at least one happens. Add, then subtract the overlap so it is not counted twice. If A and B are <b>mutually exclusive</b> (no overlap), just add.',
+    life:{text:'Of 60 students, 35 take Arabic, 25 take French and 10 take both. Data: illustrative.'},
+    formula:{f:`${T('or','P('+v('A')+' or '+v('B')+')')} = ${T('a','P('+v('A')+')')} + ${T('b','P('+v('B')+')')} − ${T('ab','P('+v('A')+' and '+v('B')+')')}`,
+      parts:[['or','<b>P(A or B)</b>: at least one happens.'],['a','<b>P(A)</b>: probability of A.'],['b','<b>P(B)</b>: probability of B.'],['ab','<b>P(A and B)</b>: the overlap, counted twice otherwise.']],
+      sub:`P(Arabic or French) = ${fr('35','60')} + ${fr('25','60')} − ${fr('10','60')}`, keys:'( 3 5 + 2 5 − 1 0 ) ÷ 6 0 =', ans:`<div class="m">= 50/60 ≈ <b>0.833</b></div>`, ansRaw:true},
+    meaning:{text:'In a Venn diagram, the overlap sits inside both circles. Change the counts and watch the rule.', fig:{label:'Change the counts', build:ST.vennTool, caption:'P(A or B) = P(A) + P(B) − P(A and B).'}} },
 
-  { nav:'Multiplication rule', title:'The multiplication rule and tree diagrams', minutes:12,
-    narration:[`For <b>independent</b> events, P(A and B) = P(A) × P(B). In a tree, multiply along a path; add paths for “or”.`],
-    fig:{label:'Drag the probabilities', build:ST.treeTool} },
+  { id:'multiplication', title:'The multiplication rule (AND) and tree diagrams',
+    def:'For <b>independent</b> events, P(A and B) = P(A) × P(B). In a tree, multiply along a path; add paths for “or”.',
+    life:{text:'A student is assigned a group (Male or Female) and a lab session (Morning or Evening) at random. Each split is 1/2.'},
+    formula:{f:`${T('and','P('+v('A')+' and '+v('B')+')')} = ${T('a','P('+v('A')+')')} × ${T('b','P('+v('B')+')')}`,
+      parts:[['and','<b>P(A and B)</b>: both happen.'],['a','<b>P(A)</b>'],['b','<b>P(B)</b>: unchanged by A when the events are independent.']],
+      sub:'P(Female and Evening) = 1/2 × 1/2', keys:'0 . 5 × 0 . 5 =', ans:`<div class="m">= <b>1/4 = 0.25</b></div>`, ansRaw:true},
+    meaning:{text:'The tree lists the sample space: 2 × 2 = 4 equally likely paths. P(Evening) = 1/4 + 1/4 = 1/2 (add the paths).',
+      fig:{label:'Sample space: 4 outcomes', html:ST.treeSVG([['Male','Female'],['Morning','Evening']],{hl:['Female, Evening']})}} },
 
-  { nav:'Tree diagram', title:'Tree diagrams with two equal branches', minutes:10,
-    narration:[`Each step splits into two equally likely options, so every branch is 1/2. List the sample space from the ends of the paths, then multiply along a path: 1/2 × 1/2 = 1/4.`],
-    src:'Example: a student is assigned a gender group (Male or Female) and a lab session (Morning or Evening) at random.',
-    fig:{label:'Sample space: 4 outcomes', html:ST.treeSVG([['Male','Female'],['Morning','Evening']],{hl:['Female, Evening']})+`<div class="steps" style="margin-top:8px">S = {(M, Mo), (M, Ev), (F, Mo), (F, Ev)} → 2 × 2 = <b>4</b> outcomes<br>P(Female <b>and</b> Evening) = 1/2 × 1/2 = <b>1/4</b><br>P(Evening) = 1/4 + 1/4 = <b>1/2</b> (add the paths)</div>`} },
-
-  { nav:'Types of events', title:'Activity · Name the relationship', kind:'activity', minutes:8,
-    narration:[`Pick the relationship between the two events.`],
-    fig:{label:'6 pairs', build:el=>W.sort(el,{buckets:['Mutually exclusive','Independent','Dependent','Complementary'],items:[
+  { id:'event-types', title:'Types of events',
+    def:'<b>Mutually exclusive</b>: cannot happen together. <b>Independent</b>: one does not change the other. <b>Dependent</b>: one changes the other. <b>Complementary</b>: opposites that add to 1.',
+    life:{text:'Name the relationship for each pair.', fig:{label:'6 pairs', build:el=>W.sort(el,{buckets:['Mutually exclusive','Independent','Dependent','Complementary'],items:[
       {t:'Rain tomorrow / no rain tomorrow',a:3,why:'One is the opposite of the other; they add to 1.'},
       {t:'Toss a coin / roll a die',a:1,why:'One does not affect the other.'},
       {t:'Draw two cards without replacement',a:2,why:'The first card changes what is left.'},
       {t:'Choose tea / choose coffee (only one drink)',a:0,why:'Cannot happen together.'},
       {t:'Two students each toss their own coin',a:1,why:'One toss does not affect the other.'},
-      {t:'Pass the exam / fail the same exam',a:3,why:'Opposites of each other.'}]})} },
-
-  { nav:'Practice', title:'Practice', kind:'activity', minutes:20,
-    narration:[`Name the rule first, then calculate.`], src:'Data: illustrative.',
-    fig:{label:'7 questions', build:practice([
-      {type:'Easy',q:'A recycling box has 12 plastic, 6 glass and 2 metal items. One is picked at random. P(glass)?',hint:'6 ÷ 20 = <b>0.3</b>.'},
-      {type:'Easy',q:'P(a flight leaves on time) = 0.82. P(it does not)?',hint:'Complement: 1 − 0.82 = <b>0.18</b>.'},
-      {type:'Medium',q:'Of 60 students, 35 take Arabic, 25 take French, 10 take both. P(Arabic or French)? P(neither)?',hint:'(35 + 25 − 10) ÷ 60 = 50/60 ≈ <b>0.833</b>. Neither: 10/60 ≈ <b>0.167</b>.'},
-      {type:'Medium',q:'A student takes one mode: bus 0.45, metro 0.30, car 0.25. P(bus or metro)?',hint:'Mutually exclusive: 0.45 + 0.30 = <b>0.75</b>.'},
-      {type:'Medium',q:'Toss a coin and roll a die. How many outcomes? P(tails and an even number)?',hint:'2 × 6 = <b>12</b> outcomes. P = 1/2 × 3/6 = <b>0.25</b>.'},
-      {type:'Hard',q:'Two independent machines: P(A works) = 0.95, P(B works) = 0.90. P(both work)? P(at least one works)?',hint:'Both: 0.95 × 0.90 = <b>0.855</b>. At least one: 1 − (0.05 × 0.10) = <b>0.995</b>.'},
-      {type:'Hard',q:'A box has 3 defective and 7 good batteries. Pick 2 without replacement. P(both defective)?',hint:'Dependent: 3/10 × 2/9 = 6/90 ≈ <b>0.067</b>.'}])} },
-
-  { nav:'Quick check', title:'Quick check', kind:'check', minutes:5, narration:[`Calculate, then open the answer.`],
-    fig:{label:'4 calculations', build:practice([
-      {q:'A box has 3 red and 7 blue pens. P(red)?',hint:'3 ÷ 10 = <b>0.3</b>.'},
-      {q:'P(A) = 0.35. P(not A)?',hint:'1 − 0.35 = <b>0.65</b>.'},
-      {q:'P(A) = 0.4, P(B) = 0.5, P(A and B) = 0.2. P(A or B)?',hint:'OR → add, minus both: 0.4 + 0.5 − 0.2 = <b>0.7</b>.'},
-      {q:'Toss two fair coins. P(two heads)?',hint:'AND → multiply: 1/2 × 1/2 = <b>1/4 = 0.25</b>.'}])} },
-
-  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 6, discrete probability distributions.`],
-    fig:{label:'Week 5 on one page', mindmap:{center:'Probability', branches:[
-      {t:'Words',items:['Experiment, outcome','Sample space S','Event E']},
-      {t:'Basic rule',items:['P(E) = favourable ÷ total','0 ≤ P ≤ 1','All outcomes add to 1']},
-      {t:'Complement',items:['P(not A) = 1 − P(A)']},
-      {t:'Addition',items:['P(A or B) = P(A) + P(B) − P(A and B)','Mutually exclusive: just add']},
-      {t:'Multiplication',items:['Independent: P(A) × P(B)','Tree: multiply along, add across']}]}} }
-  ]
+      {t:'Pass the exam / fail the same exam',a:3,why:'Opposites of each other.'}]})}},
+    meaning:{text:'The relationship decides the rule: OR → add (minus the overlap); AND → multiply; NOT → 1 minus.'} }
+  ],
+  takeaways:{label:'Week 5 on one page', mindmap:{center:'Probability', branches:[
+    {t:'Words',items:['Experiment, outcome','Sample space S','Event E']},
+    {t:'Basic rule',items:['P(E) = favourable ÷ total','0 ≤ P ≤ 1']},
+    {t:'Complement',items:['P(not A) = 1 − P(A)']},
+    {t:'Addition (OR)',items:['P(A) + P(B) − P(A and B)','Mutually exclusive: just add']},
+    {t:'Multiplication (AND)',items:['Independent: P(A) × P(B)','Tree: multiply along, add across']}]}},
+  practice:[
+    {type:'Easy',q:'A box has 3 red and 7 blue pens. P(red)?',hint:'3 ÷ 10 = <b>0.3</b>.'},
+    {type:'Easy',q:'P(a flight leaves on time) = 0.82. P(it does not)?',hint:'Complement: 1 − 0.82 = <b>0.18</b>.'},
+    {type:'Easy',q:'A recycling box has 12 plastic, 6 glass and 2 metal items. One is picked at random. P(glass)?',hint:'6 ÷ 20 = <b>0.3</b>.'},
+    {type:'Medium',q:'A student takes one mode: bus 0.45, metro 0.30, car 0.25. P(bus or metro)?',hint:'Mutually exclusive: 0.45 + 0.30 = <b>0.75</b>.'},
+    {type:'Medium',q:'P(A) = 0.4, P(B) = 0.5, P(A and B) = 0.2. P(A or B)?',hint:'OR → add, minus both: 0.4 + 0.5 − 0.2 = <b>0.7</b>.'},
+    {type:'Medium',q:'Toss a coin and roll a die. How many outcomes? P(tails and an even number)?',hint:'2 × 6 = <b>12</b> outcomes. P = 1/2 × 3/6 = <b>0.25</b>.'},
+    {type:'Hard',q:'Two independent machines: P(A works) = 0.95, P(B works) = 0.90. P(both work)? P(at least one works)?',hint:'Both: 0.95 × 0.90 = <b>0.855</b>. At least one: 1 − (0.05 × 0.10) = <b>0.995</b>.'},
+    {type:'Hard',q:'A box has 3 defective and 7 good batteries. Pick 2 without replacement. P(both defective)?',hint:'Dependent: 3/10 × 2/9 = 6/90 ≈ <b>0.067</b>.'}],
+  next:'Next: Week 6, discrete probability distributions. <a href="week-06.html">Open Week 6 →</a>'
 });

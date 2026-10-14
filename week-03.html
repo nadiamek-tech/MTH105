@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="assets/course.css">
 <link rel="stylesheet" href="assets/stats.css">
 <link rel="stylesheet" href="assets/banner.css">
+<link rel="stylesheet" href="assets/lesson.css">
 <style>
 :root{--wk:#0E7C66;--wk-soft:rgba(14,124,102,0.09);--wk-d:#5FD3B5;--wk-soft-d:rgba(95,211,181,0.14)}
 </style>
@@ -19,6 +20,7 @@
 <script src="assets/course.js"></script>
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
+<script src="assets/lesson.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -47,57 +49,50 @@ function medianFinder(el){
   el.querySelector('textarea').addEventListener('input',run); run();
 }
 
-Lecture.mount({
-  id:'mth105-w3', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Week 3 · Centre and position', eyebrow:'Week 3 · CLO 1', noTeacher:true,
-  title:'Measures of Central Tendency, Position, & Dispersion', meta:'Ch.3: Numerical Summaries of Center and Variation · Gould, Ryan & Wong (2020)', endLabel:'Week 4 →',
-  scenes:[
-  { nav:'Start here', title:'One number for the centre', minutes:3,
-    narration:[`Where is the middle of the data, and where does a value sit? <span class="mono">Topics: Mean, median, and mode · Percentiles. CLO 1.</span>`],
-    src:'Reading: Gould, Ryan &amp; Wong (2020), Ch.3: Numerical Summaries of Center and Variation.',
-    fig:{label:'This week', mindmap:{center:'Week 3', branches:[{t:'Centre',items:['Mean','Median','Mode']},{t:'Shape',items:['Skew pulls the mean']},{t:'Position',items:['Percentiles','Q1, median, Q3']}]}} },
-
-  { nav:'Mean', title:'The mean', minutes:8,
-    narration:[`The mean is the balance point: add all values, divide by how many there are.`],
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('xb',XB)} = ${fr(`${T('S',SG)}${T('x',v('x'))}`,T('n',v('n')))}`,
+Lesson.mount({
+  week:3, clo:'CLO 1', title:'Measures of Central Tendency and Position', chapter:'Ch.3: Numerical Summaries of Center and Variation · Gould, Ryan & Wong (2020)',
+  intro:'One number for the middle of the data, and a way to say where a value sits.',
+  topics:[
+  { id:'mean', title:'The mean',
+    def:'The <b>mean</b> x̄ is the balance point of the data: add all values and divide by how many there are.',
+    life:{text:'Five friends sleep 8, 9, 10, 12 and 13 hours over a weekend. What is the typical amount? Data: illustrative.'},
+    formula:{f:`${T('xb',XB)} = ${fr(`${T('S',SG)}${T('x',v('x'))}`,T('n',v('n')))}`,
       parts:[['xb','<b>x̄</b> (“x-bar”): the sample mean.'],['S','<b>Σ</b>: add up everything after it.'],['x','<b>x</b>: each data value.'],['n','<b>n</b>: how many values.']],
-      sub:`${XB} = ${fr('8 + 9 + 10 + 12 + 13','5')}`, subNote:'Data: 8, 9, 10, 12, 13.',
-      keys:'( 8 + 9 + 1 0 + 1 2 + 1 3 ) ÷ 5 =', ans:`<div class="m">${XB} = 52 ÷ 5 = <b>10.4</b></div>`, ansRaw:true})} },
+      sub:`${XB} = ${fr('8 + 9 + 10 + 12 + 13','5')}`, keys:'( 8 + 9 + 1 0 + 1 2 + 1 3 ) ÷ 5 =', ans:`<div class="m">${XB} = 52 ÷ 5 = <b>10.4</b> hours</div>`, ansRaw:true},
+    meaning:{text:'If all five slept the same amount, each would sleep 10.4 hours. The mean uses every value, so one extreme value moves it.'} },
 
-  { nav:'Median and mode', title:'Median and mode', minutes:8,
-    narration:[`<b>Median</b>: the middle value after sorting, at position (n + 1) ÷ 2. <b>Mode</b>: the most frequent value, the only centre for nominal data.`],
-    fig:{label:'Type data, see the middle', build:medianFinder} },
+  { id:'median', title:'Median and mode',
+    def:'The <b>median</b> is the middle value after sorting. The <b>mode</b> is the most frequent value; it is the only centre for nominal data.',
+    life:{text:'Delivery times (min): 7, 3, 9, 5, 20, 6. Sort first: 3, 5, 6, 7, 9, 20.'},
+    formula:{f:`${T('pos','Position')} = ${fr(`${T('n',v('n'))} + 1`,'2')}`,
+      parts:[['pos','<b>Position</b>: where the median sits in the sorted list.'],['n','<b>n</b>: how many values.']],
+      sub:`Position = ${fr('6 + 1','2')} = 3.5`, subNote:'Halfway between the 3rd and 4th values.', keys:'( 6 + 7 ) ÷ 2 =',
+      ans:`<div class="m">Median = (6 + 7) ÷ 2 = <b>6.5</b> min</div>`, ansRaw:true, ansNote:'n odd → the middle value. n even → mean of the two middle values.'},
+    meaning:{text:'Type any data to see the middle and the mode.', fig:{label:'Type data, see the middle', build:medianFinder}} },
 
-  { nav:'Which centre?', title:'Mean, median, mode and skew', minutes:8,
-    narration:[`Outliers and skew pull the mean towards the tail. For skewed data, report the median.`],
-    src:'Data: Week 1–2 slides, Exercises 1–3 (Exercise 1 corrected: mean 78.69, median 88).',
-    fig:{label:'Three data sets', build:threeCases} },
+  { id:'which', title:'Which centre to use?',
+    def:'In <b>symmetric</b> data, mean ≈ median ≈ mode. <b>Skew</b> pulls the mean towards the tail.',
+    life:{text:'Salaries in a small company: most earn 42–62 thousand, three managers earn 150–200 thousand. Data: Week 1–2 slides.'},
+    meaning:{text:'For skewed data or outliers, report the <b>median</b>. For symmetric data, the mean.', fig:{label:'Three data sets', build:threeCases}} },
 
-  { nav:'Percentiles and quartiles', title:'Percentiles and quartiles', minutes:10,
-    narration:[`A <b>percentile</b> tells you the position of a value: P25 = Q1, P50 = median, P75 = Q3. Sort the data, find the median, then the median of each half.`],
-    fig:{label:'Data: 3, 5, 7, 8, 9, 11, 13, 15, 18 (n = 9)', html:`<div class="keys">${[3,5,7,8,9,11,13,15,18].map((x,i)=>`<kbd class="${i===4?'eq':''}">${x}</kbd>`).join('')}</div><div class="steps" style="margin-top:10px">Median: position (9 + 1) ÷ 2 = 5 → <b>9</b><br>Lower half 3, 5, 7, 8 → Q1 = (5 + 7) ÷ 2 = <b>6</b><br>Upper half 11, 13, 15, 18 → Q3 = (13 + 15) ÷ 2 = <b>14</b><br>When n is odd, leave the median out of both halves.</div>`} },
-
-  { nav:'Practice', title:'Practice', kind:'activity', minutes:20,
-    narration:[`Order the data first.`], src:'Data: illustrative.',
-    fig:{label:'5 questions', build:practice([
-      {type:'Easy',q:'Hours of sleep of 8 students: 6, 7, 5, 8, 7, 9, 7, 6. Find the mean, median and mode.',hint:'Sorted: 5, 6, 6, 7, 7, 7, 8, 9. Mean = 55 ÷ 8 = <b>6.875</b>. Median = (7 + 7) ÷ 2 = <b>7</b>. Mode = <b>7</b>.'},
-      {type:'Easy',q:'Favourite campus café of 10 students: A, B, A, C, A, B, A, C, B, A. Which centre can you use, and what is it?',hint:'Nominal data: only the <b>mode</b>. Mode = <b>A</b> (5 times).'},
-      {type:'Medium',q:'Daily steps (thousands) of 10 people: 3.2, 4.5, 5.1, 5.8, 6.0, 6.4, 7.2, 7.9, 8.3, 14.6. Find the median, Q1 and Q3.',hint:'Median = (6.0 + 6.4) ÷ 2 = <b>6.2</b>. Lower half → Q1 = <b>5.1</b>. Upper half → Q3 = <b>7.9</b>.'},
-      {type:'Hard',q:'Weekly study hours of 40 students: 0–5: 8, 6–10: 15, 11–15: 12, 16–20: 5. Estimate the mean using midpoints.',hint:'Midpoints 2.5, 8, 13, 18. Σf·m = 20 + 120 + 156 + 90 = 386. Mean ≈ 386 ÷ 40 = <b>9.65 hours</b>.'},
-      {type:'Hard',q:'Monthly salaries (thousand AED) of 6 staff: 8, 9, 9, 10, 11, 40. Find the mean, median and mode. Which is the best typical value?',hint:'Mean = 87 ÷ 6 = <b>14.5</b>. Median = (9 + 10) ÷ 2 = <b>9.5</b>. Mode = <b>9</b>. The <b>median</b>: 40 pulls the mean up.'}])} },
-
-  { nav:'Quick check', title:'Quick check', kind:'check', minutes:5, narration:[`Calculate, then open the answer.`],
-    fig:{label:'4 calculations', build:practice([
-      {q:'Find the mean of 4, 8, 6, 10, 7.',hint:'x̄ = 35 ÷ 5 = <b>7</b>.'},
-      {q:'Find the median of 15, 3, 9, 12, 6, 18.',hint:'Sorted: 3, 6, 9, 12, 15, 18. n = 6 → (9 + 12) ÷ 2 = <b>10.5</b>.'},
-      {q:'Find the mode of 2, 5, 5, 7, 9, 9, 9.',hint:'<b>9</b> (three times).'},
-      {q:'Find Q1 and Q3 of 1, 3, 4, 6, 8, 9, 11, 14.',hint:'Lower half 1, 3, 4, 6 → Q1 = (3 + 4) ÷ 2 = <b>3.5</b>. Upper half 8, 9, 11, 14 → Q3 = (9 + 11) ÷ 2 = <b>10</b>.'}])} },
-
-  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 4, measures of dispersion.`],
-    fig:{label:'Week 3 on one page', mindmap:{center:'Week 3', branches:[
-      {t:'Mean',items:['x̄ = Σx ÷ n']},{t:'Median',items:['Sort first','Position (n + 1) ÷ 2']},{t:'Mode',items:['Most frequent','Only centre for nominal data']},
-      {t:'Skew',items:['Mean pulled to the tail','Skewed data → median']},{t:'Position',items:['Q1 = P25, median = P50, Q3 = P75']}]}} }
-  ]
+  { id:'quartiles', title:'Percentiles and quartiles',
+    def:'A <b>percentile</b> gives the position of a value: P25 = Q1, P50 = median, P75 = Q3.',
+    life:{text:'“Your score is at the 75th percentile” means 75% of the class scored at or below you.'},
+    meaning:{text:'Sort, find the median, then the median of each half. When n is odd, leave the median out of both halves.',
+      fig:{label:'Data: 3, 5, 7, 8, 9, 11, 13, 15, 18 (n = 9)', html:`<div class="keys">${[3,5,7,8,9,11,13,15,18].map((x,i)=>`<kbd class="${i===4?'eq':''}">${x}</kbd>`).join('')}</div><div class="steps" style="margin-top:10px">Median: position (9 + 1) ÷ 2 = 5 → <b>9</b><br>Lower half 3, 5, 7, 8 → Q1 = (5 + 7) ÷ 2 = <b>6</b><br>Upper half 11, 13, 15, 18 → Q3 = (13 + 15) ÷ 2 = <b>14</b></div>`}} }
+  ],
+  takeaways:{label:'Week 3 on one page', mindmap:{center:'Week 3', branches:[
+    {t:'Mean',items:['x̄ = Σx ÷ n']},{t:'Median',items:['Sort first','Position (n + 1) ÷ 2']},{t:'Mode',items:['Most frequent','Only centre for nominal data']},
+    {t:'Skew',items:['Mean pulled to the tail','Skewed data → median']},{t:'Position',items:['Q1 = P25, median = P50, Q3 = P75']}]}},
+  practice:[
+    {type:'Easy',q:'Find the mean of 4, 8, 6, 10, 7.',hint:'x̄ = 35 ÷ 5 = <b>7</b>.'},
+    {type:'Easy',q:'Find the median of 15, 3, 9, 12, 6, 18.',hint:'Sorted: 3, 6, 9, 12, 15, 18. n = 6 → (9 + 12) ÷ 2 = <b>10.5</b>.'},
+    {type:'Easy',q:'Favourite campus café of 10 students: A, B, A, C, A, B, A, C, B, A. Which centre can you use, and what is it?',hint:'Nominal data: only the <b>mode</b>. Mode = <b>A</b> (5 times).'},
+    {type:'Medium',q:'Hours of sleep of 8 students: 6, 7, 5, 8, 7, 9, 7, 6. Find the mean, median and mode.',hint:'Sorted: 5, 6, 6, 7, 7, 7, 8, 9. Mean = 55 ÷ 8 = <b>6.875</b>. Median = (7 + 7) ÷ 2 = <b>7</b>. Mode = <b>7</b>.'},
+    {type:'Medium',q:'Find Q1 and Q3 of 1, 3, 4, 6, 8, 9, 11, 14.',hint:'Lower half 1, 3, 4, 6 → Q1 = (3 + 4) ÷ 2 = <b>3.5</b>. Upper half 8, 9, 11, 14 → Q3 = (9 + 11) ÷ 2 = <b>10</b>.'},
+    {type:'Hard',q:'Weekly study hours of 40 students: 0–5: 8, 6–10: 15, 11–15: 12, 16–20: 5. Estimate the mean using midpoints.',hint:'Midpoints 2.5, 8, 13, 18. Σf·m = 20 + 120 + 156 + 90 = 386. Mean ≈ 386 ÷ 40 = <b>9.65 hours</b>.'},
+    {type:'Hard',q:'Monthly salaries (thousand AED) of 6 staff: 8, 9, 9, 10, 11, 40. Find the mean, median and mode. Which is the best typical value?',hint:'Mean = 87 ÷ 6 = <b>14.5</b>. Median = (9 + 10) ÷ 2 = <b>9.5</b>. Mode = <b>9</b>. The <b>median</b>: 40 pulls the mean up.'}],
+  next:'Next: Week 4, measures of dispersion. <a href="week-04.html">Open Week 4 →</a>'
 });
 </script>
 </body>

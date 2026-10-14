@@ -14,6 +14,7 @@ TPL = """<!doctype html>
 <link rel="stylesheet" href="assets/course.css">
 <link rel="stylesheet" href="assets/stats.css">
 <link rel="stylesheet" href="assets/banner.css">
+<link rel="stylesheet" href="assets/lesson.css">
 <style>
 :root{{--wk:{wk};--wk-soft:{wks};--wk-d:{wkd};--wk-soft-d:{wksd}}}
 </style>
@@ -23,6 +24,7 @@ TPL = """<!doctype html>
 <script src="assets/course.js"></script>
 <script src="assets/stats.js"></script>
 <script src="assets/decode.js"></script>
+<script src="assets/lesson.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
