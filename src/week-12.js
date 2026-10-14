@@ -1,0 +1,64 @@
+// {"file": "week-12.html", "title": "MTH 105 Week 12 · Contingency Tables", "wk": "#2E7D32", "wkd": "#7FD884"}
+const OBS=`<table class="tbl"><tr><th></th><th>Pass</th><th>Fail</th><th>Row total</th></tr><tr><th>Study alone</th><td>70</td><td>30</td><td>100</td></tr><tr><th>Study in group</th><td>80</td><td>20</td><td>100</td></tr><tr><th>Column total</th><td>150</td><td>50</td><td><b>200</b></td></tr></table>`;
+Lecture.mount({
+  id:'mth105-w12', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Week 12 · Contingency tables', eyebrow:'Week 12 · CLO 4', noTeacher:true,
+  title:'Contingency Tables', meta:'Ch 10: Associations between Categorical Variables · Gould, Ryan & Wong (2020)', endLabel:'Weeks 13–15 →',
+  scenes:[
+  { nav:'Start here', title:'Are two categories related?', minutes:3,
+    narration:[`Is exam result related to study method? Both are categorical, so we count and compare. <span class="mono">Topics: Tests of independence of the 2 variables using Chi-square test. CLO 4.</span>`],
+    src:'Reading: Gould, Ryan &amp; Wong (2020), Ch 10: Associations between Categorical Variables. Quiz 2: end of Week 12.',
+    fig:{label:'200 students (illustrative)', html:OBS} },
+
+  { nav:'Five steps', title:'The logic of a hypothesis test', minutes:8,
+    narration:[`<b>H₀</b>: the variables are independent (not related). <b>H₁</b>: they are related. Assume H₀; reject it only if the data are very unlikely under it.`],
+    fig:{label:'Every test, five steps', flow:[{t:'Hypotheses',s:'H₀, H₁',d:'H₀: independent. H₁: related.'},{t:'α and df',s:'critical value',d:'α = 0.05 usually. df = (r − 1)(c − 1).'},{t:'Expected',s:'E for each cell',d:'What we would see if H₀ were true.'},{t:'χ²',s:'compare O and E',d:'Add (O − E)² ÷ E over all cells.'},{t:'Decide',s:'in context',d:'χ² > critical → reject H₀.'}]} },
+
+  { nav:'Expected counts', title:'Expected frequencies', minutes:10,
+    narration:[`If the variables were independent, each cell would get its fair share of the totals.`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('e',v('E'))} = ${fr(T('r','row total')+' × '+T('c','column total'),T('g','grand total'))}`,
+      parts:[['e','<b>E</b>: expected count for one cell.'],['r','Total of that cell’s row.'],['c','Total of that cell’s column.'],['g','Total of the whole table.']],
+      sub:`${v('E')}<sub>alone, pass</sub> = ${fr('100 × 150','200')}`, keys:'1 0 0 × 1 5 0 ÷ 2 0 0 =',
+      ans:`<div class="m">E = <b>75</b></div><p class="calcnote">Other cells: 25, 75, 25. Every E should be at least 5.</p>`, ansRaw:true})} },
+
+  { nav:'Chi-square', title:'The chi-square statistic', minutes:10,
+    narration:[`χ² adds up how far each observed count is from its expected count. Big χ²: the data do not fit independence.`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('x','χ<sup>2</sup>')} = ${T('S',SG)} ${fr(T('d','('+v('O')+' − '+v('E')+')<sup>2</sup>'),T('e',v('E')))}`,
+      parts:[['x','<b>χ²</b> (“chi-square”): the test statistic.'],['S','<b>Σ</b>: add over every cell.'],['d','<b>(O − E)²</b>: observed minus expected, squared.'],['e','<b>E</b>: divide by the expected count.']],
+      sub:`χ² = ${fr('(70 − 75)²','75')} + ${fr('(30 − 25)²','25')} + ${fr('(80 − 75)²','75')} + ${fr('(20 − 25)²','25')}`,
+      keys:'2 5 ÷ 7 5 + 2 5 ÷ 2 5 + 2 5 ÷ 7 5 + 2 5 ÷ 2 5 =', ans:`<div class="m">χ² ≈ <b>2.667</b></div>`, ansRaw:true})} },
+
+  { nav:'Decide', title:'Degrees of freedom and decision', minutes:8,
+    narration:[`df = (rows − 1)(columns − 1). Compare χ² with the critical value. The test is always right-tailed.`],
+    fig:{label:'Critical values', html:`<table class="tbl"><tr><th>df</th><th>α = 0.10</th><th>α = 0.05</th><th>α = 0.01</th></tr>${Object.entries(ST.CHI).slice(0,6).map(([d,a])=>`<tr><td>${d}</td>${a.map((x,i)=>`<td class="${d==='1'&&i===1?'hi':''}">${x}</td>`).join('')}</tr>`).join('')}</table><div class="steps" style="margin-top:8px">df = (2 − 1)(2 − 1) = 1 → critical = 3.841<br>χ² = 2.667 &lt; 3.841 → <b>fail to reject H₀</b><br>No evidence that study method and result are related.</div>`} },
+
+  { nav:'Chi-square tool', title:'Tool · Test any table', minutes:12,
+    narration:[`Type observed counts. Add rows or columns. The tool finds E, χ², df and the decision.`],
+    fig:{label:'Edit the table', build:el=>ST.chiTool(el)} },
+
+  { nav:'Practice', title:'Practice', kind:'activity', minutes:25,
+    narration:[`Write H₀ and H₁ first.`], src:'Data: illustrative.',
+    fig:{label:'5 questions', build:practice([
+      {type:'Easy',q:'A table has 3 rows and 4 columns. df? Critical value at α = 0.05?',hint:'df = 2 × 3 = <b>6</b>. Critical = <b>12.592</b>.'},
+      {type:'Easy',q:'State H₀ and H₁ for: “Is recycling related to type of home?”',hint:'H₀: recycling and home type are <b>independent</b>. H₁: they are <b>related</b>.'},
+      {type:'Medium',q:'Villas: 60 recycle, 40 do not. Apartments: 45 recycle, 55 do not. Find the expected counts.',hint:'Row totals 100, 100; column totals 105, 95; grand 200. E = <b>52.5, 47.5, 52.5, 47.5</b>.'},
+      {type:'Medium',q:'Same table: χ², df and decision at α = 0.05.',hint:'χ² = 1.071 + 1.184 + 1.071 + 1.184 ≈ <b>4.511</b>. df = 1, critical 3.841. <b>Reject H₀</b>: recycling is related to home type.'},
+      {type:'Hard',q:'Year 1: online 20, in-person 30, blended 10. Year 2: online 25, in-person 15, blended 20. Test at α = 0.05.',hint:'E = 22.5, 22.5, 15 in each row. χ² ≈ <b>8.889</b>. df = 2, critical 5.991. <b>Reject H₀</b>: preferred format is related to year.'}])} },
+
+  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5, narration:[`Five quick questions.`],
+    fig:{label:'Check yourself', build:el=>W.quiz(el,[
+      {q:'H₀ in a test of independence says the variables are…',o:['related','independent','equal'],a:1,why:'H₀ always states no relationship.'},
+      {q:'Row total 40, column total 30, grand total 120. E =',o:['10','12','40'],a:0,why:'40 × 30 ÷ 120.'},
+      {q:'df for a 2 × 3 table is…',o:['6','2','5'],a:1,why:'(2 − 1)(3 − 1).'},
+      {q:'χ² = 9.2, critical = 5.991. Decision:',o:['reject H₀','fail to reject H₀'],a:0,why:'χ² is bigger than the critical value.'},
+      {q:'We never say…',o:['reject H₀','fail to reject H₀','accept H₀'],a:2,why:'We only fail to reject.'}])} },
+
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Weeks 13–15, simple linear regression.`],
+    fig:{label:'Week 12 on one page', mindmap:{center:'χ² test', branches:[
+      {t:'Hypotheses',items:['H₀: independent','H₁: related']},
+      {t:'Expected',items:['E = row × column ÷ grand','Every E ≥ 5']},
+      {t:'Statistic',items:['χ² = Σ (O − E)² ÷ E']},
+      {t:'Decide',items:['df = (r − 1)(c − 1)','χ² > critical → reject H₀','Write the conclusion in context']}]}} }
+  ]
+});

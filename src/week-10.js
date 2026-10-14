@@ -1,0 +1,81 @@
+// {"file": "week-10.html", "title": "MTH 105 Weeks 10–11 · Sampling Distribution of the Mean", "wk": "#3F51B5", "wkd": "#9FA8FF"}
+Lecture.mount({
+  id:'mth105-w10', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Weeks 10–11 · Sampling and CIs', eyebrow:'Weeks 10–11 · CLO 3', noTeacher:true,
+  title:'Sampling Distribution of the Mean', meta:'Ch 7: Survey Sampling and Inference · Ch 9: Inferring Population Means · Gould, Ryan & Wong (2020)', endLabel:'Week 12 →',
+  scenes:[
+  { nav:'Start here', title:'One sample, a range of plausible values', minutes:3,
+    narration:[`Every sample gives a slightly different mean. Knowing how sample means vary lets us estimate the population mean with a margin of error. <span class="mono">Topics: Definitions of sampling distribution of the mean · Confidence intervals of the mean and that of a proportion. CLO 3.</span>`],
+    src:'Reading: Gould, Ryan &amp; Wong (2020), Ch 7: Survey Sampling and Inference; Ch 9: Inferring Population Means.',
+    fig:{label:'Estimate = point ± margin', flow:[{t:'Sample',s:'n values',d:'Take a random sample.'},{t:'Point estimate',s:'x̄ or p̂',d:'Best single guess.'},{t:'Standard error',s:'σ ÷ √n',d:'How much estimates vary.'},{t:'Margin of error',s:'z × SE',d:'z from the confidence level.'},{t:'Interval',s:'estimate ± E',d:'Plausible values for the parameter.'}]} },
+
+  { nav:'Sampling distribution', title:'The sampling distribution of the mean', minutes:12,
+    narration:[`Take many samples of size n and plot their means. That is the sampling distribution of x̄. By the <b>Central Limit Theorem</b>, for n ≥ 30 it is approximately normal, even if the population is skewed.`],
+    fig:{label:'Drag n and watch the shape', build:ST.cltTool} },
+
+  { nav:'Standard error', title:'Standard error and z for a sample mean', minutes:10,
+    narration:[`The sample means centre on μ, and their spread is the <b>standard error</b> σ ÷ √n. Bigger n, smaller SE.`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('z',v('z'))} = ${fr(T('xb',XB)+' − '+T('mu','μ'),T('se',fr('σ',sq(v('n')))))}`,
+      parts:[['z','<b>z</b>: how unusual this sample mean is.'],['xb','<b>x̄</b>: the sample mean.'],['mu','<b>μ</b>: the population mean.'],['se','<b>σ ÷ √n</b>: the standard error of x̄.']],
+      sub:`${v('z')} = ${fr('22 − 21',fr('4',sq('64')))}`, subNote:'Student ages: μ = 21, σ = 4. A sample of 64 has x̄ = 22.',
+      keys:'( 2 2 − 2 1 ) ÷ ( 4 ÷ √ 6 4 ) =', ans:`<div class="m">SE = 0.5 → z = <b>2.00</b></div><p class="calcnote">P(x̄ &gt; 22) = 1 − 0.9772 = 0.0228</p>`, ansRaw:true})} },
+
+  { nav:'z* values', title:'Confidence level and z*', minutes:5,
+    narration:[`The confidence level sets the multiplier z*.`],
+    fig:{label:'Memorise these three', html:`<table class="tbl"><tr><th>Confidence</th><th>α</th><th>z*</th></tr><tr><td>90%</td><td>0.10</td><td><b>1.645</b></td></tr><tr><td>95%</td><td>0.05</td><td><b>1.96</b></td></tr><tr><td>99%</td><td>0.01</td><td><b>2.576</b></td></tr></table>`} },
+
+  { nav:'CI for a mean', title:'Confidence interval for a mean', minutes:12,
+    narration:[`Interval = x̄ ± margin of error, where E = z* × σ ÷ √n.`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('xb',XB)} ± ${T('z',v('z')+'*')} · ${T('se',fr('σ',sq(v('n'))))}`,
+      parts:[['xb','<b>x̄</b>: the point estimate.'],['z','<b>z*</b>: 1.645, 1.96 or 2.576.'],['se','<b>σ ÷ √n</b>: the standard error.']],
+      sub:`54 ± 1.96 · ${fr('6',sq('50'))}`, subNote:'Cars sold: x̄ = 54 days, σ = 6, n = 50, 95% confidence.',
+      keys:'1 . 9 6 × 6 ÷ √ 5 0 =', ans:`<div class="m">E ≈ 1.66 → (<b>52.34</b>, <b>55.66</b>) days</div>`, ansRaw:true, ansNote:'“We are 95% confident the true mean selling time is between 52.34 and 55.66 days.”'})} },
+
+  { nav:'CI for a proportion', title:'Confidence interval for a proportion', minutes:10,
+    narration:[`For a percentage, use p̂ = x ÷ n and its standard error √(p̂(1 − p̂) ÷ n).`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('p',PH)} ± ${T('z',v('z')+'*')} · ${sq(fr(T('p2',PH+'(1 − '+PH+')'),T('n',v('n'))))}`,
+      parts:[['p','<b>p̂</b> (“p-hat”): sample proportion, x ÷ n.'],['z','<b>z*</b>: from the confidence level.'],['p2','<b>p̂(1 − p̂)</b>: success × failure.'],['n','<b>n</b>: sample size.']],
+      sub:`0.6 ± 1.96 · ${sq(fr('0.6 × 0.4','200'))}`, subNote:'120 of 200 residents support a new cycle lane. 95% confidence.',
+      keys:'1 . 9 6 × √ ( 0 . 6 × 0 . 4 ÷ 2 0 0 ) =', ans:`<div class="m">E ≈ 0.068 → (<b>0.532</b>, <b>0.668</b>)</div>`, ansRaw:true})} },
+
+  { nav:'CI tool', title:'Tool · Build an interval', minutes:10,
+    narration:[`Change n or the confidence level and watch the width.`],
+    fig:{label:'Mean or proportion', build:ST.ciTool, caption:'Larger n → narrower. Higher confidence → wider.'} },
+
+  { nav:'Interpret', title:'Activity · Say it correctly', kind:'activity', minutes:8,
+    narration:[`The true mean is fixed. The 95% describes the method, not one interval.`],
+    fig:{label:'Correct or wrong?', build:el=>W.sort(el,{buckets:['Correct','Wrong'],items:[
+      {t:'We are 95% confident the true mean is between 52.34 and 55.66 days.',a:0,why:'The standard wording.'},
+      {t:'95% of all cars sell between 52.34 and 55.66 days.',a:1,why:'The interval is about the mean, not individual cars.'},
+      {t:'If we repeated the sampling many times, about 95% of the intervals would contain μ.',a:0,why:'This is what 95% confidence means.'},
+      {t:'The sample mean is between 52.34 and 55.66 with 95% probability.',a:1,why:'x̄ = 54 is known exactly; the interval is about μ.'}]})} },
+
+  { nav:'Practice', title:'Practice', kind:'activity', minutes:25,
+    narration:[`Write the formula, substitute, then use the calculator.`], src:'Data: illustrative.',
+    fig:{label:'6 questions', build:practice([
+      {type:'Easy',q:'σ = 12 and n = 36. Find the standard error.',hint:'SE = 12 ÷ √36 = 12 ÷ 6 = <b>2</b>.'},
+      {type:'Medium',q:'36 households: mean water use x̄ = 520 L/day, σ = 60. Build a 95% CI.',hint:'SE = 60 ÷ 6 = 10. E = 1.96 × 10 = 19.6. CI = (<b>500.4</b>, <b>539.6</b>) L.'},
+      {type:'Medium',q:'Battery life: x̄ = 12.4 h, σ = 1.5 h, n = 100. Build a 90% CI.',hint:'SE = 0.15. E = 1.645 × 0.15 ≈ 0.247. CI ≈ (<b>12.15</b>, <b>12.65</b>) h.'},
+      {type:'Medium',q:'180 of 400 surveyed households recycle. Build a 95% CI for the proportion.',hint:'p̂ = 0.45. SE = √(0.45 × 0.55 ÷ 400) ≈ 0.0249. E ≈ 0.0488. CI ≈ (<b>0.401</b>, <b>0.499</b>).'},
+      {type:'Hard',q:'How large a sample gives E = 2 at 99% confidence if σ = 12? Use n = (z*·σ ÷ E)².',hint:'(2.576 × 12 ÷ 2)² = 15.456² ≈ 238.9 → round <b>up</b>: <b>n = 239</b>.'},
+      {type:'Hard',q:'Ages: μ = 21, σ = 4. For samples of 64 students, P(x̄ < 20.5)?',hint:'SE = 0.5. z = (20.5 − 21) ÷ 0.5 = −1.00 → <b>0.1587</b>.'}])} },
+
+  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5, narration:[`Five quick questions.`],
+    fig:{label:'Check yourself', build:el=>W.quiz(el,[
+      {q:'If n increases, the standard error…',o:['increases','decreases','stays the same'],a:1,why:'σ ÷ √n gets smaller.'},
+      {q:'z* for 99% confidence is…',o:['1.645','1.96','2.576'],a:2,why:'Memorise 1.645, 1.96, 2.576.'},
+      {q:'The CLT says the sample mean is approximately normal when…',o:['n ≥ 30','n = 1','the population is normal only'],a:0,why:'Large n, any population shape.'},
+      {q:'A 99% CI compared with a 95% CI from the same data is…',o:['wider','narrower','the same'],a:0,why:'More confidence needs a wider net.'},
+      {q:'Sample size from the formula is 96.04. Use…',o:['96','97'],a:1,why:'Always round up.'}])} },
+
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 12, contingency tables and the chi-square test.`],
+    fig:{label:'Weeks 10–11 on one page', mindmap:{center:'Estimation', branches:[
+      {t:'Sampling distribution',items:['Centre μ','SE = σ ÷ √n','CLT: n ≥ 30 → normal']},
+      {t:'CI for μ',items:['x̄ ± z*·σ ÷ √n']},
+      {t:'CI for p',items:['p̂ ± z*·√(p̂(1 − p̂) ÷ n)']},
+      {t:'z*',items:['90%: 1.645','95%: 1.96','99%: 2.576']},
+      {t:'Sample size',items:['n = (z*σ ÷ E)²','Round up']}]}} }
+  ]
+});

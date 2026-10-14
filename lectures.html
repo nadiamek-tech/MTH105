@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="assets/course.css">
+<link rel="stylesheet" href="assets/stats.css">
+<link rel="stylesheet" href="assets/site.css">
+<style>:root{--wk:#C8102E;--wk-soft:rgba(200,16,46,.08);--wk-d:#FF7A7F;--wk-soft-d:rgba(255,122,127,.14)}</style>
+<title>MTH 105 Lectures</title>
+</head>
+<body>
+<div id="hub" data-cur="lectures"></div>
+<main class="wrap">
+  <h1 class="pg">Lectures</h1>
+  <p class="lead">Each lecture: short explanations, formulas broken down symbol by symbol, a working tool, practice with answers and an exit quiz. Press ▶ Listen to hear it.</p>
+  <div class="cards" id="lec"></div>
+  <h2 class="sec" id="practice">Practice</h2>
+  <p class="lead">New exercises with hidden answers, from easy to hard.</p>
+  <div class="cards" id="prac"></div>
+  <h2 class="sec" id="tools">Calculator and tools</h2>
+  <div class="cards">
+    <a class="card" href="tools.html#calc"><span class="no">Tool</span><h3>Scientific calculator</h3><p>x², √, xʸ, n!, nCr, ln, log, Ans: the keys you need in exams.</p></a>
+    <a class="card" href="tools.html#stats"><span class="no">Tools</span><h3>Statistics checkers</h3><p>Mean and SD, boxplot, frequency table, Venn, binomial, normal, confidence interval, chi-square, regression.</p></a>
+    <a class="card dash" href="https://nadiamek-tech.github.io/MindTheGap/" target="_blank" rel="noopener"><span class="no">Workshops</span><h3>Mind the Gap ↗</h3><p>Read the question, read the formula, use the calculator.</p></a>
+  </div>
+</main>
+<footer style="max-width:1100px;margin:0 auto;padding:18px 16px 30px;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted);text-align:center">Created and owned by <b>Eng. Nadia Mek</b> · <a href="https://github.com/nadiamek-tech/MTH105">github.com/nadiamek-tech/MTH105</a></footer>
+<script src="assets/course.js"></script>
+<script src="assets/site.js"></script>
+<script src="assets/kb.js"></script>
+<script src="assets/search-index.js"></script>
+<script src="assets/assistant.js"></script>
+<script>
+const esc=Lecture.W.esc;
+const WEEKS=[
+ ['week-01.html','Week 1','Introduction to Statistics',['Descriptive and inferential statistics','Definitions of representative samples and importance of sample size, and impact of outliers.','Illustrative practical examples of use of Statistics'],'CLO 1','Ch.1: Introduction to Data','',8],
+ ['week-02.html','Week 2','Describing and Organizing Data',['Frequency distributions','Histograms and frequency polygons','Cumulative frequency distributions:'],'CLO 1','Ch.2: Picturing Variation with Graphs','',7],
+ ['week-03.html','Weeks 3–4','Measures of Central Tendency, Position, & Dispersion',['Mean, median, and mode','Percentiles','Variance and standard deviation','Coefficient of variation'],'CLO 1','Ch.3: Numerical Summaries of Center and Variation','',9],
+ ['week-05.html','Week 5','Probability Theory',['Definitions of events and sample space','Operations on probabilities'],'CLO 2','Ch 5: Modeling Variation with Probability','Quiz 1 · End of Week 5',7],
+ ['week-06.html','Weeks 6–7','Discrete Probability Distributions',['Definition of discrete random variables','Expected value, variance and standard deviation of discrete random variables','Examples of discrete random variables:','Bernoulli and Binomial distributions'],'CLO 2','Ch 6: Modelling Random Events: The Normal and Binomial Models','',9],
+ ['week-08.html','Weeks 8–9','The Normal and Standard Normal Distribution',['Usage of Histogram to introduce continuous random variables and their density functions','The normal distribution','The standard normal distribution','Interpreting the standard deviation: Z-scores'],'CLO 2','Ch 6: Modeling Random Events: The Normal and Binomial Models','Midterm · End of Week 9',7],
+ ['week-10.html','Weeks 10–11','Sampling Distribution of the Mean',['Definitions of sampling distribution of the mean','Confidence intervals of the mean and that of a proportion'],'CLO 3','Ch 7: Survey Sampling and Inference · Ch 9 : Inferring Population Means','',8],
+ ['week-12.html','Week 12','Contingency Tables',['Tests of independence of the 2 variables using Chi-square test'],'CLO 4','Ch 10: Associations between Categorical Variables','Quiz 2 · End of Week 12',6],
+ ['week-13.html','Weeks 13–15','Simple Linear Regression',['Equation of regression line','Correlation between two variables','Interpretation of Coefficient of Determination and Correlation Coefficient','Interpretation of Regression Coefficients'],'CLO 5','Ch 4: Regression Analysis: Exploring Associations between Variables · Ch 14: Inference for Regression','Lab Project/ Exercise, Lab Exam · End of Week 15',7]];
+document.getElementById('lec').innerHTML=WEEKS.map(([f,wk,t,subs,clo,ch,as])=>'<a class="card" href="'+f+'"><span class="no">'+wk+' · '+clo+'</span><h3>'+esc(t)+'</h3><ul>'+subs.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul><div class="meta"><span>'+esc(ch)+'</span>'+(as?'<span class="as">'+esc(as)+'</span>':'')+'</div></a>').join('')
+ +'<div class="card dash"><span class="no">Week 16</span><h3>Final Exam</h3><p>See <a href="exams.html">Exams</a>.</p></div>';
+document.getElementById('prac').innerHTML=WEEKS.map(([f,wk,t,,,,,s])=>'<a class="card" href="'+f+'#s'+s+'"><span class="no">'+wk+'</span><h3>Practice · '+esc(t)+'</h3></a>').join('');
+</script>
+</body>
+</html>

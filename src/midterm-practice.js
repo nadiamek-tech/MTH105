@@ -1,0 +1,132 @@
+// {"file": "midterm-practice.html", "title": "MTH 105 Midterm Practice", "wk": "#C8102E", "wkd": "#FF7A7F"}
+const toW2 = `<a href="https://nadiamek-tech.github.io/MindTheGap/workshop-02.html" target="_blank" rel="noopener">Each formula, symbol by symbol: Mind the Gap Workshop 2 ↗</a>`;
+/* ---------- practice figures ---------- */
+const H1 = ST.hist([2,9,8,5,3,2,1],['200','250','300','350','400','450','500','550'],{xlabel:'Reaction time (ms)',aria:'Histogram of reaction times',ymax:10});
+const H2 = ST.hist([1,2,3,6,9,9],['0','2','4','6','8','10','12'],{xlabel:'Quiz score (out of 12)',aria:'Histogram of quiz scores',ymax:10});
+const BX = ST.boxSVG([12,20,26,30,46],10,50,5,{xlabel:'Metro commute time (minutes)',aria:'Boxplot of commute times'});
+
+const PRAC = {
+graphs:[
+ {type:'Shape', q:`A road-safety study timed how fast 30 drivers braked (illustrative data).${H1}Describe the shape. Is the mean above or below the median?`,
+  hint:`<b>Positively (right) skewed</b>: most times are short and the tail stretches to the right. The few slow drivers pull the mean up, so <b>mean &gt; median</b>.`},
+ {type:'Shape', q:`Scores of 30 students on an easy quiz.${H2}Describe the shape and say where most scores are.`,
+  hint:`<b>Negatively (left) skewed</b>: most scores are high (8–12) and the tail stretches to the left. Mean &lt; median.`},
+ {type:'Polygon', q:`Daily water use (litres) of 30 households in Sharjah (illustrative).<table class="tbl" style="margin:6px 0"><tr><th>Class</th><td>100–149</td><td>150–199</td><td>200–249</td><td>250–299</td><td>300–349</td></tr><tr><th>f</th><td>4</td><td>7</td><td>10</td><td>6</td><td>3</td></tr></table>(a) Find the class boundaries and midpoints. (b) Where does the frequency polygon start and end? (c) Which graph would you draw to read “how many households use less than 250 L?”`,
+  hint:`(a) Boundaries: 99.5, 149.5, 199.5, 249.5, 299.5, 349.5. Midpoints: 124.5, 174.5, 224.5, 274.5, 324.5.<br>(b) It starts at <b>74.5</b> and ends at <b>374.5</b>, both with frequency 0 (midpoints of the empty classes).<br>(c) The <b>ogive</b> (cumulative frequency): at 249.5 it reads 4 + 7 + 10 = <b>21</b> households.`}],
+box:[
+ {type:'Compute', q:`Daily solar output (kWh) of 11 rooftop panels in Masdar City (illustrative):<br><span class="mono">18, 21, 23, 23, 25, 27, 28, 31, 31, 35, 48</span><br>(a) Five-number summary. (b) Range and IQR. (c) Is 48 an outlier?`,
+  hint:`(a) Min 18, Q1 = 23, median = 27 (6th value), Q3 = 31, max 48. Q1 and Q3 are the medians of the 5 values below and above the median.<br>(b) Range = 48 − 18 = <b>30</b>. IQR = 31 − 23 = <b>8</b>.<br>(c) Upper fence = 31 + 1.5 × 8 = 43. 48 &gt; 43, so <b>yes, 48 is an outlier</b>.`},
+ {type:'Read', q:`A boxplot of Dubai Metro commute times for 200 students (illustrative):${BX}(a) Range and IQR. (b) About how many students commute more than 30 minutes? (c) Between which two values is the middle 50%?`,
+  hint:`(a) Range = 46 − 12 = <b>34 min</b>. IQR = 30 − 20 = <b>10 min</b>.<br>(b) 30 is Q3, so 25% are above it: 0.25 × 200 = <b>50 students</b>.<br>(c) Between Q1 = <b>20</b> and Q3 = <b>30</b> minutes.`}],
+spread:[
+ {type:'Compute', q:`Plastic bottles collected by 7 volunteers at a Jumeirah beach clean-up (illustrative):<br><span class="mono">10, 14, 15, 15, 19, 21, 25</span><br>Find the mean, median, mode, sample variance, sample SD and CV.`,
+  hint:`Σx = 119, <b>x̄ = 17</b>. Median = <b>15</b> (4th value). Mode = <b>15</b>.<br>Deviations: −7, −3, −2, −2, 2, 4, 8 → squares 49, 9, 4, 4, 4, 16, 64; Σ = 150.<br><b>s² = 150 ÷ 6 = 25</b>, <b>s = 5</b>, <b>CV = 5 ÷ 17 × 100% ≈ 29.4%</b>.`},
+ {type:'Compare', q:`Two solar farms. Farm A: mean 40 MWh, s = 6 MWh. Farm B: mean 25 MWh, s = 5 MWh. Which farm is more consistent? Use the CV.`,
+  hint:`CV(A) = 6 ÷ 40 × 100% = <b>15%</b>. CV(B) = 5 ÷ 25 × 100% = <b>20%</b>. Farm A has the smaller CV, so <b>A is more consistent</b>, even though its s is larger.`},
+ {type:'Think', q:`Every volunteer in Q1 collects 3 more bottles. What happens to the mean and to s?`,
+  hint:`The mean rises by 3 (to 20). <b>s stays 5</b>: every value moves together, so the distances from the mean do not change.`}],
+venn:[
+ {type:'Venn', q:`A survey of 300 households: 150 have solar panels (S), 90 have a water-saving device (D), and 210 have <i>at least one</i> of the two.<br>(a) Draw the Venn diagram. (b) P(S and D). (c) P(exactly one). (d) P(neither). (e) Are S and D mutually exclusive?`,
+  hint:`(a) Both = 150 + 90 − 210 = <b>30</b>. S only = 120, D only = 60, neither = 300 − 210 = 90.<br>(b) 30 ÷ 300 = <b>0.10</b>. (c) (120 + 60) ÷ 300 = <b>0.60</b>. (d) 90 ÷ 300 = <b>0.30</b>.<br>(e) <b>No</b>: 30 households have both, so the events overlap.`},
+ {type:'Rules', q:`In a lab, P(A) = 0.45 and P(B) = 0.35, and A and B are mutually exclusive. Find P(A or B) and P(neither).`,
+  hint:`Mutually exclusive → P(A and B) = 0. P(A or B) = 0.45 + 0.35 = <b>0.80</b>. P(neither) = 1 − 0.80 = <b>0.20</b>.`}],
+tree:[
+ {type:'Tree', q:`Two independent leak sensors protect a water pipe. Sensor 1 detects a leak with probability 0.9, sensor 2 with probability 0.8.<br>(a) Draw the tree. (b) P(both detect). (c) P(neither detects). (d) P(at least one detects).`,
+  hint:`(a) First branches: detects 0.9 / misses 0.1. Second: detects 0.8 / misses 0.2 on each.<br>(b) 0.9 × 0.8 = <b>0.72</b>. (c) 0.1 × 0.2 = <b>0.02</b>. (d) 1 − 0.02 = <b>0.98</b>.`},
+ {type:'Sample space', q:`A student chooses one main dish (machboos, salad or pasta) and one drink (water or laban), all equally likely. List the sample space. What is P(salad and water)?`,
+  hint:`3 × 2 = <b>6 outcomes</b>: (machboos, water), (machboos, laban), (salad, water), (salad, laban), (pasta, water), (pasta, laban).<br>P(salad and water) = 1/3 × 1/2 = <b>1/6 ≈ 0.167</b>.`}],
+dist:[
+ {type:'Validity', q:`Which table is a valid probability distribution?<br>(i) 0.3, 0.3, 0.3 &nbsp; (ii) 0.5, −0.1, 0.6 &nbsp; (iii) 0.25, 0.25, 0.5`,
+  hint:`Only <b>(iii)</b>. (i) sums to 0.9. (ii) has a negative probability.`},
+ {type:'Compute', q:`X = number of the 3 EV chargers in use at a mall at noon (illustrative).<table class="tbl" style="margin:6px 0"><tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td></tr><tr><th>P(x)</th><td>0.15</td><td>0.35</td><td>0.30</td><td>k</td></tr></table>(a) k. (b) P(X ≤ 1). (c) E(X), with meaning. (d) Var(X) and SD.`,
+  hint:`(a) k = 1 − 0.80 = <b>0.20</b>. (b) 0.15 + 0.35 = <b>0.50</b>.<br>(c) E(X) = 0 + 0.35 + 0.60 + 0.60 = <b>1.55</b>: over many days, about 1.55 chargers are in use at noon on average.<br>(d) Σ(x − 1.55)²P(x) = 0.3604 + 0.1059 + 0.0608 + 0.4205 ≈ <b>0.9475</b>; SD = √0.9475 ≈ <b>0.97</b>.`},
+ {type:'Meaning', q:`A charity raffle ticket costs 10 AED. You win 100 AED with probability 0.05, 20 AED with probability 0.15, nothing otherwise. Let X = your net gain. Find E(X) and explain it.`,
+  hint:`Net gains: 90 (0.05), 10 (0.15), −10 (0.80). E(X) = 4.5 + 1.5 − 8 = <b>−2 AED</b>. On average a buyer loses 2 AED per ticket; that is what the charity raises.`}]
+};
+const prac = k => practice(PRAC[k]);
+
+Lecture.mount({
+  id:'mth105-midterm', course:'MTH 105', home:'exams.html', homeLabel:'Exams', short:'Midterm practice', eyebrow:'Midterm revision · CLO 1 and CLO 2', noTeacher:true,
+  title:'Midterm practice', meta:'Descriptive statistics (CLO 1) · Probability (CLO 2)', endLabel:'End of revision',
+  scenes:[
+  { nav:'Start here', title:'What the midterm covers', minutes:2,
+    narration:[`Each topic: a short recap with a tool, then <b>new</b> practice. Try first, then open the answer.`],
+    fig:{label:'Pick a topic', html:`<div class="map2"><div><h4>Descriptive statistics · CLO 1</h4>
+      <button data-s="1">Histogram shape<small>symmetric, right- or left-skewed</small></button><button data-s="2">Frequency polygon and ogive<small>midpoints, boundaries</small></button><button data-s="4">Boxplot<small>five-number summary, range, IQR</small></button><button data-s="6">Centre and spread<small>mean, mode, s², s, CV</small></button></div>
+      <div><h4>Probability · CLO 2</h4><button data-s="8">Venn diagrams<small>addition and complement rules</small></button><button data-s="10">Tree diagrams<small>multiplication rule, sample space</small></button><button data-s="12">Discrete distributions<small>k, P(X ≥ a), E(X), Var(X), SD</small></button><button data-s="14">Exit quiz<small>7 quick questions</small></button></div></div>`,
+      build:el=>el.querySelectorAll('button[data-s]').forEach(b=>b.addEventListener('click',()=>goScene(+b.dataset.s)))} },
+
+  { nav:'Histogram shape', title:'Shape: follow the tail', minutes:4,
+    narration:[`The tail names the shape. Tail to the right: <b>positively skewed</b>, mean &gt; median. Tail to the left: <b>negatively skewed</b>, mean &lt; median.`],
+    fig:{label:'Switch the shape', build:ST.shapeTool} },
+
+  { nav:'Polygon and ogive', title:'Frequency polygon and ogive', minutes:5,
+    narration:[`A <b>frequency polygon</b> joins the class midpoints at their frequencies and closes on the axis. An <b>ogive</b> joins cumulative frequencies at the upper class boundaries.`],
+    fig:{label:'Same data, two graphs', build:ST.polyTool} },
+
+  { nav:'Practice · Graphs', title:'Practice · Graphs', kind:'activity', minutes:10,
+    narration:[`New data. Answer on paper first.`], src:'Data: illustrative.',
+    fig:{label:'3 questions', build:prac('graphs')} },
+
+  { nav:'Boxplot', title:'Boxplot: five numbers', minutes:5,
+    narration:[`Min, Q1, median, Q3, max. <b>Range</b> = max − min. <b>IQR</b> = Q3 − Q1, the middle 50%. Outlier: beyond Q1 − 1.5·IQR or Q3 + 1.5·IQR.`],
+    fig:{label:'Type data, see the boxplot', build:ST.boxTool, caption:'Q1 and Q3 = medians of the lower and upper halves (median excluded when n is odd).'} },
+
+  { nav:'Practice · Boxplot', title:'Practice · Boxplot', kind:'activity', minutes:10,
+    narration:[`Compute one, read one.`], src:'Data: illustrative.',
+    fig:{label:'2 questions', build:prac('box')} },
+
+  { nav:'Centre and spread', title:'Centre and spread', minutes:5,
+    narration:[`Centre: mean, median, mode. Spread: s², s and <b>CV = s ÷ x̄ × 100%</b>. Use the CV to compare spread between data sets with different means.`],
+    fig:{label:'Type data, check each step', build:el=>ST.spreadTool(el,toW2)} },
+
+  { nav:'Practice · Spread', title:'Practice · Centre and spread', kind:'activity', minutes:12,
+    narration:[`Use a deviation table. Check your answers with the tool in the previous scene.`], src:'Data: illustrative.',
+    fig:{label:'3 questions', build:prac('spread')} },
+
+  { nav:'Venn diagrams', title:'Venn diagrams and the addition rule', minutes:5,
+    narration:[`Fill from the middle out: both, then each “only”, then neither. <b>P(A or B) = P(A) + P(B) − P(A and B)</b>. <b>P(neither) = 1 − P(A or B)</b>.`],
+    fig:{label:'Change the counts', build:ST.vennTool} },
+
+  { nav:'Practice · Venn', title:'Practice · Venn diagrams', kind:'activity', minutes:10,
+    narration:[`This time the overlap is missing. Find it first.`], src:'Data: illustrative.',
+    fig:{label:'2 questions', build:prac('venn')} },
+
+  { nav:'Tree diagrams', title:'Tree diagrams and the multiplication rule', minutes:5,
+    narration:[`Branches from one point add to 1. <b>Multiply along a path</b> for “and” (independent events). <b>Add paths</b> for “or”.`],
+    fig:{label:'Drag the probabilities', build:ST.treeTool} },
+
+  { nav:'Practice · Tree', title:'Practice · Tree diagrams', kind:'activity', minutes:8,
+    narration:[`Unequal branches this time.`], src:'Data: illustrative.',
+    fig:{label:'2 questions', build:prac('tree')} },
+
+  { nav:'Discrete distributions', title:'Discrete probability distributions', minutes:6,
+    narration:[`Valid when every P(x) is between 0 and 1 and <b>ΣP(x) = 1</b>. <b>E(X) = Σx·P(x)</b> is the long-run average. <b>Var(X) = Σ(x − μ)²·P(x)</b>, SD = √Var(X).`], src:toW2,
+    fig:{label:'Edit P(x) · check validity', build:ST.distTool} },
+
+  { nav:'Practice · Distribution', title:'Practice · Discrete distributions', kind:'activity', minutes:12,
+    narration:[`Find k first. Every later part depends on it.`], src:'Data: illustrative.',
+    fig:{label:'3 questions', build:prac('dist')} },
+
+  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5,
+    narration:[`Seven quick questions across all topics.`],
+    fig:{label:'Check yourself', build:el=>W.quiz(el,[
+      {q:'In a left-skewed distribution, usually…',o:['mean > median','mean < median','mean = median'],a:1,why:'The long left tail pulls the mean down, below the median.'},
+      {q:'A boxplot has Q1 = 40 and Q3 = 58. The IQR is…',o:['98','49','18','9'],a:2,why:'IQR = Q3 − Q1 = 58 − 40 = 18.'},
+      {q:'Which graph uses cumulative frequency?',o:['Histogram','Frequency polygon','Ogive'],a:2,why:'The ogive plots cumulative frequency at each upper class boundary.'},
+      {q:'Which measure compares spread between data sets with different means?',o:['Range','Standard deviation','Coefficient of variation'],a:2,why:'CV = s ÷ x̄ × 100% is relative, so it compares across means and units.'},
+      {q:'P(A) = 0.5, P(B) = 0.4, P(A and B) = 0.2. P(A or B) =',o:['0.9','0.7','0.2','0.1'],a:1,why:'0.5 + 0.4 − 0.2 = 0.7.'},
+      {q:'A and B are independent, P(A) = 0.3, P(B) = 0.5. P(A and B) =',o:['0.8','0.15','0.2','0.35'],a:1,why:'Multiply: 0.3 × 0.5 = 0.15.'},
+      {q:'Which list cannot be a probability distribution?',o:['0.2, 0.5, 0.3','0.3, 0.4, 0.4','0.1, 0.1, 0.8'],a:1,why:'0.3 + 0.4 + 0.4 = 1.1, not 1.'}])} },
+
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2,
+    narration:[`Good luck on Monday. Bring a standard calculator.`],
+    fig:{label:'The midterm on one page', mindmap:{center:'Midterm', branches:[
+      {t:'Graphs',items:['Tail right → positive skew','Polygon: midpoints, closes on axis','Ogive: cumulative, upper boundaries']},
+      {t:'Boxplot',items:['Min, Q1, median, Q3, max','Range = max − min','IQR = Q3 − Q1','Fences: Q1 − 1.5·IQR, Q3 + 1.5·IQR']},
+      {t:'Centre and spread',items:['x̄ = Σx ÷ n','s² = Σ(x − x̄)² ÷ (n − 1)','s = √s²','CV = s ÷ x̄ × 100%']},
+      {t:'Venn',items:['Both first','P(A or B) = P(A) + P(B) − P(A and B)','P(neither) = 1 − P(A or B)']},
+      {t:'Tree',items:['Branches add to 1','Multiply along a path','Add paths for “or”']},
+      {t:'Distributions',items:['ΣP(x) = 1','E(X) = Σx·P(x)','Var(X) = Σ(x − μ)²·P(x)','SD = √Var(X)']}]}} }
+  ]
+});

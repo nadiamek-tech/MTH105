@@ -1,0 +1,85 @@
+// {"file": "week-08.html", "title": "MTH 105 Weeks 8–9 · The Normal Distribution", "wk": "#A21CAF", "wkd": "#F09BFF"}
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+function smoothTool(el){
+  el.innerHTML=`<div class="tool"><div class="seg2"><button type="button" aria-pressed="true">50 heights</button><button type="button" aria-pressed="false">500 heights</button><button type="button" aria-pressed="false">50,000 heights</button></div><div class="pic"></div><p class="mono" style="margin:0;color:var(--muted)">Simulated student heights, μ = 170 cm, σ = 8 cm.</p></div>`;
+  const draw=i=>{ const N=[50,500,50000][i], k=[8,16,40][i]; let seed=3; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+    const g=()=>170+8*Math.sqrt(-2*Math.log(rnd()))*Math.cos(2*Math.PI*rnd()); const lo=140,hi=200,w=(hi-lo)/k,f=Array(k).fill(0);
+    for(let j=0;j<N;j++){ const x=g(), b=Math.floor((x-lo)/w); if(b>=0&&b<k) f[b]++; }
+    const Wd=520,Hd=190,L=10,B=26, dens=f.map(c=>c/(N*w)), mx=Math.max(...dens,0.05), X=x=>L+(Wd-2*L)*(x-lo)/(hi-lo), Y=d=>Hd-B-(Hd-B-10)*d/mx;
+    const pdf=x=>Math.exp(-(((x-170)/8)**2)/2)/(8*Math.sqrt(2*Math.PI)); const pts=[]; for(let x=lo;x<=hi;x+=.5) pts.push(`${X(x)},${Y(pdf(x))}`);
+    el.querySelector('.pic').innerHTML=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Histogram turning into a curve">${dens.map((d,j)=>`<rect x="${X(lo+j*w)}" y="${Y(d)}" width="${(Wd-2*L)/k-1}" height="${Hd-B-Y(d)}" fill="var(--wk)" opacity=".35"/>`).join('')}<polyline points="${pts.join(' ')}" fill="none" stroke="var(--ink)" stroke-width="2.4" opacity="${i===2?1:.5}"/><line x1="${L}" x2="${Wd-L}" y1="${Hd-B}" y2="${Hd-B}" stroke="var(--ink)"/>${[146,154,162,170,178,186,194].map(t=>`<text x="${X(t)}" y="${Hd-8}" text-anchor="middle" ${MONO} font-size="10" fill="var(--muted)">${t}</text>`).join('')}</svg>`; };
+  el.querySelectorAll('.seg2 button').forEach((b,i)=>b.addEventListener('click',()=>{ el.querySelectorAll('.seg2 button').forEach(x=>x.setAttribute('aria-pressed',x===b)); draw(i); })); draw(0);
+}
+function shapeNormal(el){
+  el.innerHTML=`<div class="tool"><div class="sl"><label for="ns-mu">μ</label><input type="range" id="ns-mu" min="50" max="90" value="70"><b class="mono" id="ns-muv"></b></div><div class="sl"><label for="ns-sd">σ</label><input type="range" id="ns-sd" min="3" max="20" value="10"><b class="mono" id="ns-sdv"></b></div><div class="pic"></div></div>`;
+  const run=()=>{ const mu=+el.querySelector('#ns-mu').value, sd=+el.querySelector('#ns-sd').value; el.querySelector('#ns-muv').textContent=mu; el.querySelector('#ns-sdv').textContent=sd;
+    const Wd=520,Hd=180,L=14,B=26,lo=10,hi=130,X=x=>L+(Wd-2*L)*(x-lo)/(hi-lo),Y=d=>Hd-B-(Hd-B-10)*d/0.135;
+    const pdf=(x,m,s)=>Math.exp(-(((x-m)/s)**2)/2)/(s*Math.sqrt(2*Math.PI)); const line=(m,s)=>{ const p=[]; for(let x=lo;x<=hi;x+=.5) p.push(`${X(x)},${Y(pdf(x,m,s))}`); return p.join(' '); };
+    el.querySelector('.pic').innerHTML=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Normal curve shape"><polyline points="${line(70,10)}" fill="none" stroke="var(--muted)" stroke-dasharray="4 4"/><polyline points="${line(mu,sd)}" fill="var(--wk-soft)" stroke="var(--wk)" stroke-width="2.4"/><line x1="${X(mu)}" x2="${X(mu)}" y1="10" y2="${Hd-B}" stroke="var(--wk)" stroke-dasharray="5 4"/><line x1="${L}" x2="${Wd-L}" y1="${Hd-B}" y2="${Hd-B}" stroke="var(--ink)"/>${[20,40,60,80,100,120].map(t=>`<text x="${X(t)}" y="${Hd-8}" text-anchor="middle" ${MONO} font-size="10" fill="var(--muted)">${t}</text>`).join('')}<text x="${X(mu)+6}" y="22" ${FT} font-size="12" font-weight="700" fill="var(--wk)">μ = ${mu}</text></svg>`; };
+  el.querySelectorAll('input').forEach(i=>i.addEventListener('input',run)); run();
+}
+
+Lecture.mount({
+  id:'mth105-w8', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Weeks 8–9 · Normal distribution', eyebrow:'Weeks 8–9 · CLO 2', noTeacher:true,
+  title:'The Normal and Standard Normal Distribution', meta:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)', endLabel:'Weeks 10–11 →',
+  scenes:[
+  { nav:'Start here', title:'From counting to measuring', minutes:3,
+    narration:[`Binomial X was counted (0, 1, 2 …). Height, time and weight are measured: they are <b>continuous</b>. <span class="mono">Topics: Usage of Histogram to introduce continuous random variables and their density functions · The normal distribution · The standard normal distribution · Interpreting the standard deviation: Z-scores. CLO 2.</span>`],
+    src:'Reading: Gould, Ryan &amp; Wong (2020), Ch 6.',
+    fig:{label:'The road this week', flow:[{t:'Histogram',s:'real data',d:'Bars of measured values.'},{t:'Density curve',s:'smooth',d:'More data, thinner bars, a smooth curve.'},{t:'Normal N(μ, σ)',s:'the model',d:'Bell-shaped and symmetric.'},{t:'z-score',s:'common scale',d:'Distance from μ in σ units.'},{t:'Z-table',s:'area',d:'Probability = area under the curve.'}]} },
+
+  { nav:'Density curve', title:'From histogram to density curve', minutes:8,
+    narration:[`With more data and thinner bars, the histogram becomes a smooth <b>density curve</b>. The area under it is 1, and area = probability.`],
+    fig:{label:'Add more data', build:smoothTool} },
+
+  { nav:'Normal curve', title:'The normal distribution', minutes:8,
+    narration:[`Bell-shaped and symmetric: mean = median = mode at the peak. <b>μ</b> moves the curve; <b>σ</b> makes it narrow or wide.`],
+    fig:{label:'Drag μ and σ', build:shapeNormal, caption:'Dashed: μ = 70, σ = 10.'} },
+
+  { nav:'Empirical rule', title:'The 68–95–99.7 rule', minutes:8,
+    narration:[`In a normal distribution about 68% of values lie within 1σ of μ, 95% within 2σ, and 99.7% within 3σ.`],
+    fig:{label:'Pick a range', build:ST.ruleTool} },
+
+  { nav:'z-score', title:'The z-score', minutes:10,
+    narration:[`A z-score counts how many standard deviations a value is from the mean. Positive: above the mean. Negative: below.`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('z',v('z'))} = ${fr(T('d',v('x')+' − μ'),T('s','σ'))}`,
+      parts:[['z','<b>z</b>: the standard score, no units.'],['d','<b>x − μ</b>: distance from the mean.'],['s','<b>σ</b>: the standard deviation, used as the ruler.']],
+      sub:`${v('z')} = ${fr('85 − 70','10')}`, subNote:'Exam: μ = 70, σ = 10. A student scores 85.',
+      keys:'( 8 5 − 7 0 ) ÷ 1 0 =', ans:`<div class="m">z = <b>1.5</b></div><p class="calcnote">1.5 standard deviations above the mean.</p>`, ansRaw:true})} },
+
+  { nav:'Z-table', title:'Reading the Z-table', minutes:8,
+    narration:[`The Z-table gives the area to the <b>left</b> of z. Row: first decimal. Column: second decimal.`],
+    fig:{label:'P(Z < 1.53)', html:ST.zRow(1.53)+`<div class="steps" style="margin-top:8px">Row 1.5, column .03 → <b>0.9370</b><br>Right of z: 1 − 0.9370 = 0.0630<br>Between a and b: Φ(b) − Φ(a)</div>`} },
+
+  { nav:'Find probabilities', title:'Tool · Normal probabilities', minutes:15,
+    narration:[`Convert to z, look up the table, then subtract when needed.`],
+    fig:{label:'Change μ, σ, a and b', build:ST.normalTool} },
+
+  { nav:'Practice', title:'Practice', kind:'activity', minutes:25,
+    narration:[`Draw the curve and shade the area before you calculate.`], src:'Data: illustrative.',
+    fig:{label:'6 questions', build:practice([
+      {type:'Easy',q:'Newborn weights: μ = 3.3 kg, σ = 0.5 kg. Find the z-score of a 4.1 kg baby.',hint:'z = (4.1 − 3.3) ÷ 0.5 = <b>1.6</b>.'},
+      {type:'Medium',q:'Same babies: P(weight < 4.1 kg)? P(weight > 4.1 kg)?',hint:'Φ(1.60) = <b>0.9452</b>. Above: 1 − 0.9452 = <b>0.0548</b>.'},
+      {type:'Medium',q:'Commute times: μ = 35 min, σ = 8 min. P(27 < X < 51)?',hint:'z = −1.00 and 2.00. 0.9772 − 0.1587 = <b>0.8185</b>.'},
+      {type:'Medium',q:'Exam: μ = 70, σ = 10. P(score < 62)?',hint:'z = −0.80 → <b>0.2119</b>.'},
+      {type:'Hard',q:'Math 80 (μ = 70, σ = 5) or History 90 (μ = 85, σ = 10): which result is relatively better?',hint:'Math z = 2.0, History z = 0.5. <b>Math</b> is relatively better.'},
+      {type:'Hard',q:'Daily maximum temperature: μ = 34 °C, σ = 2 °C. Between which values are about 95% of days? About what % are above 36 °C?',hint:'95%: <b>30 to 38 °C</b>. Above 36 (μ + 1σ): (100 − 68) ÷ 2 ≈ <b>16%</b>.'}])} },
+
+  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5, narration:[`Five quick questions.`],
+    fig:{label:'Check yourself', build:el=>W.quiz(el,[
+      {q:'In a normal distribution the mean is…',o:['left of the median','equal to the median','right of the median'],a:1,why:'Symmetric: mean = median = mode.'},
+      {q:'μ = 50, σ = 5, x = 40. z =',o:['−2','2','−10'],a:0,why:'(40 − 50) ÷ 5.'},
+      {q:'The Z-table gives…',o:['area to the left of z','area to the right of z','the z-score'],a:0,why:'Cumulative area from the left.'},
+      {q:'P(Z > 1) =',o:['0.8413','0.1587','0.3413'],a:1,why:'1 − 0.8413.'},
+      {q:'About what % lies within 2σ of μ?',o:['68%','95%','99.7%'],a:1,why:'Empirical rule.'}])} },
+
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Weeks 10–11, sampling distributions and confidence intervals.`],
+    fig:{label:'Weeks 8–9 on one page', mindmap:{center:'Normal', branches:[
+      {t:'Density',items:['Area under curve = 1','Area = probability']},
+      {t:'Shape',items:['Bell, symmetric','μ: centre, σ: width']},
+      {t:'Rule',items:['68% within 1σ','95% within 2σ','99.7% within 3σ']},
+      {t:'z-score',items:['z = (x − μ) ÷ σ','+ above, − below']},
+      {t:'Z-table',items:['Left area: Φ(z)','Right: 1 − Φ(z)','Between: Φ(b) − Φ(a)']}]}} }
+  ]
+});

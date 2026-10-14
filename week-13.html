@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Weeks 13–15 · Simple Linear Regression</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css">
+<link rel="stylesheet" href="assets/stats.css">
+<style>
+:root{--wk:#9F1239;--wk-soft:rgba(159,18,57,0.09);--wk-d:#FF8FB0;--wk-soft-d:rgba(255,143,176,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/course.js"></script>
+<script src="assets/stats.js"></script>
+<script src="assets/decode.js"></script>
+<script src="assets/kb.js"></script>
+<script src="assets/search-index.js"></script>
+<script src="assets/assistant.js"></script>
+<script>
+const {W} = Lecture; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+const pats=(()=>{ let seed=5; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  const plot=(x0,lab,f)=>{ let s=`<g transform="translate(${x0},10)"><rect width="150" height="130" rx="10" fill="var(--bg)" stroke="var(--line)"/>`; for(let i=0;i<18;i++){ const x=10+rnd()*130, y=f(x); s+=`<circle cx="${x}" cy="${Math.max(8,Math.min(122,y))}" r="4" fill="var(--wk)"/>`; } return s+`<text x="75" y="152" text-anchor="middle" ${FT} font-weight="700" font-size="13" fill="var(--ink)">${lab}</text></g>`; };
+  return `<svg viewBox="0 0 520 170" role="img" aria-label="Positive, negative and no relationship">${plot(10,'Positive',x=>120-x*.8+(rnd()-.5)*30)}${plot(185,'Negative',x=>15+x*.8+(rnd()-.5)*30)}${plot(360,'None',()=>10+rnd()*110)}</svg>`; })();
+const SCALE=`<svg viewBox="0 0 520 80" role="img" aria-label="Strength of r"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="var(--c2)"/><stop offset=".5" stop-color="var(--line)"/><stop offset="1" stop-color="var(--wk)"/></linearGradient></defs><rect x="20" y="28" width="480" height="12" rx="6" fill="url(#rg)"/>${[[-1,'−1'],[-.7,'−0.7'],[-.4,'−0.4'],[0,'0'],[.4,'0.4'],[.7,'0.7'],[1,'+1']].map(([r,t])=>`<text x="${260+240*r}" y="20" text-anchor="middle" ${MONO} font-size="11" fill="var(--ink)">${t}</text>`).join('')}${[[-.85,'strong −'],[-.55,'moderate −'],[-.2,'weak −'],[.2,'weak +'],[.55,'moderate +'],[.85,'strong +']].map(([r,t])=>`<text x="${260+240*r}" y="60" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${t}</text>`).join('')}</svg>`;
+
+Lecture.mount({
+  id:'mth105-w13', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Weeks 13–15 · Regression', eyebrow:'Weeks 13–15 · CLO 5', noTeacher:true,
+  title:'Simple Linear Regression', meta:'Ch 4: Regression Analysis: Exploring Associations between Variables · Ch 14: Inference for Regression · Gould, Ryan & Wong (2020)', endLabel:'Course map',
+  scenes:[
+  { nav:'Start here', title:'Use x to predict y', minutes:3,
+    narration:[`Regression fits a straight line through a scatter plot so we can predict y from x. <span class="mono">Topics: Equation of regression line · Correlation between two variables · Interpretation of Coefficient of Determination and Correlation Coefficient · Interpretation of Regression Coefficients. CLO 5.</span>`],
+    src:'Reading: Gould, Ryan &amp; Wong (2020), Ch 4 and Ch 14. Lab Project and Lab Exam: end of Week 15.',
+    fig:{label:'Three patterns', html:pats} },
+
+  { nav:'x and y', title:'Independent and dependent variables', minutes:6,
+    narration:[`<b>x</b> is the predictor (independent). <b>y</b> is the outcome we predict (dependent). Decide which is which before you calculate.`],
+    fig:{label:'Pick y for each pair', build:el=>W.sort(el,{buckets:['First is y','Second is y'],items:[
+      {t:'Exam score · hours studied',a:0,why:'Score depends on hours studied.'},
+      {t:'Temperature · ice creams sold',a:1,why:'Sales depend on temperature.'},
+      {t:'Fertiliser (kg) · crop yield',a:1,why:'Yield depends on fertiliser.'},
+      {t:'Electricity bill · hours of air conditioning',a:0,why:'The bill depends on AC use.'}]})} },
+
+  { nav:'Correlation r', title:'Correlation coefficient r', minutes:12,
+    narration:[`r measures the strength and direction of a straight-line relationship, from −1 to +1.`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('r',v('r'))} = ${fr(T('nm',v('n')+'Σ'+v('xy')+' − Σ'+v('x')+'Σ'+v('y')),sq(T('dx','['+v('n')+'Σ'+v('x')+'<sup>2</sup> − (Σ'+v('x')+')<sup>2</sup>]')+T('dy','['+v('n')+'Σ'+v('y')+'<sup>2</sup> − (Σ'+v('y')+')<sup>2</sup>]')))}`,
+      parts:[['r','<b>r</b>: correlation, between −1 and +1.'],['nm','Top: n·Σxy minus Σx·Σy. Same as the slope’s top.'],['dx','x part: n·Σx² − (Σx)².'],['dy','y part: n·Σy² − (Σy)².']],
+      sub:`${v('r')} = ${fr('5(66) − 15(20)',sq('[5(55) − 15²][5(86) − 20²]'))}`, subNote:'x: 1, 2, 3, 4, 5 · y: 2, 4, 5, 4, 5 → Σx = 15, Σy = 20, Σx² = 55, Σxy = 66, Σy² = 86.',
+      keys:'( 3 3 0 − 3 0 0 ) ÷ √ ( 5 0 × 3 0 ) =', ans:`<div class="m">r = 30 ÷ 38.73 ≈ <b>0.775</b></div>`, ansRaw:true})} },
+
+  { nav:'Read r and r²', title:'Interpreting r and r²', minutes:8,
+    narration:[`<b>r²</b> is the share of the variation in y explained by x. r = 0.775 → r² ≈ 0.60: 60% of the variation in y is explained by x. Correlation does not prove causation.`],
+    fig:{label:'Strength of r', html:SCALE} },
+
+  { nav:'Slope and intercept', title:'The regression line ŷ = a + bx', minutes:12,
+    narration:[`Build a table of x, y, x², xy. Find the slope <b>b</b> first, then the intercept <b>a</b>.`],
+    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
+      f:`${T('b',v('b'))} = ${fr(T('nm',v('n')+'Σ'+v('xy')+' − Σ'+v('x')+'Σ'+v('y')),T('dx',v('n')+'Σ'+v('x')+'<sup>2</sup> − (Σ'+v('x')+')<sup>2</sup>'))}<br>${T('a',v('a'))} = ${fr(T('ay','Σ'+v('y')+' − '+v('b')+'Σ'+v('x')),T('n',v('n')))}`,
+      parts:[['b','<b>b</b>: slope, change in ŷ for each 1-unit increase in x.'],['nm','Top of b: n·Σxy − Σx·Σy.'],['dx','Bottom of b: n·Σx² − (Σx)².'],['a','<b>a</b>: intercept, ŷ when x = 0.'],['ay','Σy − b·Σx, then divide by n.']],
+      sub:`${v('b')} = ${fr('330 − 300','275 − 225')}<br>${v('a')} = ${fr('20 − 0.6(15)','5')}`, subNote:'Same data: n = 5.',
+      keys:'3 0 ÷ 5 0 = → ( 2 0 − 0 . 6 × 1 5 ) ÷ 5 =', ans:`<div class="m">ŷ = <b>2.2 + 0.6x</b></div><p class="calcnote">Predict at x = 5: 2.2 + 3.0 = 5.2. Actual y = 5, error = −0.2.</p>`, ansRaw:true})} },
+
+  { nav:'Interpret', title:'Interpreting the coefficients', minutes:8,
+    narration:[`Slope: each extra unit of x changes ŷ by b. Intercept: ŷ when x = 0, only meaningful if x = 0 makes sense. Do not predict far outside the data (<b>extrapolation</b>).`],
+    src:'Example: appraised value vs sale price ($000s), from the regression notes.',
+    fig:{label:'ŷ = −3.2 + 1.3x', html:`<div class="steps">b = 1.3 → each extra $1,000 of appraised value adds about <b>$1,300</b> to the predicted sale price.<br>a = −3.2 → x = 0 is far outside the data: no useful meaning.<br>x = 25 → ŷ = −3.2 + 32.5 = <b>29.3</b> ($29,300).</div>`} },
+
+  { nav:'Regression tool', title:'Tool · Fit your own line', minutes:12,
+    narration:[`Type pairs. The tool builds the table, finds b, a, r and r², and predicts.`],
+    fig:{label:'Edit the data', build:el=>ST.regTool(el)} },
+
+  { nav:'Practice', title:'Practice', kind:'activity', minutes:25,
+    narration:[`Table first: x, y, x², xy, y².`], src:'Data: illustrative.',
+    fig:{label:'5 questions', build:practice([
+      {type:'Medium',q:'Hours of solar exposure x: 1, 2, 3, 4, 5, 6. Plant growth y (cm): 3, 5, 4, 7, 8, 9. Find ŷ = a + bx.',hint:'Σx = 21, Σy = 36, Σx² = 91, Σxy = 147. b = (6·147 − 21·36) ÷ (6·91 − 21²) = 126 ÷ 105 = <b>1.2</b>. a = (36 − 1.2·21) ÷ 6 = <b>1.8</b>. <b>ŷ = 1.8 + 1.2x</b>.'},
+      {type:'Medium',q:'Same data: Σy² = 244. Find r and r².',hint:'r = 126 ÷ √(105 × 168) ≈ <b>0.949</b>. r² = <b>0.90</b>: 90% of the variation in growth is explained by solar exposure.'},
+      {type:'Easy',q:'Predict growth for 4.5 hours. Is predicting for 20 hours sensible?',hint:'ŷ = 1.8 + 1.2 × 4.5 = <b>7.2 cm</b>. 20 hours is far outside 1–6: <b>extrapolation</b>, not reliable.'},
+      {type:'Easy',q:'r = −0.82 between screen time and sleep. Describe it and find r².',hint:'<b>Strong negative</b>. r² ≈ <b>0.67</b>: 67% of the variation in sleep is explained by screen time.'},
+      {type:'Medium',q:'ŷ = 12 + 3.5x, x = hours studied, y = quiz score. Interpret 3.5 and 12.',hint:'Each extra hour adds about <b>3.5 points</b>. A student who studies <b>0 hours</b> is predicted to score <b>12</b>.'}])} },
+
+  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5, narration:[`Five quick questions.`],
+    fig:{label:'Check yourself', build:el=>W.quiz(el,[
+      {q:'r = 0.9 means…',o:['strong positive','weak positive','strong negative'],a:0,why:'Close to +1.'},
+      {q:'r = 0.6. r² =',o:['0.6','0.36','0.77'],a:1,why:'Square r.'},
+      {q:'In ŷ = 5 + 2x, the slope is…',o:['5','2','7'],a:1,why:'The number multiplying x.'},
+      {q:'Calculate first:',o:['a','b'],a:1,why:'a uses b.'},
+      {q:'A high r proves x causes y.',o:['True','False'],a:1,why:'Correlation is not causation.'}])} },
+
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Final exam: comprehensive, more weight on topics after the midterm.`],
+    fig:{label:'Weeks 13–15 on one page', mindmap:{center:'Regression', branches:[
+      {t:'Variables',items:['x: predictor','y: outcome']},
+      {t:'Line',items:['ŷ = a + bx','b first, then a']},
+      {t:'r',items:['−1 to +1','Direction and strength']},
+      {t:'r²',items:['% of variation in y explained by x']},
+      {t:'Care',items:['No extrapolation','Correlation ≠ causation']}]}} }
+  ]
+});
+</script>
+</body>
+</html>

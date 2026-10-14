@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="assets/course.css">
+<link rel="stylesheet" href="assets/stats.css">
+<link rel="stylesheet" href="assets/site.css">
+<style>:root{--wk:#C8102E;--wk-soft:rgba(200,16,46,.08);--wk-d:#FF7A7F;--wk-soft-d:rgba(255,122,127,.14)}</style>
+<title>MTH 105 Exams</title>
+<style>
+.next{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;border:2px solid var(--wk);background:linear-gradient(150deg,var(--wk-soft),transparent 70%);border-radius:16px;padding:16px 18px}
+.next .day{font-family:var(--f-mono);text-align:center;line-height:1.1;border-right:1px solid var(--line);padding-right:16px}
+.next .day b{display:block;font-size:2.4rem;color:var(--wk);font-family:var(--f-display)}
+.next h3{font-size:1.2rem;margin:0}.next p{margin:4px 0 0;color:var(--muted)}
+.cd{font-family:var(--f-mono);font-size:.85rem;color:var(--wk)!important;font-weight:600}
+tr.soon td:first-child{box-shadow:inset 4px 0 0 var(--wk)}
+@media (max-width:700px){.next{grid-template-columns:minmax(0,1fr)}.next .day{border-right:0;padding-right:0;text-align:left}}
+</style>
+</head>
+<body>
+<div id="hub" data-cur="exams"></div>
+<main class="wrap">
+  <h1 class="pg">Exams</h1>
+  <p class="lead">Dates, what each exam covers, revision pages and past papers.</p>
+  <h2 class="sec" id="next">Next exam</h2>
+  <div class="next"><div class="day">MON<b>19</b>OCT 2026</div><div><h3>Midterm Examination · 20%</h3><p>9:30–11:00 AM (90 minutes) · HUB-Yard Zones A, B, D</p><p>Section 1: Descriptive Statistics (CLO 1) · Section 2: Probability (CLO 2) · Weeks 1–7</p><p>Closed book · standard calculator only · no phones</p><p class="cd" id="cd"></p></div></div>
+
+  <h2 class="sec" id="dates">Important dates</h2>
+  <div class="tblwrap"><table class="tbl"><tr><th>Assessment</th><th>When</th><th class="c">Weight</th><th>CLOs</th></tr>
+    <tr><td>Quiz 1</td><td>End of Week 5</td><td class="c">10%</td><td>1, 2</td></tr>
+    <tr class="soon"><td><b>Midterm Examination</b></td><td><b>Monday 19 October 2026, 9:30–11:00 AM</b> · HUB-Yard Zones A, B, D</td><td class="c">20%</td><td>1, 2</td></tr>
+    <tr><td>Quiz 2</td><td>End of Week 12</td><td class="c">10%</td><td>3, 4</td></tr>
+    <tr><td>Lab Project / Exercise</td><td>End of Week 14 · upload on Moodle</td><td class="c">20%</td><td>1–5</td></tr>
+    <tr><td>Lab Exam</td><td>End of Week 15</td><td class="c">10%</td><td>1, 3, 5</td></tr>
+    <tr><td>Final Examination</td><td>Week 16 · examination period announced by the Registrar’s office</td><td class="c">30%</td><td>2–5</td></tr></table></div>
+
+  <h2 class="sec" id="assess">Assessment and CLOs</h2>
+  <div class="tblwrap"><table class="tbl"><tr><th>Assessment Items</th><th class="c">Grade Weight %</th><th class="c">CLO 1</th><th class="c">CLO 2</th><th class="c">CLO 3</th><th class="c">CLO 4</th><th class="c">CLO 5</th></tr>
+    <tr><td>Quiz 1</td><td class="c">10</td><td class="c tick">✓</td><td class="c tick">✓</td><td></td><td></td><td></td></tr>
+    <tr><td>Quiz 2</td><td class="c">10</td><td></td><td></td><td class="c tick">✓</td><td class="c tick">✓</td><td></td></tr>
+    <tr><td>Lab Project/Exercise</td><td class="c">20</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td></tr>
+    <tr><td>Lab Exam</td><td class="c">10</td><td class="c tick">✓</td><td></td><td class="c tick">✓</td><td></td><td class="c tick">✓</td></tr>
+    <tr><td>Midterm Examination</td><td class="c">20</td><td class="c tick">✓</td><td class="c tick">✓</td><td></td><td></td><td></td></tr>
+    <tr><td>Final Examination</td><td class="c">30</td><td></td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td><td class="c tick">✓</td></tr></table></div>
+
+  <h2 class="sec" id="revision">Revision</h2>
+  <div class="cards">
+    <a class="card" href="midterm-practice.html"><span class="no">Midterm · CLO 1, CLO 2</span><h3>Midterm practice</h3><p>Every midterm topic: recap, tools and new exercises with answers.</p></a>
+    <a class="card dash" href="https://nadiamek-tech.github.io/MindTheGap/" target="_blank" rel="noopener"><span class="no">Workshops</span><h3>Mind the Gap ↗</h3><p>Read the question, read the formula, use the calculator.</p></a>
+    <div class="card dash"><span class="no">Final · CLO 2–5</span><h3>Final exam practice</h3><p>Coming after the midterm. Until then, use the Practice scene of each lecture.</p></div>
+  </div>
+
+  <h2 class="sec" id="past">Past papers</h2>
+  <div class="note">Past papers will be posted here.</div>
+
+  <h2 class="sec">Exam rules</h2>
+  <div id="rules"></div>
+</main>
+<footer style="max-width:1100px;margin:0 auto;padding:18px 16px 30px;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted);text-align:center">Created and owned by <b>Eng. Nadia Mek</b> · <a href="https://github.com/nadiamek-tech/MTH105">github.com/nadiamek-tech/MTH105</a></footer>
+<script src="assets/course.js"></script>
+<script src="assets/site.js"></script>
+<script src="assets/kb.js"></script>
+<script src="assets/search-index.js"></script>
+<script src="assets/assistant.js"></script>
+<script>
+Lecture.W.accordion(document.getElementById('rules'),[
+ {t:'What to bring',d:'Your CUD ID and a standard calculator. Programmable calculators with graphing capabilities are not allowed.'},
+ {t:'Not allowed',d:'Mobile phones, books, or other communication devices. Any violation of the academic integrity policy is sanctioned as per the Student Handbook.'},
+ {t:'Final exam',d:'Closed book and comprehensive, with more emphasis on the material covered after the midterm. Students absent for 25% or more of the classes cannot sit the final.'}]);
+document.querySelectorAll('#rules details').forEach((d,i)=>{ if(i) d.open=false; });
+(function(){ const t=new Date('2026-10-19T09:30:00+04:00').getTime(), d=Math.ceil((t-Date.now())/86400000), el=document.getElementById('cd'); el.textContent=d>1?d+' days to go':d===1?'Tomorrow':d===0?'Today':''; })();
+</script>
+</body>
+</html>
