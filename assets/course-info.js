@@ -2,18 +2,15 @@
    To update the site, edit only this file. Empty links show "coming soon" until you paste them. */
 window.COURSE={
   code:'MTH 105', title:['Introduction to','Statistics'], eyebrow:'MTH 105 · Fall 2026 · 3 credit hours',
-  instructor:'Eng. Nadia Mek', email:'Nadia.mekhfi@cud.ac.ae', officeHours:'Monday 2–6 PM', office:'MGT OA8',
+  instructor:'Eng. Nadia Mek',
   pages:{lectures:'lectures.html', labs:'lab.html', exams:'exams.html'},
   blurbs:{lectures:'Narrated lectures, formulas step by step, practice, calculator.', labs:'Excel workbooks with step-by-step guides.', exams:'Dates, what each exam includes, revision.'},
 
   links:{
-    form:'',        /* the ONE student request form (Microsoft Forms) */
-    formHelp:'',    /* optional: pre-filled link of the same form with "I need help" selected */
-    formAbsent:'',  /* optional: pre-filled link with "Absence / missed assessment" selected */
-    booking:'',     /* office-hours booking page (Microsoft Bookings) */
-    portal:'',      /* student portal (grades) */
-    moodle:''       /* Moodle course page */
+    booking:'',     /* optional booking page; empty = students email to book */
+    moodle:''
   },
+  /* email, office hours, schedule, portal and form links come from assets/professor.js */
 
   ask:()=>window.MTH105Assistant&&MTH105Assistant.open(),
   search:q=>{ const A=window.MTH105Assistant; if(!A||!A.search) return []; const r=A.search(q);
