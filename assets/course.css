@@ -274,3 +274,4 @@ textarea,input[type=text]{width:100%;border:1px solid var(--line);background:var
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
+.support-note{max-width:1440px;margin:0 auto;padding:14px 20px 90px;border-top:1px solid var(--line);font-family:var(--f-display);font-size:.84rem;color:var(--muted);text-align:center}

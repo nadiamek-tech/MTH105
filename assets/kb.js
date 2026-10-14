@@ -65,6 +65,7 @@ window.MTH105_KB=[
 {q:'How do I find k in a probability table?',k:'find k missing probability table',a:'k = 1 − (sum of the other probabilities).',l:'week-06.html#s1',r:'Ch 6'},
 {q:'How do I find E(X)?',k:'expected value mean e x mu expectation long run',a:'E(X) = Σx·P(x): the long-run average.',l:'week-06.html#s2',r:'Ch 6'},
 {q:'How do I find Var(X)?',k:'variance var x discrete distribution standard deviation',a:'Var(X) = Σ(x − μ)²·P(x). SD = √Var(X).',l:'week-06.html#s3',r:'Ch 6'},
+{q:'Is this an online course?',k:'online course hybrid campus class attendance distance remote exams paper',a:'No. Classes are on campus and taught on the board; quizzes and exams are on paper in class. This site supports your classes.',l:'index.html#faq'},
 {q:'When are office hours?',k:'office hours professor meet book appointment contact email',a:'Mon 11–12, Tue 1–3 PM, Thu 1–3 PM in the HUB Office. Email the professor to book. The full weekly schedule is under Meet the professor on the home page.',l:'index.html#faq'},
 {q:'I missed a class, quiz or exam',k:'absent absence missed quiz exam excuse justification make-up medical',a:'Fill in the form under “I was / will be absent” on the home page and add your evidence.',l:'https://forms.cloud.microsoft/r/ntbY8WvQne'},
 {q:'Where do I see my grades?',k:'grades marks results portal',a:'On the CUD student portal.',l:'https://cudportal.cud.ac.ae/student/'},
