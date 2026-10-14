@@ -3,92 +3,27 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Introduction to Statistics</title>
+<meta name="description" content="MTH 105 Introduction to Statistics: lectures, labs, exams, calendar and help.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
 <link rel="stylesheet" href="assets/course.css">
-<link rel="stylesheet" href="assets/stats.css">
 <link rel="stylesheet" href="assets/site.css">
-<link rel="stylesheet" href="assets/banner.css">
+<link rel="stylesheet" href="assets/portal.css">
 <style>:root{--wk:#C8102E;--wk-soft:rgba(200,16,46,.08);--wk-d:#FF7A7F;--wk-soft-d:rgba(255,122,127,.14)}</style>
-<title>MTH 105 Introduction to Statistics</title>
-<meta name="description" content="MTH 105 Introduction to Statistics, Canadian University Dubai: lectures, lab and exams.">
-<style>
-.mast{padding-block:30px 10px}.mast .eyebrow{display:block;margin-bottom:10px}
-.mast h1{font-size:clamp(2.3rem,7vw,4.4rem);font-weight:800;letter-spacing:-.035em;line-height:.98;text-wrap:balance;margin:0}
-.mast h1 span{color:var(--wk)}
-.trial{margin:12px 0 0;color:var(--muted);max-width:62ch}.by{margin:6px 0 0;font-size:.92rem}
-.big{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}
-.big a{border:1px solid var(--line);background:var(--surface);border-radius:18px;padding:18px;text-decoration:none;color:var(--ink);display:grid;gap:6px;align-content:start}
-.big a:hover{border-color:var(--wk)}
-.big a b{font-size:1.5rem;font-weight:800}
-.big a span{color:var(--muted);font-size:.92rem}
-.big a i{font-style:normal;color:var(--wk);font-weight:700;font-size:.9rem}
-.find{display:grid;gap:8px;margin-bottom:10px}
-.find input{width:100%;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;font-size:1rem}
-.find input:focus{outline:2px solid var(--wk);outline-offset:1px}
-.hits{display:grid;gap:6px}.hits a{display:block;border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;text-decoration:none;color:var(--ink)}.hits small{display:block;color:var(--muted);font-size:.8rem}
-.ban{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;border:2px solid var(--wk);background:linear-gradient(150deg,var(--wk-soft),transparent 70%);border-radius:14px;padding:12px 16px;text-decoration:none;color:var(--ink);margin-top:18px}
-.ban b{color:var(--wk)}
-@media (max-width:760px){.big{grid-template-columns:minmax(0,1fr)}}
-</style>
 </head>
-<body>
+<body data-nobanner>
 <div id="hub" data-cur=""></div>
-<main class="wrap">
-  <section class="mast">
-    <span class="eyebrow">MTH 105 · Canadian University Dubai · 3 credit hours</span>
-    <h1>Introduction to <span>Statistics</span></h1>
-    <p class="trial">A trial of a more interactive way to run this course. Your comments and recommendations are very welcome.</p>
-    <p class="by">Instructor: <b>Eng. Nadia Mek</b></p>
-  </section>
-  <a class="ban" href="midterm-practice.html"><b>Next exam</b><span>Midterm · Monday 19 October 2026 · 9:30–11:00 AM · HUB-Yard Zones A, B, D</span><span class="mono" id="cd"></span><b>Revise now →</b></a>
-  <div class="big">
-    <a href="lectures.html"><b>Lectures</b><span>Interactive lectures, formulas step by step, practice with answers, scientific calculator.</span><i>Open →</i></a>
-    <a href="lab.html"><b>Lab</b><span>Excel workbooks with step-by-step instructions. Upload on Moodle.</span><i>Open →</i></a>
-    <a href="exams.html"><b>Exams</b><span>Important dates, revision, past papers.</span><i>Open →</i></a>
-  </div>
-  <div class="find"><label for="q" class="eyebrow">Search the course</label><input id="q" type="search" placeholder="e.g. IQR, z-score, binomial, midterm date" autocomplete="off"><div class="hits" id="hits"></div></div>
-
-  <h2 class="sec" id="clos">Course Learning Outcomes</h2>
-  <div class="tblwrap"><table class="tbl">
-    <tr><th>CLO 1</th><td>Explain data sets graphically, in tabular form, and through sample statistics.</td></tr>
-    <tr><th>CLO 2</th><td>Interpret the computed probabilities using popular discrete and continuous probability distributions.</td></tr>
-    <tr><th>CLO 3</th><td>Analyze sample statistics to estimate population parameters and construct confidence intervals.</td></tr>
-    <tr><th>CLO 4</th><td>Assess simple hypotheses testing to determine statistical significance.</td></tr>
-    <tr><th>CLO 5</th><td>Create models for simple linear regression and critically interpret their coefficients.</td></tr></table></div>
-
-  <h2 class="sec" id="faq">FAQ</h2>
-  <div id="faqbox"></div>
-
-  <h2 class="sec" id="books">Textbook and references</h2>
-  <p><b>Textbook:</b> Gould, Ryan &amp; Wong (2020) Introductory Statistics: Exploring the World Through Data, 3rd Edition.</p>
-  <p><b>Reference books:</b> Carlson, K. A., &amp; Winquist, J. R. (2022). An Introduction to Statistics: An Active Learning Approach (3rd ed.). · Gravetter, F. J., &amp; Wallnau, L. B. (2020). Statistics for the behavioral sciences (9th ed.). Cengage Learning.</p>
-  <p><b>Suggested readings:</b> Cote, L. R., Gordon, R., Randell, C. E., Schmitt, J., &amp; Guerra, R. (2021). Introduction to statistics in the psychological sciences. University of Missouri–St. Louis, Open Educational Resources Collection. · Navarro, D. &amp; Foxcroft, D. (2025). Learning statistics with jamovi: a tutorial for beginners in statistical analysis. Open Book Publishers.</p>
-
-  <h2 class="sec" id="policies">Key policies</h2>
-  <div id="polacc"></div>
-</main>
-<footer style="max-width:1100px;margin:0 auto;padding:18px 16px 30px;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted);text-align:center">Created and owned by <b>Eng. Nadia Mek</b> · <a href="https://github.com/nadiamek-tech/MTH105">github.com/nadiamek-tech/MTH105</a></footer>
+<main id="portal"></main>
+<footer class="pt-foot">Created and owned by <b>Eng. Nadia Mek</b></footer>
 <script src="assets/course.js"></script>
 <script src="assets/site.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
-<script>
-const W=Lecture.W, esc=W.esc, KB=window.MTH105_KB||[];
-W.accordion(document.getElementById('faqbox'),KB.slice(0,13).map(e=>({t:esc(e.q),d:esc(e.a)+' <a href="'+esc(e.l)+'">Open →</a>'})));
-W.accordion(document.getElementById('polacc'),[
- {t:'Attendance',d:'Attending classes is compulsory. Students absent for 25% or more of the classes will not be allowed to take the final examination (grade “FA”). Reminders are emailed at 10% and 20%.'},
- {t:'Academic integrity',d:'Cheating and plagiarism are serious offences sanctioned as per the Academic Integrity Policy in the Student Handbook. Maximum similarity index for Turnitin submissions: 20%.'},
- {t:'Grading scale',d:'90–100 A+ · 80–89 A · 75–79 B+ · 70–74 B · 65–69 C+ · 60–64 C · 55–59 D+ · 50–54 D · 0–49 F.'}]);
-document.querySelectorAll('#faqbox details,#polacc details').forEach((d,i)=>{ if(i) d.open=false; });
-const q=document.getElementById('q'), hits=document.getElementById('hits');
-q.addEventListener('input',()=>{ const v=q.value.trim(); if(v.length<2){ hits.innerHTML=''; return; }
-  const r=window.MTH105Assistant.search(v); const kb=r.kb.slice(0,3).map(x=>'<a href="'+esc(x.e.l)+'"><b>'+esc(x.e.q)+'</b><small>'+esc(x.e.a)+'</small></a>');
-  const ix=r.idx.slice(0,4).map(x=>'<a href="'+esc(x.e.l)+'"><b>'+esc(x.e.pt)+' · '+esc(x.e.n)+'</b><small>'+esc(x.e.t)+'</small></a>');
-  hits.innerHTML=kb.concat(ix).join('')||'<p class="mono" style="color:var(--muted)">No match. Try a key word like “IQR” or “binomial”, or ask the 🙂 helper.</p>'; });
-(function(){ const t=new Date('2026-10-19T09:30:00+04:00').getTime(), d=Math.ceil((t-Date.now())/86400000), el=document.getElementById('cd'); el.textContent=d>1?'· '+d+' days to go':d===1?'· Tomorrow':d===0?'· Today':''; })();
-</script>
+<script src="assets/course-info.js"></script>
+<script src="assets/portal.js"></script>
+<script>Portal.home();</script>
 </body>
 </html>
