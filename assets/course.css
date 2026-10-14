@@ -278,7 +278,7 @@ textarea,input[type=text]{width:100%;border:1px solid var(--line);background:var
 
 /* learning supports: practice methods */
 .prac .qb{display:flex;gap:6px;flex:none}
-.prac .say{padding:4px 9px}
+.prac .spk{padding:4px 9px}
 .calm-start{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:10px 12px;font-family:var(--f-display);font-size:.92rem}
 .calm-start summary{cursor:pointer;font-weight:700}
 .calm-start textarea{width:100%;min-height:70px;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;background:var(--bg);color:var(--ink)}
