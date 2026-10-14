@@ -317,5 +317,20 @@ function regTool(el, def){
     const x0v=+el.querySelector('#rg-x0').value; el.querySelector('.rg-p').innerHTML=`ŷ = ${r4(S.a)} ${S.b<0?'−':'+'} ${r4(Math.abs(S.b))} × ${x0v} = <b>${r4(S.a+S.b*x0v)}</b>${x0v<x0||x0v>x1?' <span class="warn">(outside the data: extrapolation)</span>':''}`; };
   el.querySelectorAll('textarea,input').forEach(i=>i.addEventListener('input',run)); run();
 }
-window.ST={hist,boxSVG,nums,median,fiveNum,shapeTool,polyTool,boxTool,spreadTool,vennTool,treeTool,distTool,freqTool,binomTool,normalTool,normalCurve,ruleTool,zRow,cltTool,ciTool,chiTool,regTool,regStats,phi,tab,choose,CHI,r2,r4};
+
+/* ---------- static tree diagram: every step splits into 2 equal branches ---------- */
+function treeSVG(levels, opt={}){
+  const L=levels.length, leaves=2**L, Wd=600, rowH=L===3?26:42, Hd=leaves*rowH+20, labW=62, colW=(Wd-200-14)/L, hl=opt.hl||[];
+  const X=lvl=>14+lvl*colW, y=(lvl,i)=>10+(i+.5)*(Hd-20)/(2**lvl);
+  let s=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Tree diagram"><circle cx="${X(0)}" cy="${y(0,0)}" r="4" fill="var(--ink)"/>`;
+  for(let lvl=1;lvl<=L;lvl++) for(let i=0;i<2**lvl;i++){ const pi=Math.floor(i/2), x1=lvl===1?X(0)+4:X(lvl-1)+labW, y1=y(lvl-1,pi), x2=X(lvl)-4, y2=y(lvl,i);
+    s+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--wk)" stroke-width="1.8"/><text x="${(x1+x2)/2}" y="${(y1+y2)/2+(i%2?14:-6)}" text-anchor="middle" ${MONO} font-size="11" font-weight="600" fill="var(--wk)">1/2</text>`;
+    s+=`<text x="${X(lvl)}" y="${y2+4}" ${FT} font-weight="700" font-size="12" fill="var(--ink)">${esc(levels[lvl-1][i%2])}</text>`; }
+  for(let i=0;i<leaves;i++){ let path=[], k=i; for(let lvl=L;lvl>=1;lvl--){ path.unshift(levels[lvl-1][k%2]); k=Math.floor(k/2); }
+    const lab=path.join(', '), on=hl.includes(lab);
+    s+=`<text x="${X(L)+labW+6}" y="${y(L,i)+4}" ${MONO} font-size="11" fill="${on?'var(--wk)':'var(--muted)'}" font-weight="${on?700:400}">(${esc(lab)}) · 1/${leaves}</text>`; }
+  return s+'</svg>';
+}
+
+window.ST={treeSVG,hist,boxSVG,nums,median,fiveNum,shapeTool,polyTool,boxTool,spreadTool,vennTool,treeTool,distTool,freqTool,binomTool,normalTool,normalCurve,ruleTool,zRow,cltTool,ciTool,chiTool,regTool,regStats,phi,tab,choose,CHI,r2,r4};
 })();

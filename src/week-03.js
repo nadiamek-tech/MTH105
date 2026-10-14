@@ -1,4 +1,4 @@
-// {"file": "week-03.html", "title": "MTH 105 Weeks 3–4 · Centre, Position and Dispersion", "wk": "#0E7C66", "wkd": "#5FD3B5"}
+// {"file": "week-03.html", "title": "MTH 105 Week 3 · Central Tendency and Position", "wk": "#0E7C66", "wkd": "#5FD3B5"}
 const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
 const W2='<a href="https://nadiamek-tech.github.io/MindTheGap/workshop-02.html" target="_blank" rel="noopener">Every symbol, step by step: Mind the Gap Workshop 2 ↗</a>';
 const CASES=[['Exam scores (difficult exam)','30, 45, 50, 82, 85, 87, 88, 90, 91, 92, 93, 95, 95','78.69','88','95','Mean < median < mode → <b>left-skewed</b>'],
@@ -19,13 +19,13 @@ function medianFinder(el){
 }
 
 Lecture.mount({
-  id:'mth105-w3', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Weeks 3–4 · Centre and spread', eyebrow:'Weeks 3–4 · CLO 1', noTeacher:true,
-  title:'Measures of Central Tendency, Position, & Dispersion', meta:'Ch.3: Numerical Summaries of Center and Variation · Gould, Ryan & Wong (2020)', endLabel:'Week 5 →',
+  id:'mth105-w3', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Week 3 · Centre and position', eyebrow:'Week 3 · CLO 1', noTeacher:true,
+  title:'Measures of Central Tendency, Position, & Dispersion', meta:'Ch.3: Numerical Summaries of Center and Variation · Gould, Ryan & Wong (2020)', endLabel:'Week 4 →',
   scenes:[
-  { nav:'Start here', title:'One number for the centre, one for the spread', minutes:3,
-    narration:[`The same mean can hide very different spreads. We need both. <span class="mono">Topics: Mean, median, and mode · Percentiles · Variance and standard deviation · Coefficient of variation. CLO 1.</span>`],
+  { nav:'Start here', title:'One number for the centre', minutes:3,
+    narration:[`Where is the middle of the data, and where does a value sit? <span class="mono">Topics: Mean, median, and mode · Percentiles. CLO 1.</span>`],
     src:'Reading: Gould, Ryan &amp; Wong (2020), Ch.3: Numerical Summaries of Center and Variation.',
-    fig:{label:'This week', mindmap:{center:'Summaries', branches:[{t:'Centre',items:['Mean','Median','Mode']},{t:'Position',items:['Quartiles Q1, Q3','Percentiles']},{t:'Spread',items:['Range, IQR','Variance, SD','CV']}]}} },
+    fig:{label:'This week', mindmap:{center:'Week 3', branches:[{t:'Centre',items:['Mean','Median','Mode']},{t:'Shape',items:['Skew pulls the mean']},{t:'Position',items:['Percentiles','Q1, median, Q3']}]}} },
 
   { nav:'Mean', title:'The mean', minutes:8,
     narration:[`The mean is the balance point: add all values, divide by how many there are.`],
@@ -44,62 +44,29 @@ Lecture.mount({
     src:'Data: Week 1–2 slides, Exercises 1–3 (Exercise 1 corrected: mean 78.69, median 88).',
     fig:{label:'Three data sets', build:threeCases} },
 
-  { nav:'Quartiles and IQR', title:'Quartiles, range and IQR', minutes:12,
-    narration:[`Sort the data. The median splits it in two halves; <b>Q1</b> is the median of the lower half (25th percentile), <b>Q3</b> of the upper half (75th percentile). Range = max − min. <b>IQR = Q3 − Q1</b>.`],
-    fig:{label:'Type data, see the boxplot', build:ST.boxTool, caption:'Outliers: beyond Q1 − 1.5·IQR or Q3 + 1.5·IQR.'} },
+  { nav:'Percentiles and quartiles', title:'Percentiles and quartiles', minutes:10,
+    narration:[`A <b>percentile</b> tells you the position of a value: P25 = Q1, P50 = median, P75 = Q3. Sort the data, find the median, then the median of each half.`],
+    fig:{label:'Data: 3, 5, 7, 8, 9, 11, 13, 15, 18 (n = 9)', html:`<div class="keys">${[3,5,7,8,9,11,13,15,18].map((x,i)=>`<kbd class="${i===4?'eq':''}">${x}</kbd>`).join('')}</div><div class="steps" style="margin-top:10px">Median: position (9 + 1) ÷ 2 = 5 → <b>9</b><br>Lower half 3, 5, 7, 8 → Q1 = (5 + 7) ÷ 2 = <b>6</b><br>Upper half 11, 13, 15, 18 → Q3 = (13 + 15) ÷ 2 = <b>14</b><br>When n is odd, leave the median out of both halves.</div>`} },
 
-  { nav:'Variance', title:'Sample variance', minutes:12,
-    narration:[`Variance is the average squared distance from the mean. For a sample, divide by <b>n − 1</b>.`],
-    src:W2,
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('s2',v('s')+'<sup>2</sup>')} = ${fr(`${T('S',SG)}${T('d','('+v('x')+' − '+XB+')<sup>2</sup>')}`,T('n1',v('n')+' − 1'))}`,
-      parts:[['s2','<b>s²</b>: the sample variance (squared units).'],['S','<b>Σ</b>: add up.'],['d','<b>(x − x̄)²</b>: distance from the mean, squared. Subtract first, then square.'],['n1','<b>n − 1</b>: one less than the sample size.']],
-      sub:`${v('s')}<sup>2</sup> = ${fr('(−4)² + (−2)² + (−1)² + 1² + 6²','5 − 1')}`, subNote:'Data: 4, 6, 7, 9, 14. Mean = 8.',
-      keys:'( 1 6 + 4 + 1 + 1 + 3 6 ) ÷ ( 5 − 1 ) =', ans:`<div class="m">s² = 58 ÷ 4 = <b>14.5</b></div>`, ansRaw:true, ansNote:'Population variance σ² divides by N instead of n − 1.'})} },
-
-  { nav:'Standard deviation', title:'Standard deviation', minutes:8,
-    narration:[`The standard deviation is the square root of the variance: the typical distance from the mean, in the original units.`],
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('s',v('s'))} = ${sq(T('s2',v('s')+'<sup>2</sup>'))}`,
-      parts:[['s','<b>s</b>: the sample standard deviation.'],['s2','<b>s²</b>: the variance you just found.']],
-      sub:`${v('s')} = ${sq('14.5')}`, keys:'√ 1 4 . 5 =', ans:`<div class="m">s ≈ <b>3.81</b></div>`, ansRaw:true, ansNote:'Report it with the mean: 8 ± 3.81.'})} },
-
-  { nav:'CV', title:'Coefficient of variation', minutes:8,
-    narration:[`The CV is the SD as a percentage of the mean. Use it to compare spread across different means or units.`],
-    fig:{label:'Formula breakdown', build:el=>F.decode(el,{
-      f:`${T('cv','CV')} = ${fr(T('s',v('s')),T('xb',XB))} × 100%`,
-      parts:[['cv','<b>CV</b>: relative spread, in %.'],['s','<b>s</b>: standard deviation.'],['xb','<b>x̄</b>: mean.']],
-      sub:`CV<sub>temp</sub> = ${fr('6','15')} × 100%<br>CV<sub>rain</sub> = ${fr('30','100')} × 100%`, subNote:'City A temperature: mean 15 °C, s 6 °C. City B rainfall: mean 100 mm, s 30 mm.',
-      keys:'6 ÷ 1 5 × 1 0 0 =', ans:`<div class="m">40% vs 30%</div><p class="calcnote">Temperature varies more, relative to its mean.</p>`, ansRaw:true})} },
-
-  { nav:'Check any data', title:'Tool · Check your calculations', minutes:5,
-    narration:[`Type any data set to check the mean, median, mode, s², s and CV step by step.`],
-    fig:{label:'Deviation table', build:el=>ST.spreadTool(el)} },
-
-  { nav:'Practice', title:'Practice', kind:'activity', minutes:25,
-    narration:[`Order the data first. Check with the tool.`], src:'Data: illustrative.',
-    fig:{label:'6 questions', build:practice([
+  { nav:'Practice', title:'Practice', kind:'activity', minutes:20,
+    narration:[`Order the data first.`], src:'Data: illustrative.',
+    fig:{label:'5 questions', build:practice([
       {type:'Easy',q:'Hours of sleep of 8 students: 6, 7, 5, 8, 7, 9, 7, 6. Find the mean, median and mode.',hint:'Sorted: 5, 6, 6, 7, 7, 7, 8, 9. Mean = 55 ÷ 8 = <b>6.875</b>. Median = (7 + 7) ÷ 2 = <b>7</b>. Mode = <b>7</b>.'},
-      {type:'Medium',q:'Daily steps (thousands) of 10 people: 3.2, 4.5, 5.1, 5.8, 6.0, 6.4, 7.2, 7.9, 8.3, 14.6. Find Q1, median, Q3, IQR and check for outliers.',hint:'Median = (6.0 + 6.4) ÷ 2 = <b>6.2</b>. Q1 = <b>5.1</b>, Q3 = <b>7.9</b>, IQR = <b>2.8</b>. Fences: 5.1 − 4.2 = 0.9 and 7.9 + 4.2 = 12.1. <b>14.6 is an outlier</b>.'},
-      {type:'Medium',q:'Water used per shower (L) by 5 students: 40, 45, 50, 55, 60. Find s², s and CV.',hint:'Mean 50. Squares: 100, 25, 0, 25, 100 → Σ = 250. <b>s² = 250 ÷ 4 = 62.5</b>, <b>s ≈ 7.91</b>, <b>CV ≈ 15.8%</b>.'},
-      {type:'Medium',q:'Two desalination plants. A: mean 120 ML/day, s = 9. B: mean 45 ML/day, s = 5. Which is more consistent?',hint:'CV(A) = 9 ÷ 120 = <b>7.5%</b>. CV(B) = 5 ÷ 45 ≈ <b>11.1%</b>. <b>Plant A</b> is more consistent.'},
+      {type:'Easy',q:'Favourite campus café of 10 students: A, B, A, C, A, B, A, C, B, A. Which centre can you use, and what is it?',hint:'Nominal data: only the <b>mode</b>. Mode = <b>A</b> (5 times).'},
+      {type:'Medium',q:'Daily steps (thousands) of 10 people: 3.2, 4.5, 5.1, 5.8, 6.0, 6.4, 7.2, 7.9, 8.3, 14.6. Find the median, Q1 and Q3.',hint:'Median = (6.0 + 6.4) ÷ 2 = <b>6.2</b>. Lower half → Q1 = <b>5.1</b>. Upper half → Q3 = <b>7.9</b>.'},
       {type:'Hard',q:'Weekly study hours of 40 students: 0–5: 8, 6–10: 15, 11–15: 12, 16–20: 5. Estimate the mean using midpoints.',hint:'Midpoints 2.5, 8, 13, 18. Σf·m = 20 + 120 + 156 + 90 = 386. Mean ≈ 386 ÷ 40 = <b>9.65 hours</b>.'},
-      {type:'Hard',q:'Income data are strongly right-skewed. Should a report use the mean or the median? Why?',hint:'The <b>median</b>: a few very high incomes pull the mean up, so it does not show a typical income.'}])} },
+      {type:'Hard',q:'Monthly salaries (thousand AED) of 6 staff: 8, 9, 9, 10, 11, 40. Find the mean, median and mode. Which is the best typical value?',hint:'Mean = 87 ÷ 6 = <b>14.5</b>. Median = (9 + 10) ÷ 2 = <b>9.5</b>. Mode = <b>9</b>. The <b>median</b>: 40 pulls the mean up.'}])} },
 
-  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5, narration:[`Five quick questions.`],
-    fig:{label:'Check yourself', build:el=>W.quiz(el,[
-      {q:'For n = 9 sorted values, the median is the…',o:['4th value','5th value','mean of 4th and 5th'],a:1,why:'(9 + 1) ÷ 2 = 5.'},
-      {q:'IQR measures the spread of…',o:['all the data','the middle 50%','the top 25%'],a:1,why:'From Q1 to Q3.'},
-      {q:'Sample variance divides by…',o:['n','n − 1','n + 1'],a:1,why:'n − 1 for a sample.'},
-      {q:'SD = 4. The variance is…',o:['2','8','16'],a:2,why:'Variance = SD² = 16.'},
-      {q:'Data set A: CV = 12%. Data set B: CV = 30%. Which varies more relative to its mean?',o:['A','B'],a:1,why:'Larger CV = more relative spread.'}])} },
+  { nav:'Quick check', title:'Quick check', kind:'check', minutes:5, narration:[`Calculate, then open the answer.`],
+    fig:{label:'4 calculations', build:practice([
+      {q:'Find the mean of 4, 8, 6, 10, 7.',hint:'x̄ = 35 ÷ 5 = <b>7</b>.'},
+      {q:'Find the median of 15, 3, 9, 12, 6, 18.',hint:'Sorted: 3, 6, 9, 12, 15, 18. n = 6 → (9 + 12) ÷ 2 = <b>10.5</b>.'},
+      {q:'Find the mode of 2, 5, 5, 7, 9, 9, 9.',hint:'<b>9</b> (three times).'},
+      {q:'Find Q1 and Q3 of 1, 3, 4, 6, 8, 9, 11, 14.',hint:'Lower half 1, 3, 4, 6 → Q1 = (3 + 4) ÷ 2 = <b>3.5</b>. Upper half 8, 9, 11, 14 → Q3 = (9 + 11) ÷ 2 = <b>10</b>.'}])} },
 
-  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 5, Ch 5: Modeling Variation with Probability.`],
-    fig:{label:'Weeks 3–4 on one page', mindmap:{center:'Weeks 3–4', branches:[
-      {t:'Centre',items:['x̄ = Σx ÷ n','Median at (n + 1) ÷ 2','Mode: most frequent']},
-      {t:'Position',items:['Q1 = 25th percentile','Q3 = 75th percentile']},
-      {t:'Spread',items:['Range = max − min','IQR = Q3 − Q1','s² = Σ(x − x̄)² ÷ (n − 1)','s = √s²']},
-      {t:'Compare',items:['CV = s ÷ x̄ × 100%','Smaller CV = more consistent']},
-      {t:'Skew',items:['Mean pulled to the tail','Skewed data → median']}]}} }
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 4, measures of dispersion.`],
+    fig:{label:'Week 3 on one page', mindmap:{center:'Week 3', branches:[
+      {t:'Mean',items:['x̄ = Σx ÷ n']},{t:'Median',items:['Sort first','Position (n + 1) ÷ 2']},{t:'Mode',items:['Most frequent','Only centre for nominal data']},
+      {t:'Skew',items:['Mean pulled to the tail','Skewed data → median']},{t:'Position',items:['Q1 = P25, median = P50, Q3 = P75']}]}} }
   ]
 });

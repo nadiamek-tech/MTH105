@@ -23,7 +23,7 @@
 <script src="assets/assistant.js"></script>
 <script src="assets/site.js"></script>
 <script>
-const {W} = Lecture; const esc = W.esc;
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
 const {T, fr, sq, SG, XB, PH, v} = F;
 const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
 const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
@@ -128,14 +128,11 @@ Lecture.mount({
       {type:'Medium',q:'To estimate gym use at CUD, a researcher asks students as they leave the gym. What is wrong?',hint:'Every person asked already uses the gym: the sample is <b>biased</b>. Take a random sample of all students.'},
       {type:'Hard',q:'Commute times (min): 20, 22, 25, 24, 23, 95. Find the mean and median. Which is the better “typical” value?',hint:'Mean = 209 ÷ 6 ≈ <b>34.8</b>. Median = (23 + 24) ÷ 2 = <b>23.5</b>. The <b>median</b>: the outlier 95 pulls the mean up.'}])} },
 
-  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5,
-    narration:[`Five quick questions.`],
-    fig:{label:'Check yourself', build:el=>W.quiz(el,[
-      {q:'A number that describes a sample is a…',o:['parameter','statistic','population'],a:1,why:'Sample → statistic. Population → parameter.'},
-      {q:'“Favourite colour” is…',o:['nominal','ordinal','discrete','continuous'],a:0,why:'Categories with no order.'},
-      {q:'Which sample is most likely representative?',o:['Friends of the researcher','Volunteers who answer an online post','Students chosen at random from the full list'],a:2,why:'Random selection from the whole population.'},
-      {q:'An outlier mostly affects the…',o:['median','mean','mode'],a:1,why:'The mean uses every value, so one extreme value pulls it.'},
-      {q:'Estimating a population value from a sample is…',o:['descriptive statistics','inferential statistics'],a:1,why:'Inference goes from sample to population.'}])} },
+  { nav:'Quick check', title:'Quick check', kind:'check', minutes:5, narration:[`Calculate, then open the answer.`],
+    fig:{label:'3 calculations', build:practice([
+      {q:'In a sample of 250 residents, 85 use the Metro. What percentage is this, and is it a parameter or a statistic?',hint:'85 ÷ 250 × 100% = <b>34%</b>. It comes from a sample → <b>statistic</b>.'},
+      {q:'Delivery times (min): 12, 14, 13, 15, 46. Find the mean and the median.',hint:'Mean = 100 ÷ 5 = <b>20</b>. Sorted: 12, 13, 14, 15, 46 → median = <b>14</b>.'},
+      {q:'Remove the outlier 46. Find the new mean and median. Which measure changed more?',hint:'Mean = 54 ÷ 4 = <b>13.5</b>; median = (13 + 14) ÷ 2 = <b>13.5</b>. The <b>mean</b> changed more (20 → 13.5).'}])} },
 
   { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2,
     narration:[`Next week: Ch.2, Picturing Variation with Graphs.`],

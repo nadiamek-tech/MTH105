@@ -15,7 +15,7 @@ const H_AGE = ST.hist([4,9,8,5,3,1],['9.5','19.5','29.5','39.5','49.5','59.5','6
 
 Lecture.mount({
   id:'mth105-w2', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Week 2 · Organizing data', eyebrow:'Week 2 · CLO 1', noTeacher:true,
-  title:'Describing and Organizing Data', meta:'Ch.2: Picturing Variation with Graphs · Gould, Ryan & Wong (2020)', endLabel:'Weeks 3–4 →',
+  title:'Describing and Organizing Data', meta:'Ch.2: Picturing Variation with Graphs · Gould, Ryan & Wong (2020)', endLabel:'Week 3 →',
   scenes:[
   { nav:'Start here', title:'Organize before you analyze', minutes:3,
     narration:[`Raw data are hard to read. Tables and graphs show the pattern. <span class="mono">Topics: Frequency distributions · Histograms and frequency polygons · Cumulative frequency distributions. CLO 1.</span>`],
@@ -60,20 +60,19 @@ Lecture.mount({
     narration:[`New data. Answer on paper first.`], src:'Data: illustrative.',
     fig:{label:'5 questions', build:practice([
       {type:'Easy',q:'Blood types of 50 donors at a Sharjah blood drive: O 22, A 14, B 10, AB 4. Find each relative frequency and the mode.',hint:'O 0.44, A 0.28, B 0.20, AB 0.08 (sum = 1). Mode: <b>O</b>.'},
-      {type:'Easy',q:'Bar chart or histogram for (a) blood type (b) daily temperature?',hint:'(a) <b>Bar chart</b>: categories, bars with gaps. (b) <b>Histogram</b>: continuous numbers, touching bars.'},
+      {type:'Easy',q:'For the classes 100–149 and 150–199, find each midpoint and the boundary between them.',hint:'Midpoints <b>124.5</b> and <b>174.5</b>. Boundary <b>149.5</b>.'},
       {type:'Medium',q:'Daily PM10 readings range from 31 to 88. Make 6 classes. What is the width and what are the classes?',hint:'(88 − 31) ÷ 6 = 9.5 → <b>10</b>. Classes 31–40, 41–50, 51–60, 61–70, 71–80, 81–90.'},
       {type:'Medium',q:`Ages of 30 visitors to a science museum:${H_AGE}Find the midpoints, the cumulative frequencies and the shape.`,hint:'Classes 10–19 … 60–69, f = 4, 9, 8, 5, 3, 1. Midpoints 14.5, 24.5, 34.5, 44.5, 54.5, 64.5. Cum. f = 4, 13, 21, 26, 29, 30. <b>Right-skewed</b>.'},
       {type:'Hard',q:'Using the same data: what percentage of visitors were younger than 49.5? Which graph shows this directly?',hint:'Cum. f at 49.5 = 26 → 26 ÷ 30 ≈ <b>86.7%</b>. The <b>ogive</b>.'}])} },
 
-  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5, narration:[`Five quick questions.`],
-    fig:{label:'Check yourself', build:el=>W.quiz(el,[
-      {q:'In a histogram, the bars…',o:['have gaps','touch','are ordered by height'],a:1,why:'Classes are continuous intervals, so bars touch.'},
-      {q:'A class is 20–29. Its midpoint is…',o:['24.5','25','29.5'],a:0,why:'(20 + 29) ÷ 2 = 24.5.'},
-      {q:'Relative frequency = …',o:['f × n','f ÷ n','n ÷ f'],a:1,why:'Share of the total.'},
-      {q:'An ogive uses…',o:['midpoints','cumulative frequency','relative frequency only'],a:1,why:'Cumulative frequency at upper boundaries.'},
-      {q:'Most values are high and the tail is on the left. The shape is…',o:['symmetric','positively skewed','negatively skewed'],a:2,why:'Tail left → negative skew.'}])} },
+  { nav:'Quick check', title:'Quick check', kind:'check', minutes:5, narration:[`Calculate, then open the answer.`],
+    fig:{label:'4 calculations', build:practice([
+      {q:'12 of 48 students walk to campus. Find the relative frequency.',hint:'rf = 12 ÷ 48 = <b>0.25</b> (25%).'},
+      {q:'Data range from 18 to 76. You want 6 classes. Find the class width.',hint:'(76 − 18) ÷ 6 = 9.67 → round up → <b>10</b>.'},
+      {q:'For the class 40–49, find the midpoint and the class boundaries.',hint:'Midpoint = (40 + 49) ÷ 2 = <b>44.5</b>. Boundaries <b>39.5 – 49.5</b>.'},
+      {q:'Frequencies: 3, 8, 12, 5. Find the cumulative frequencies.',hint:'<b>3, 11, 23, 28</b>. The last one equals n = 28.'}])} },
 
-  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Weeks 3–4, Ch.3: Numerical Summaries of Center and Variation.`],
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 3, Ch.3: Numerical Summaries of Center and Variation.`],
     fig:{label:'Week 2 on one page', mindmap:{center:'Week 2', branches:[
       {t:'Categories',items:['rf = f ÷ n','Bar: compare','Pie: part of 100%']},
       {t:'Classes',items:['Width = range ÷ k, round up','Midpoint = (lower + upper) ÷ 2','Boundaries: ± 0.5']},

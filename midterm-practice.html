@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>MTH 105 Midterm Practice</title>
+<title>MTH 105 Midterm Revision</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
@@ -23,139 +23,178 @@
 <script src="assets/assistant.js"></script>
 <script src="assets/site.js"></script>
 <script>
-const {W} = Lecture; const esc = W.esc;
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
 const {T, fr, sq, SG, XB, PH, v} = F;
 const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
 const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
-const toW2 = `<a href="https://nadiamek-tech.github.io/MindTheGap/workshop-02.html" target="_blank" rel="noopener">Each formula, symbol by symbol: Mind the Gap Workshop 2 ↗</a>`;
-/* ---------- practice figures ---------- */
-const H1 = ST.hist([2,9,8,5,3,2,1],['200','250','300','350','400','450','500','550'],{xlabel:'Reaction time (ms)',aria:'Histogram of reaction times',ymax:10});
-const H2 = ST.hist([1,2,3,6,9,9],['0','2','4','6','8','10','12'],{xlabel:'Quiz score (out of 12)',aria:'Histogram of quiz scores',ymax:10});
-const BX = ST.boxSVG([12,20,26,30,46],10,50,5,{xlabel:'Metro commute time (minutes)',aria:'Boxplot of commute times'});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+const HOW='Method: as covered in class and in last Wednesday’s lab revision.';
+/* Mind the Gap model answer: formula → decode → substitute → calculator → answer */
+const MG=o=>`<div class="mg">${o.f?`<div><span>Formula</span><span>${o.f}</span></div>`:''}${o.d?`<div><span>Decode</span><span>${o.d}</span></div>`:''}${o.s?`<div><span>Substitute</span><span>${o.s}</span></div>`:''}${o.k?`<div><span>Calculator</span>${F.keys(o.k)}</div>`:''}<div class="fin"><span>Answer</span><span>${o.a}</span></div>${o.how===false?'':`<div class="how"><span>${HOW}</span></div>`}</div>`;
+const steps=a=>`<div class="mg">${a.map(([l,t])=>`<div${l==='Answer'?' class="fin"':''}><span>${l}</span><span>${t}</span></div>`).join('')}<div class="how"><span>${HOW}</span></div></div>`;
+const tbl=(h,rows)=>`<table class="tbl" style="margin:6px 0"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table>`;
+function bars(vals,labels,xl){ const Wd=440,Hd=170,mx=Math.max(...vals),bw=(Wd-60)/vals.length; return `<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Bar chart">${[0,2,4,6,8].map(g=>`<line x1="34" x2="${Wd-10}" y1="${140-g*14}" y2="${140-g*14}" stroke="var(--line)"/><text x="28" y="${144-g*14}" text-anchor="end" ${MONO} font-size="10" fill="var(--muted)">${g}</text>`).join('')}${vals.map((v,i)=>`<rect x="${44+i*bw+bw*.2}" y="${140-v*14}" width="${bw*.6}" height="${v*14}" fill="var(--wk)" opacity=".75"/><text x="${44+i*bw+bw/2}" y="156" text-anchor="middle" ${MONO} font-size="11" fill="var(--ink)">${labels[i]}</text>`).join('')}<line x1="34" x2="${Wd-10}" y1="140" y2="140" stroke="var(--ink)"/><text x="${Wd/2}" y="${Hd-1}" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${xl}</text></svg>`; }
+function ogive(b,c,xl){ const Wd=440,Hd=190,L=34,R=12,T=10,B=34,n=c[c.length-1],X=i=>L+(Wd-L-R)*i/(b.length-1),Y=v=>T+(Hd-T-B)*(1-v/n); return `<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Ogive">${[0,10,20,30,40].map(g=>`<line x1="${L}" x2="${Wd-R}" y1="${Y(g)}" y2="${Y(g)}" stroke="var(--line)"/><text x="${L-5}" y="${Y(g)+4}" text-anchor="end" ${MONO} font-size="10" fill="var(--muted)">${g}</text>`).join('')}<polyline points="${c.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="var(--c3)" stroke-width="2.4"/>${c.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="4" fill="var(--c3)"/><text x="${X(i)}" y="${Y(v)-8}" text-anchor="middle" ${MONO} font-size="10" fill="var(--ink)">${v}</text><text x="${X(i)}" y="${Hd-B+16}" text-anchor="middle" ${MONO} font-size="10" fill="var(--muted)">${b[i]}</text>`).join('')}<text x="${(L+Wd-R)/2}" y="${Hd-3}" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${xl}</text></svg>`; }
+function venn(a,ab,b,ne,A,Bn){ return `<svg viewBox="0 0 300 150" style="max-width:300px" role="img" aria-label="Venn diagram"><rect x="2" y="2" width="296" height="146" rx="8" fill="none" stroke="var(--ink)"/><circle cx="118" cy="78" r="56" fill="var(--wk-soft)" stroke="var(--wk)" stroke-width="2"/><circle cx="182" cy="78" r="56" fill="rgba(31,99,181,.08)" stroke="var(--c2)" stroke-width="2"/><text x="78" y="20" ${FT} font-weight="700" font-size="12" fill="var(--wk)">${A}</text><text x="198" y="20" ${FT} font-weight="700" font-size="12" fill="var(--c2)">${Bn}</text>${[[92,a],[150,ab],[208,b],[272,ne]].map(([x,v],i)=>`<text x="${x}" y="${i===3?136:84}" text-anchor="middle" ${FT} font-weight="800" font-size="16" fill="var(--ink)">${v}</text>`).join('')}</svg>`; }
+const box=(f,lo,hi,st,xl,out)=>ST.boxSVG(f,lo,hi,st,{labels:true,out:out||[],xlabel:xl});
 
-const PRAC = {
-graphs:[
- {type:'Shape', q:`A road-safety study timed how fast 30 drivers braked (illustrative data).${H1}Describe the shape. Is the mean above or below the median?`,
-  hint:`<b>Positively (right) skewed</b>: most times are short and the tail stretches to the right. The few slow drivers pull the mean up, so <b>mean &gt; median</b>.`},
- {type:'Shape', q:`Scores of 30 students on an easy quiz.${H2}Describe the shape and say where most scores are.`,
-  hint:`<b>Negatively (left) skewed</b>: most scores are high (8–12) and the tail stretches to the left. Mean &lt; median.`},
- {type:'Polygon', q:`Daily water use (litres) of 30 households in Sharjah (illustrative).<table class="tbl" style="margin:6px 0"><tr><th>Class</th><td>100–149</td><td>150–199</td><td>200–249</td><td>250–299</td><td>300–349</td></tr><tr><th>f</th><td>4</td><td>7</td><td>10</td><td>6</td><td>3</td></tr></table>(a) Find the class boundaries and midpoints. (b) Where does the frequency polygon start and end? (c) Which graph would you draw to read “how many households use less than 250 L?”`,
-  hint:`(a) Boundaries: 99.5, 149.5, 199.5, 249.5, 299.5, 349.5. Midpoints: 124.5, 174.5, 224.5, 274.5, 324.5.<br>(b) It starts at <b>74.5</b> and ends at <b>374.5</b>, both with frequency 0 (midpoints of the empty classes).<br>(c) The <b>ogive</b> (cumulative frequency): at 249.5 it reads 4 + 7 + 10 = <b>21</b> households.`}],
-box:[
- {type:'Compute', q:`Daily solar output (kWh) of 11 rooftop panels in Masdar City (illustrative):<br><span class="mono">18, 21, 23, 23, 25, 27, 28, 31, 31, 35, 48</span><br>(a) Five-number summary. (b) Range and IQR. (c) Is 48 an outlier?`,
-  hint:`(a) Min 18, Q1 = 23, median = 27 (6th value), Q3 = 31, max 48. Q1 and Q3 are the medians of the 5 values below and above the median.<br>(b) Range = 48 − 18 = <b>30</b>. IQR = 31 − 23 = <b>8</b>.<br>(c) Upper fence = 31 + 1.5 × 8 = 43. 48 &gt; 43, so <b>yes, 48 is an outlier</b>.`},
- {type:'Read', q:`A boxplot of Dubai Metro commute times for 200 students (illustrative):${BX}(a) Range and IQR. (b) About how many students commute more than 30 minutes? (c) Between which two values is the middle 50%?`,
-  hint:`(a) Range = 46 − 12 = <b>34 min</b>. IQR = 30 − 20 = <b>10 min</b>.<br>(b) 30 is Q3, so 25% are above it: 0.25 × 200 = <b>50 students</b>.<br>(c) Between Q1 = <b>20</b> and Q3 = <b>30</b> minutes.`}],
-spread:[
- {type:'Compute', q:`Plastic bottles collected by 7 volunteers at a Jumeirah beach clean-up (illustrative):<br><span class="mono">10, 14, 15, 15, 19, 21, 25</span><br>Find the mean, median, mode, sample variance, sample SD and CV.`,
-  hint:`Σx = 119, <b>x̄ = 17</b>. Median = <b>15</b> (4th value). Mode = <b>15</b>.<br>Deviations: −7, −3, −2, −2, 2, 4, 8 → squares 49, 9, 4, 4, 4, 16, 64; Σ = 150.<br><b>s² = 150 ÷ 6 = 25</b>, <b>s = 5</b>, <b>CV = 5 ÷ 17 × 100% ≈ 29.4%</b>.`},
- {type:'Compare', q:`Two solar farms. Farm A: mean 40 MWh, s = 6 MWh. Farm B: mean 25 MWh, s = 5 MWh. Which farm is more consistent? Use the CV.`,
-  hint:`CV(A) = 6 ÷ 40 × 100% = <b>15%</b>. CV(B) = 5 ÷ 25 × 100% = <b>20%</b>. Farm A has the smaller CV, so <b>A is more consistent</b>, even though its s is larger.`},
- {type:'Think', q:`Every volunteer in Q1 collects 3 more bottles. What happens to the mean and to s?`,
-  hint:`The mean rises by 3 (to 20). <b>s stays 5</b>: every value moves together, so the distances from the mean do not change.`}],
-venn:[
- {type:'Venn', q:`A survey of 300 households: 150 have solar panels (S), 90 have a water-saving device (D), and 210 have <i>at least one</i> of the two.<br>(a) Draw the Venn diagram. (b) P(S and D). (c) P(exactly one). (d) P(neither). (e) Are S and D mutually exclusive?`,
-  hint:`(a) Both = 150 + 90 − 210 = <b>30</b>. S only = 120, D only = 60, neither = 300 − 210 = 90.<br>(b) 30 ÷ 300 = <b>0.10</b>. (c) (120 + 60) ÷ 300 = <b>0.60</b>. (d) 90 ÷ 300 = <b>0.30</b>.<br>(e) <b>No</b>: 30 households have both, so the events overlap.`},
- {type:'Rules', q:`In a lab, P(A) = 0.45 and P(B) = 0.35, and A and B are mutually exclusive. Find P(A or B) and P(neither).`,
-  hint:`Mutually exclusive → P(A and B) = 0. P(A or B) = 0.45 + 0.35 = <b>0.80</b>. P(neither) = 1 − 0.80 = <b>0.20</b>.`}],
-tree:[
- {type:'Tree', q:`Two independent leak sensors protect a water pipe. Sensor 1 detects a leak with probability 0.9, sensor 2 with probability 0.8.<br>(a) Draw the tree. (b) P(both detect). (c) P(neither detects). (d) P(at least one detects).`,
-  hint:`(a) First branches: detects 0.9 / misses 0.1. Second: detects 0.8 / misses 0.2 on each.<br>(b) 0.9 × 0.8 = <b>0.72</b>. (c) 0.1 × 0.2 = <b>0.02</b>. (d) 1 − 0.02 = <b>0.98</b>.`},
- {type:'Sample space', q:`A student chooses one main dish (machboos, salad or pasta) and one drink (water or laban), all equally likely. List the sample space. What is P(salad and water)?`,
-  hint:`3 × 2 = <b>6 outcomes</b>: (machboos, water), (machboos, laban), (salad, water), (salad, laban), (pasta, water), (pasta, laban).<br>P(salad and water) = 1/3 × 1/2 = <b>1/6 ≈ 0.167</b>.`}],
-dist:[
- {type:'Validity', q:`Which table is a valid probability distribution?<br>(i) 0.3, 0.3, 0.3 &nbsp; (ii) 0.5, −0.1, 0.6 &nbsp; (iii) 0.25, 0.25, 0.5`,
-  hint:`Only <b>(iii)</b>. (i) sums to 0.9. (ii) has a negative probability.`},
- {type:'Compute', q:`X = number of the 3 EV chargers in use at a mall at noon (illustrative).<table class="tbl" style="margin:6px 0"><tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td></tr><tr><th>P(x)</th><td>0.15</td><td>0.35</td><td>0.30</td><td>k</td></tr></table>(a) k. (b) P(X ≤ 1). (c) E(X), with meaning. (d) Var(X) and SD.`,
-  hint:`(a) k = 1 − 0.80 = <b>0.20</b>. (b) 0.15 + 0.35 = <b>0.50</b>.<br>(c) E(X) = 0 + 0.35 + 0.60 + 0.60 = <b>1.55</b>: over many days, about 1.55 chargers are in use at noon on average.<br>(d) Σ(x − 1.55)²P(x) = 0.3604 + 0.1059 + 0.0608 + 0.4205 ≈ <b>0.9475</b>; SD = √0.9475 ≈ <b>0.97</b>.`},
- {type:'Meaning', q:`A charity raffle ticket costs 10 AED. You win 100 AED with probability 0.05, 20 AED with probability 0.15, nothing otherwise. Let X = your net gain. Find E(X) and explain it.`,
-  hint:`Net gains: 90 (0.05), 10 (0.15), −10 (0.80). E(X) = 4.5 + 1.5 − 8 = <b>−2 AED</b>. On average a buyer loses 2 AED per ticket; that is what the charity raises.`}]
-};
-const prac = k => practice(PRAC[k]);
+/* ---------------- Part 1 · Graphical representation ---------------- */
+const P1A=[
+ {type:'Histogram',q:`Minutes to finish a quiz (30 students). Draw the histogram.${tbl(['Class','10–14','15–19','20–24','25–29','30–34'],[['f',3,7,10,6,4]])}`,
+  hint:steps([['Step 1','Boundaries: 9.5, 14.5, 19.5, 24.5, 29.5, 34.5 (subtract and add 0.5).'],['Step 2','x-axis = boundaries, y-axis = frequency. Bars <b>touch</b>.'],['Answer',ST.hist([3,7,10,6,4],['9.5','14.5','19.5','24.5','29.5','34.5'],{ymax:11,xlabel:'Minutes'})+'Shape: roughly <b>symmetric</b>, peak at 20–24.']])},
+ {type:'Polygon',q:`Ages of 40 marathon runners. Draw the frequency polygon.${tbl(['Class','20–29','30–39','40–49','50–59','60–69'],[['f',6,14,11,7,2]])}`,
+  hint:steps([['Step 1','Midpoints: 24.5, 34.5, 44.5, 54.5, 64.5.'],['Step 2','Plot (midpoint, f) and join with straight lines.'],['Step 3','Close on the axis: add 14.5 and 74.5 with f = 0.'],['Answer',ST.hist([6,14,11,7,2],['19.5','29.5','39.5','49.5','59.5','69.5'],{pad:true,poly:true,ymax:15,xlabel:'Age (years)'})]])},
+ {type:'Table + histogram',q:'Plastic recycled (kg/month) by 20 households: 2, 3, 5, 6, 6, 7, 8, 8, 9, 9, 10, 11, 11, 12, 13, 14, 15, 17, 19, 22. Use classes 0–4, 5–9, 10–14, 15–19, 20–24. Build the frequency table and draw the histogram and polygon.',
+  hint:steps([['Step 1','Tally: 0–4: <b>2</b> · 5–9: <b>8</b> · 10–14: <b>6</b> · 15–19: <b>3</b> · 20–24: <b>1</b> (total 20).'],['Step 2','Midpoints 2, 7, 12, 17, 22.'],['Answer',ST.hist([2,8,6,3,1],['−0.5','4.5','9.5','14.5','19.5','24.5'],{pad:true,poly:true,ymax:9,xlabel:'kg'})+'Shape: <b>right-skewed</b>.']])},
+ {type:'Boxplot',q:'Waiting times (min) of 11 patients: 5, 8, 9, 10, 12, 13, 15, 16, 18, 22, 35. Draw the boxplot. Check for outliers.',
+  hint:steps([['Step 1','Median: position (11 + 1) ÷ 2 = 6th → <b>13</b>.'],['Step 2','Lower half 5, 8, 9, 10, 12 → Q1 = <b>9</b>. Upper half 15, 16, 18, 22, 35 → Q3 = <b>18</b>.'],['Step 3','IQR = 9. Fences: 9 − 13.5 = −4.5 and 18 + 13.5 = 31.5 → <b>35 is an outlier</b>; the whisker stops at 22.'],['Answer',box([5,9,13,18,22],0,40,5,'Minutes',[35])]])},
+ {type:'Boxplot',q:'Daily water intake (L) of 10 athletes: 1.8, 2.0, 2.2, 2.4, 2.5, 2.7, 2.9, 3.0, 3.2, 3.6. Draw the boxplot.',
+  hint:steps([['Step 1','n = 10 (even): median = (2.5 + 2.7) ÷ 2 = <b>2.6</b>.'],['Step 2','Lower half 1.8 … 2.5 → Q1 = <b>2.2</b>. Upper half 2.7 … 3.6 → Q3 = <b>3.0</b>.'],['Step 3','IQR = 0.8. Fences 1.0 and 4.2 → no outliers.'],['Answer',box([1.8,2.2,2.6,3.0,3.6],1.5,4,0.5,'Litres')]])}];
+const P1B=[
+ {type:'Read a boxplot',q:`Battery life of 120 phones (hours):${box([6,9,11,14,20],4,22,2,'Hours')}Find min, max, range, Q1, median, Q3, IQR. How many phones last more than 14 hours?`,
+  hint:steps([['Read','Min <b>6</b> · Q1 <b>9</b> · Median <b>11</b> · Q3 <b>14</b> · Max <b>20</b>'],['Calculate','Range = 20 − 6 = <b>14</b>. IQR = 14 − 9 = <b>5</b>.'],['Answer','Above Q3 = 25% → 0.25 × 120 = <b>30 phones</b>.']])},
+ {type:'Read a histogram',q:`Exam scores of a class:${ST.hist([2,5,9,6,3],['49.5','59.5','69.5','79.5','89.5','99.5'],{ymax:10,xlabel:'Score'})}How many students? Modal class? In which class is the median? What % scored 80 or more?`,
+  hint:steps([['Read','f = 2, 5, 9, 6, 3 → n = <b>25</b>.'],['Modal class','Tallest bar: <b>70–79</b>.'],['Median','Position (25 + 1) ÷ 2 = 13th. Cumulative: 2, 7, 16 → the 13th is in <b>70–79</b>.'],['Answer','80 or more: 6 + 3 = 9 → 9 ÷ 25 = <b>36%</b>.']])},
+ {type:'Read a bar chart',q:`Number of siblings of 20 students:${bars([3,7,6,3,1],['0','1','2','3','4'],'Siblings')}Find the mode, median, Q1, Q3, IQR, range and mean.`,
+  hint:steps([['Read','0: 3 · 1: 7 · 2: 6 · 3: 3 · 4: 1 → n = 20. Cumulative 3, 10, 16, 19, 20.'],['Mode','Tallest bar: <b>1</b>.'],['Median','10th and 11th values: 1 and 2 → <b>1.5</b>.'],['Quartiles','Q1 = (5th + 6th) ÷ 2 = <b>1</b>. Q3 = (15th + 16th) ÷ 2 = <b>2</b>. IQR = <b>1</b>.'],['Answer','Range = 4 − 0 = <b>4</b>. Mean = (0 + 7 + 12 + 9 + 4) ÷ 20 = 32 ÷ 20 = <b>1.6</b>.']])},
+ {type:'Read an ogive',q:`Commute times of students:${ogive([0,10,20,30,40,50],[0,6,18,30,36,40],'Minutes · cumulative frequency')}How many students? How many take less than 30 min? What % take more than 40 min? How many take 10–20 min?`,
+  hint:steps([['Read','Last point = <b>40</b> students.'],['Less than 30','Cumulative at 30 = <b>30</b> students (75%).'],['More than 40','40 − 36 = 4 → 4 ÷ 40 = <b>10%</b>.'],['Answer','10–20 min: 18 − 6 = <b>12</b> students.']])},
+ {type:'Compare boxplots',q:`Quiz scores of two sections:<p class="mono" style="margin:4px 0">Section A</p>${box([40,55,65,75,90],35,95,5,'')}<p class="mono" style="margin:4px 0">Section B</p>${box([50,60,70,72,85],35,95,5,'Score')}Which section has the higher median? Which has more spread (range and IQR)?`,
+  hint:steps([['Read A','40, 55, 65, 75, 90'],['Read B','50, 60, 70, 72, 85'],['Median','A = 65, B = 70 → <b>B</b> is higher.'],['Answer','Range: A = 50, B = 35. IQR: A = 20, B = 12. <b>A</b> has more spread.']])}];
+
+/* ---------------- Part 2 · Calculations ---------------- */
+const P2A=[
+ {type:'Mean',q:'Daily steps (thousands) of 5 students: 6, 8, 9, 10, 12. Find the mean.',
+  hint:MG({f:'x̄ = Σx ÷ n',d:'x̄ = mean · Σ = add all · x = each value · n = how many',s:'x̄ = (6 + 8 + 9 + 10 + 12) ÷ 5',k:'( 6 + 8 + 9 + 1 0 + 1 2 ) ÷ 5 =',a:'x̄ = 45 ÷ 5 = <b>9 thousand steps</b>'})},
+ {type:'Median (odd n)',q:'Minutes spent on homework: 14, 9, 21, 17, 12, 25, 11. Find the median.',
+  hint:MG({f:'Median position = (n + 1) ÷ 2',d:'Sort first. n = 7',s:'Sorted: 9, 11, 12, <b>14</b>, 17, 21, 25 · position (7 + 1) ÷ 2 = 4',a:'Median = <b>14 minutes</b>'})},
+ {type:'Median (even n)',q:'Hours of exercise per week: 3.5, 4.0, 2.5, 5.0, 4.5, 3.0. Find the median and the mean.',
+  hint:MG({f:'Even n: median = average of the two middle values',d:'n = 6 → middle positions 3 and 4',s:'Sorted: 2.5, 3.0, <b>3.5, 4.0</b>, 4.5, 5.0 → (3.5 + 4.0) ÷ 2',k:'( 3 . 5 + 4 ) ÷ 2 =',a:'Median = <b>3.75</b> h. Mean = 22.5 ÷ 6 = <b>3.75</b> h'})},
+ {type:'Mode',q:'(a) Number of pets: 2, 3, 3, 4, 5, 5, 6. (b) Transport: Metro, Car, Car, Bus, Metro, Car. Find the mode of each.',
+  hint:MG({f:'Mode = most frequent value',d:'Count each value',s:'(a) 3 → twice, 5 → twice · (b) Car → 3 times',a:'(a) <b>3 and 5</b> (bimodal) · (b) <b>Car</b>'})},
+ {type:'Which centre?',q:'Monthly salaries (thousand AED) of 6 staff: 8, 9, 9, 10, 11, 40. Find mean, median and mode. Which is the best typical value?',
+  hint:MG({f:'x̄ = Σx ÷ n · median at (n + 1) ÷ 2',s:'x̄ = 87 ÷ 6 · median = (9 + 10) ÷ 2',k:'( 8 + 9 + 9 + 1 0 + 1 1 + 4 0 ) ÷ 6 =',a:'Mean = <b>14.5</b> · Median = <b>9.5</b> · Mode = <b>9</b>. The outlier 40 pulls the mean up (right-skewed) → use the <b>median</b>.'})}];
+const P2B=[
+ {type:'Range and IQR',q:'Data: 12, 15, 17, 18, 20, 22, 25, 28, 31. Find the range, Q1, Q3 and IQR.',
+  hint:MG({f:'Range = max − min · IQR = Q3 − Q1',d:'n = 9 → median is the 5th value (20); leave it out of both halves',s:'Lower half 12, 15, 17, 18 → Q1 = (15 + 17) ÷ 2 · Upper half 22, 25, 28, 31 → Q3 = (25 + 28) ÷ 2',a:'Range = 31 − 12 = <b>19</b> · Q1 = <b>16</b> · Q3 = <b>26.5</b> · IQR = <b>10.5</b>'})},
+ {type:'Variance and SD',q:'Data: 4, 7, 8, 9, 12. Find the sample variance and standard deviation.',
+  hint:MG({f:'s² = Σ(x − x̄)² ÷ (n − 1) · s = √s²',d:'Mean x̄ = 40 ÷ 5 = 8 · subtract, square, add, divide by n − 1',s:'(−4)² + (−1)² + 0² + 1² + 4² = 16 + 1 + 0 + 1 + 16 = 34',k:'( 1 6 + 1 + 0 + 1 + 1 6 ) ÷ ( 5 − 1 ) =',a:'s² = 34 ÷ 4 = <b>8.5</b> · s = √8.5 ≈ <b>2.92</b>'})},
+ {type:'Variance, SD, CV',q:'Data: 10, 12, 14, 16, 18. Find s², s and CV.',
+  hint:MG({f:'s² = Σ(x − x̄)² ÷ (n − 1) · CV = s ÷ x̄ × 100%',d:'x̄ = 70 ÷ 5 = 14',s:'(−4)² + (−2)² + 0² + 2² + 4² = 40 → s² = 40 ÷ 4',k:'√ 1 0 ÷ 1 4 × 1 0 0 =',a:'s² = <b>10</b> · s ≈ <b>3.16</b> · CV = 3.16 ÷ 14 × 100% ≈ <b>22.6%</b>'})},
+ {type:'Compare with CV',q:'Exam A: mean 60, s = 12. Exam B: mean 75, s = 9. Which exam has more consistent results?',
+  hint:MG({f:'CV = s ÷ x̄ × 100%',d:'Smaller CV = more consistent',s:'CV<sub>A</sub> = 12 ÷ 60 × 100% · CV<sub>B</sub> = 9 ÷ 75 × 100%',k:'1 2 ÷ 6 0 × 1 0 0 =',a:'A = <b>20%</b>, B = <b>12%</b> → <b>Exam B</b> is more consistent.'})},
+ {type:'Full summary',q:'Daily maximum temperature (°C) for 5 days: 21, 23, 25, 25, 26. Find the range, IQR, s², s and CV.',
+  hint:MG({f:'Range · IQR · s² = Σ(x − x̄)² ÷ (n − 1) · s · CV',d:'x̄ = 120 ÷ 5 = 24 · median = 25 · halves 21, 23 and 25, 26',s:'Range = 26 − 21 · Q1 = 22, Q3 = 25.5 · (−3)² + (−1)² + 1² + 1² + 2² = 16',k:'1 6 ÷ ( 5 − 1 ) =',a:'Range <b>5</b> · IQR <b>3.5</b> · s² <b>4</b> · s <b>2</b> · CV = 2 ÷ 24 ≈ <b>8.3%</b>'})}];
+
+/* ---------------- Part 3 · Probability rules ---------------- */
+const RULES=`<table class="tbl"><tr><th>Word</th><th>Rule</th><th>Formula</th></tr>
+ <tr><td>—</td><td>Simple</td><td>P(E) = favourable ÷ total</td></tr>
+ <tr><td><b>NOT</b></td><td>Complement</td><td>P(not A) = 1 − P(A)</td></tr>
+ <tr><td><b>OR</b></td><td>Addition</td><td>No overlap (mutually exclusive): P(A) + P(B)<br>Overlap (BOTH given): P(A) + P(B) − P(A and B)</td></tr>
+ <tr><td><b>AND</b></td><td>Multiplication</td><td>Independent: P(A) × P(B). Fair choice of 2 → each is 1/2</td></tr></table>`;
+const P3A=[
+ {type:'Simple',q:'A bag has 4 green and 6 red marbles. One is picked at random. P(green)?',hint:MG({f:'P(E) = favourable ÷ total',s:'4 ÷ (4 + 6)',a:'P(green) = <b>0.4</b>'})},
+ {type:'Simple',q:'A spinner has 8 equal sections numbered 1 to 8. P(a number greater than 5)?',hint:MG({f:'P(E) = favourable ÷ total',d:'Greater than 5: {6, 7, 8} → 3 outcomes',s:'3 ÷ 8',a:'<b>0.375</b>'})},
+ {type:'Simple',q:'A class has 10 Business, 8 Engineering and 7 Design students. One is chosen at random. P(Engineering)?',hint:MG({f:'P(E) = favourable ÷ total',s:'8 ÷ 25',a:'<b>0.32</b>'})},
+ {type:'Complement',q:'P(the bus is late) = 0.15. P(the bus is not late)?',hint:MG({f:'P(not A) = 1 − P(A)',s:'1 − 0.15',a:'<b>0.85</b>'})},
+ {type:'Complement',q:'12% of products are defective. P(a product is not defective)?',hint:MG({f:'P(not A) = 1 − P(A)',s:'1 − 0.12',a:'<b>0.88</b>'})},
+ {type:'Complement',q:'Same spinner (1 to 8). P(not an 8)?',hint:MG({f:'P(not A) = 1 − P(A)',s:'1 − 1/8',k:'1 − 1 ÷ 8 =',a:'<b>7/8 = 0.875</b>'})}];
+const P3B=[
+ {type:'OR · no overlap',q:'A student picks one elective: Arabic 0.35, French 0.25, Chinese 0.40. P(Arabic or Chinese)?',hint:MG({f:'Mutually exclusive: P(A or B) = P(A) + P(B)',d:'Only one elective → no BOTH',s:'0.35 + 0.40',a:'<b>0.75</b>'})},
+ {type:'OR · no overlap',q:'Roll a fair die. P(1 or 6)?',hint:MG({f:'P(A or B) = P(A) + P(B)',d:'Cannot get 1 and 6 at once',s:'1/6 + 1/6',a:'2/6 ≈ <b>0.333</b>'})},
+ {type:'OR · no overlap',q:'One mode of transport: P(walk) = 0.10, P(bike) = 0.05. P(walk or bike)?',hint:MG({f:'P(A or B) = P(A) + P(B)',s:'0.10 + 0.05',a:'<b>0.15</b>'})},
+ {type:'OR · with BOTH',q:'Of 50 people, 30 drink coffee, 20 drink tea and 10 drink both. Draw the Venn diagram. P(coffee or tea)?',hint:MG({f:'P(C or T) = P(C) + P(T) − P(C and T)',d:'BOTH is given → subtract it once',s:'30/50 + 20/50 − 10/50 = 40/50',a:venn(20,10,10,10,'Coffee','Tea')+'P(C or T) = <b>0.8</b> · neither = 10/50 = 0.2'})},
+ {type:'OR · with BOTH',q:'Of 80 students, 45 use Instagram, 35 use TikTok and 20 use both. Draw the Venn diagram. P(Instagram or TikTok)? P(neither)?',hint:MG({f:'P(I or T) = P(I) + P(T) − P(I and T)',s:'45/80 + 35/80 − 20/80 = 60/80',a:venn(25,20,15,20,'Instagram','TikTok')+'P(I or T) = <b>0.75</b> · P(neither) = 1 − 0.75 = <b>0.25</b>'})},
+ {type:'OR · with BOTH',q:'P(A) = 0.5, P(B) = 0.3, P(A and B) = 0.1. Find P(A or B) and P(neither). Show the Venn diagram.',hint:MG({f:'P(A or B) = P(A) + P(B) − P(A and B)',s:'0.5 + 0.3 − 0.1',a:venn('0.4','0.1','0.2','0.3','A','B')+'P(A or B) = <b>0.7</b> · P(neither) = <b>0.3</b>'})}];
+const P3C=[
+ {type:'AND',q:'Toss a fair coin twice. P(heads and heads)?',hint:MG({f:'Independent: P(A and B) = P(A) × P(B)',d:'Fair coin → each side 1/2',s:'1/2 × 1/2',k:'0 . 5 × 0 . 5 =',a:'<b>1/4 = 0.25</b>'})},
+ {type:'AND',q:'Toss a fair coin and spin a spinner with two equal halves (red, blue). P(tails and blue)?',hint:MG({f:'P(A and B) = P(A) × P(B)',s:'1/2 × 1/2',a:'<b>0.25</b>'})},
+ {type:'AND',q:'Toss a fair coin three times. P(heads, heads, heads)?',hint:MG({f:'P(A and B and C) = P(A) × P(B) × P(C)',s:'1/2 × 1/2 × 1/2',k:'0 . 5 ^ 3 =',a:'<b>1/8 = 0.125</b>'})}];
+
+/* ---------------- Part 4 · Tree diagrams ---------------- */
+const P4=[
+ {type:'Draw',q:'A student is chosen at random: Male or Female. Then a lab session is assigned at random: Morning or Evening. Draw the tree, list the sample space and find P(Female and Evening).',
+  hint:steps([['Tree',ST.treeSVG([['Male','Female'],['Morning','Evening']],{hl:['Female, Evening']})],['Sample space','{(M, Mo), (M, Ev), (F, Mo), (F, Ev)} → 2 × 2 = <b>4</b> outcomes'],['Answer','AND → multiply along the path: 1/2 × 1/2 = <b>1/4</b>']])},
+ {type:'Draw',q:'Toss a coin (H or T), then spin a fair red/blue spinner. Draw the tree. Find P(H and red) and P(red).',
+  hint:steps([['Tree',ST.treeSVG([['H','T'],['Red','Blue']],{hl:['H, Red']})],['Sample space','{(H, R), (H, B), (T, R), (T, B)}'],['Answer','P(H and red) = <b>1/4</b> · P(red) = 1/4 + 1/4 = <b>1/2</b> (add the paths that end in red)']])},
+ {type:'Read',q:`Two fair coins:${ST.treeSVG([['H','T'],['H','T']])}List the sample space. P(exactly one head)?`,
+  hint:steps([['Sample space','{HH, HT, TH, TT} → 4 outcomes'],['Paths','Exactly one head: HT and TH → 2 paths'],['Answer','1/4 + 1/4 = <b>1/2</b>']])},
+ {type:'Read',q:`Three fair coins:${ST.treeSVG([['H','T'],['H','T'],['H','T']])}How many outcomes? P(exactly two heads)? P(at least one head)?`,
+  hint:steps([['Sample space','2 × 2 × 2 = <b>8</b> outcomes, each 1/8'],['Exactly two','HHT, HTH, THH → <b>3/8</b>'],['Answer','At least one head = 1 − P(TTT) = 1 − 1/8 = <b>7/8</b>']])},
+ {type:'Read',q:`Mode: Online or On-campus. Then a quiz version: A or B.${ST.treeSVG([['Online','Campus'],['Quiz A','Quiz B']])}Find P(Online and Quiz A), P(On-campus) and P(Online or Quiz A).`,
+  hint:steps([['AND','P(Online and A) = 1/2 × 1/2 = <b>1/4</b>'],['One step','P(On-campus) = <b>1/2</b>'],['Answer','OR: paths with Online or A: (On, A), (On, B), (Campus, A) = 3 paths → <b>3/4</b>. Check: 1/2 + 1/2 − 1/4 = 3/4.']])}];
+
+/* ---------------- Part 5 · Discrete distributions ---------------- */
+const P5A=[
+ {type:'Discrete?',q:'Which are discrete random variables? (a) cars in a car park (b) time to charge a phone (c) correct answers out of 10 (d) weight of a bag',hint:MG({f:'Discrete = counted (0, 1, 2 …). Continuous = measured.',a:'Discrete: <b>(a) and (c)</b>. Continuous: (b) and (d).',how:false})},
+ {type:'Valid?',q:'x: 0, 1, 2 with P(x): 0.5, 0.3, 0.3. Is this a valid probability distribution?',hint:MG({f:'Valid if 0 ≤ P(x) ≤ 1 and ΣP(x) = 1',s:'0.5 + 0.3 + 0.3 = 1.1',a:'<b>Not valid</b>: the sum is 1.1, not 1.'})},
+ {type:'Valid?',q:'x: 1, 2, 3, 4 with P(x): 0.1, 0.4, −0.1, 0.6. Valid?',hint:MG({f:'Valid if 0 ≤ P(x) ≤ 1 and ΣP(x) = 1',d:'Check every value first',a:'<b>Not valid</b>: −0.1 is negative (even though the sum is 1).'})},
+ {type:'Valid?',q:'x: 0, 1, 2, 3 with P(x): 0.25, 0.25, 0.25, 0.25. Valid?',hint:MG({f:'Valid if 0 ≤ P(x) ≤ 1 and ΣP(x) = 1',s:'0.25 × 4 = 1',a:'<b>Valid</b>.'})},
+ {type:'Find k',q:'x: 0, 1, 2, 3 with P(x): 0.2, 0.4, k, 0.1. Find k.',hint:MG({f:'ΣP(x) = 1 → k = 1 − (others)',s:'k = 1 − (0.2 + 0.4 + 0.1)',k:'1 − ( 0 . 2 + 0 . 4 + 0 . 1 ) =',a:'<b>k = 0.3</b>'})},
+ {type:'Find k',q:'x: 0, 1, 2 with P(x): k, 2k, 0.4. Find k.',hint:MG({f:'ΣP(x) = 1',s:'k + 2k + 0.4 = 1 → 3k = 0.6',k:'0 . 6 ÷ 3 =',a:'<b>k = 0.2</b> → P(0) = 0.2, P(1) = 0.4'})}];
+const P5B=[
+ {type:'E(X)',q:'Number of online orders a student makes per week: x: 0, 1, 2, 3 with P(x): 0.1, 0.2, 0.3, 0.4. Find E(X) and interpret.',
+  hint:MG({f:'E(X) = Σ x·P(x)',d:'Multiply each x by its probability, then add',s:'0(0.1) + 1(0.2) + 2(0.3) + 3(0.4)',k:'0 × 0 . 1 + 1 × 0 . 2 + 2 × 0 . 3 + 3 × 0 . 4 =',a:'E(X) = <b>2.0</b>. On average, a student makes 2 online orders per week.'})},
+ {type:'Var(X), SD',q:'Same table (E(X) = 2). Find Var(X) and SD, and interpret SD.',
+  hint:MG({f:'Var(X) = Σ (x − μ)²·P(x) · SD = √Var(X)',d:'μ = E(X) = 2 · bracket the negative before squaring',s:'(0 − 2)²(0.1) + (1 − 2)²(0.2) + (2 − 2)²(0.3) + (3 − 2)²(0.4) = 0.4 + 0.2 + 0 + 0.4',k:'( 0 − 2 ) x² × 0 . 1 + ( 1 − 2 ) x² × 0 . 2 + ( 3 − 2 ) x² × 0 . 4 =',a:'Var(X) = <b>1.0</b> · SD = <b>1</b>. Weekly orders typically vary by about 1 order from the mean of 2.'})},
+ {type:'Full',q:'Defective phones per box: x: 0, 1, 2 with P(x): 0.7, 0.2, k. Find k, E(X), Var(X), SD and interpret E(X).',
+  hint:MG({f:'k = 1 − others · E(X) = Σx·P(x) · Var(X) = Σ(x − μ)²·P(x)',s:'k = 1 − 0.9 = 0.1 · E = 0(0.7) + 1(0.2) + 2(0.1) = 0.4 · Var = (−0.4)²(0.7) + (0.6)²(0.2) + (1.6)²(0.1) = 0.112 + 0.072 + 0.256',k:'( 0 − 0 . 4 ) x² × 0 . 7 + ( 1 − 0 . 4 ) x² × 0 . 2 + ( 2 − 0 . 4 ) x² × 0 . 1 =',a:'k = <b>0.1</b> · E(X) = <b>0.4</b> · Var = <b>0.44</b> · SD ≈ <b>0.66</b>. On average, a box has 0.4 defective phones.'})},
+ {type:'Full',q:'Rainy days per week in a city (illustrative): x: 0, 1, 2, 3 with P(x): 0.4, 0.3, 0.2, 0.1. Find E(X), Var(X), SD and interpret.',
+  hint:MG({f:'E(X) = Σx·P(x) · Var(X) = Σ(x − μ)²·P(x)',s:'E = 0 + 0.3 + 0.4 + 0.3 = 1.0 · Var = (−1)²(0.4) + 0²(0.3) + 1²(0.2) + 2²(0.1) = 0.4 + 0 + 0.2 + 0.4',k:'0 . 4 + 0 . 2 + 4 × 0 . 1 =',a:'E(X) = <b>1</b> · Var = <b>1</b> · SD = <b>1</b>. On average, 1 rainy day per week, typically varying by about 1 day.'})}];
+
+const prac=(items)=>el=>W.practice(el,items,{label:'Show model answer',prefix:''});
+const PARTS=[['1','Graphical representation','Draw and read graphs',1],['2','Calculations','Centre and spread',3],['3','Probability rules','Simple, NOT, OR, AND',5],['4','Tree diagrams','Two equal branches',9],['5','Discrete distributions','Valid, k, E(X), Var(X), SD',10]];
 
 Lecture.mount({
-  id:'mth105-midterm', course:'MTH 105', home:'exams.html', homeLabel:'Exams', short:'Midterm practice', eyebrow:'Midterm revision · CLO 1 and CLO 2', noTeacher:true,
-  title:'Midterm practice', meta:'Descriptive statistics (CLO 1) · Probability (CLO 2)', endLabel:'End of revision',
+  id:'mth105-midterm', course:'MTH 105', home:'exams.html', homeLabel:'Exams', short:'Midterm revision', eyebrow:'Midterm · CLO 1 and CLO 2', noTeacher:true,
+  title:'Midterm Revision', meta:'Monday 19 October 2026 · 9:30 AM · HUB-Yard Zones A, B, D', endLabel:'Good luck',
   scenes:[
-  { nav:'Start here', title:'What the midterm covers', minutes:2,
-    narration:[`Each topic: a short recap with a tool, then <b>new</b> practice. Try first, then open the answer.`],
-    fig:{label:'Pick a topic', html:`<div class="map2"><div><h4>Descriptive statistics · CLO 1</h4>
-      <button data-s="1">Histogram shape<small>symmetric, right- or left-skewed</small></button><button data-s="2">Frequency polygon and ogive<small>midpoints, boundaries</small></button><button data-s="4">Boxplot<small>five-number summary, range, IQR</small></button><button data-s="6">Centre and spread<small>mean, mode, s², s, CV</small></button></div>
-      <div><h4>Probability · CLO 2</h4><button data-s="8">Venn diagrams<small>addition and complement rules</small></button><button data-s="10">Tree diagrams<small>multiplication rule, sample space</small></button><button data-s="12">Discrete distributions<small>k, P(X ≥ a), E(X), Var(X), SD</small></button><button data-s="14">Exit quiz<small>7 quick questions</small></button></div></div>`,
+  { nav:'Start here', title:'Five parts, 50 exercises', minutes:2,
+    narration:[`Work through the five parts in order. Answer on paper, then open the model answer. ${HOW}`],
+    fig:{label:'Pick a part', html:`<div class="map2">${PARTS.map(([n,t,s,i])=>`<button type="button" data-s="${i}"><b>Part ${n} · ${t}</b><small>${s}</small></button>`).join('')}</div>`,
       build:el=>el.querySelectorAll('button[data-s]').forEach(b=>b.addEventListener('click',()=>goScene(+b.dataset.s)))} },
-
-  { nav:'Histogram shape', title:'Shape: follow the tail', minutes:4,
-    narration:[`The tail names the shape. Tail to the right: <b>positively skewed</b>, mean &gt; median. Tail to the left: <b>negatively skewed</b>, mean &lt; median.`],
-    fig:{label:'Switch the shape', build:ST.shapeTool} },
-
-  { nav:'Polygon and ogive', title:'Frequency polygon and ogive', minutes:5,
-    narration:[`A <b>frequency polygon</b> joins the class midpoints at their frequencies and closes on the axis. An <b>ogive</b> joins cumulative frequencies at the upper class boundaries.`],
-    fig:{label:'Same data, two graphs', build:ST.polyTool} },
-
-  { nav:'Practice · Graphs', title:'Practice · Graphs', kind:'activity', minutes:10,
-    narration:[`New data. Answer on paper first.`], src:'Data: illustrative.',
-    fig:{label:'3 questions', build:prac('graphs')} },
-
-  { nav:'Boxplot', title:'Boxplot: five numbers', minutes:5,
-    narration:[`Min, Q1, median, Q3, max. <b>Range</b> = max − min. <b>IQR</b> = Q3 − Q1, the middle 50%. Outlier: beyond Q1 − 1.5·IQR or Q3 + 1.5·IQR.`],
-    fig:{label:'Type data, see the boxplot', build:ST.boxTool, caption:'Q1 and Q3 = medians of the lower and upper halves (median excluded when n is odd).'} },
-
-  { nav:'Practice · Boxplot', title:'Practice · Boxplot', kind:'activity', minutes:10,
-    narration:[`Compute one, read one.`], src:'Data: illustrative.',
-    fig:{label:'2 questions', build:prac('box')} },
-
-  { nav:'Centre and spread', title:'Centre and spread', minutes:5,
-    narration:[`Centre: mean, median, mode. Spread: s², s and <b>CV = s ÷ x̄ × 100%</b>. Use the CV to compare spread between data sets with different means.`],
-    fig:{label:'Type data, check each step', build:el=>ST.spreadTool(el,toW2)} },
-
-  { nav:'Practice · Spread', title:'Practice · Centre and spread', kind:'activity', minutes:12,
-    narration:[`Use a deviation table. Check your answers with the tool in the previous scene.`], src:'Data: illustrative.',
-    fig:{label:'3 questions', build:prac('spread')} },
-
-  { nav:'Venn diagrams', title:'Venn diagrams and the addition rule', minutes:5,
-    narration:[`Fill from the middle out: both, then each “only”, then neither. <b>P(A or B) = P(A) + P(B) − P(A and B)</b>. <b>P(neither) = 1 − P(A or B)</b>.`],
-    fig:{label:'Change the counts', build:ST.vennTool} },
-
-  { nav:'Practice · Venn', title:'Practice · Venn diagrams', kind:'activity', minutes:10,
-    narration:[`This time the overlap is missing. Find it first.`], src:'Data: illustrative.',
-    fig:{label:'2 questions', build:prac('venn')} },
-
-  { nav:'Tree diagrams', title:'Tree diagrams and the multiplication rule', minutes:5,
-    narration:[`Branches from one point add to 1. <b>Multiply along a path</b> for “and” (independent events). <b>Add paths</b> for “or”.`],
-    fig:{label:'Drag the probabilities', build:ST.treeTool} },
-
-  { nav:'Practice · Tree', title:'Practice · Tree diagrams', kind:'activity', minutes:8,
-    narration:[`Unequal branches this time.`], src:'Data: illustrative.',
-    fig:{label:'2 questions', build:prac('tree')} },
-
-  { nav:'Discrete distributions', title:'Discrete probability distributions', minutes:6,
-    narration:[`Valid when every P(x) is between 0 and 1 and <b>ΣP(x) = 1</b>. <b>E(X) = Σx·P(x)</b> is the long-run average. <b>Var(X) = Σ(x − μ)²·P(x)</b>, SD = √Var(X).`], src:toW2,
-    fig:{label:'Edit P(x) · check validity', build:ST.distTool} },
-
-  { nav:'Practice · Distribution', title:'Practice · Discrete distributions', kind:'activity', minutes:12,
-    narration:[`Find k first. Every later part depends on it.`], src:'Data: illustrative.',
-    fig:{label:'3 questions', build:prac('dist')} },
-
-  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5,
-    narration:[`Seven quick questions across all topics.`],
-    fig:{label:'Check yourself', build:el=>W.quiz(el,[
-      {q:'In a left-skewed distribution, usually…',o:['mean > median','mean < median','mean = median'],a:1,why:'The long left tail pulls the mean down, below the median.'},
-      {q:'A boxplot has Q1 = 40 and Q3 = 58. The IQR is…',o:['98','49','18','9'],a:2,why:'IQR = Q3 − Q1 = 58 − 40 = 18.'},
-      {q:'Which graph uses cumulative frequency?',o:['Histogram','Frequency polygon','Ogive'],a:2,why:'The ogive plots cumulative frequency at each upper class boundary.'},
-      {q:'Which measure compares spread between data sets with different means?',o:['Range','Standard deviation','Coefficient of variation'],a:2,why:'CV = s ÷ x̄ × 100% is relative, so it compares across means and units.'},
-      {q:'P(A) = 0.5, P(B) = 0.4, P(A and B) = 0.2. P(A or B) =',o:['0.9','0.7','0.2','0.1'],a:1,why:'0.5 + 0.4 − 0.2 = 0.7.'},
-      {q:'A and B are independent, P(A) = 0.3, P(B) = 0.5. P(A and B) =',o:['0.8','0.15','0.2','0.35'],a:1,why:'Multiply: 0.3 × 0.5 = 0.15.'},
-      {q:'Which list cannot be a probability distribution?',o:['0.2, 0.5, 0.3','0.3, 0.4, 0.4','0.1, 0.1, 0.8'],a:1,why:'0.3 + 0.4 + 0.4 = 1.1, not 1.'}])} },
-
-  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2,
-    narration:[`Good luck on Monday. Bring a standard calculator.`],
-    fig:{label:'The midterm on one page', mindmap:{center:'Midterm', branches:[
-      {t:'Graphs',items:['Tail right → positive skew','Polygon: midpoints, closes on axis','Ogive: cumulative, upper boundaries']},
-      {t:'Boxplot',items:['Min, Q1, median, Q3, max','Range = max − min','IQR = Q3 − Q1','Fences: Q1 − 1.5·IQR, Q3 + 1.5·IQR']},
-      {t:'Centre and spread',items:['x̄ = Σx ÷ n','s² = Σ(x − x̄)² ÷ (n − 1)','s = √s²','CV = s ÷ x̄ × 100%']},
-      {t:'Venn',items:['Both first','P(A or B) = P(A) + P(B) − P(A and B)','P(neither) = 1 − P(A or B)']},
-      {t:'Tree',items:['Branches add to 1','Multiply along a path','Add paths for “or”']},
-      {t:'Distributions',items:['ΣP(x) = 1','E(X) = Σx·P(x)','Var(X) = Σ(x − μ)²·P(x)','SD = √Var(X)']}]}} }
+  { nav:'1 · Draw graphs', title:'Part 1A · Draw the graph', kind:'activity', minutes:25,
+    narration:[`Histogram: boundaries on the x-axis, touching bars. Polygon: midpoints, closed on the axis. Boxplot: min, Q1, median, Q3, max.`], src:'Data: illustrative.',
+    fig:{label:'5 exercises', build:prac(P1A)} },
+  { nav:'1 · Read graphs', title:'Part 1B · Read the graph', kind:'activity', minutes:20,
+    narration:[`Read the values first, then calculate.`], src:'Data: illustrative.',
+    fig:{label:'5 exercises', build:prac(P1B)} },
+  { nav:'2 · Centre', title:'Part 2A · Central tendency', kind:'activity', minutes:20,
+    narration:[`Mean, median, mode. Sort the data before the median.`], src:'Data: illustrative.',
+    fig:{label:'5 exercises', build:prac(P2A)} },
+  { nav:'2 · Spread', title:'Part 2B · Measures of variation', kind:'activity', minutes:25,
+    narration:[`Range, IQR, variance, SD, CV. For s²: subtract, square, add, divide by n − 1.`], src:'Data: illustrative.',
+    fig:{label:'5 exercises', build:prac(P2B)} },
+  { nav:'3 · The rules', title:'Part 3 · Probability rules', minutes:5,
+    narration:[`<b>AND</b> means multiply. <b>OR</b> means add; if BOTH is given, subtract it once. <b>NOT</b> means 1 minus.`],
+    fig:{label:'Which rule?', html:RULES} },
+  { nav:'3 · Simple and NOT', title:'Part 3A · Simple probability and complement', kind:'activity', minutes:15,
+    narration:[`Count favourable over total. For NOT, subtract from 1.`], src:'Data: illustrative.',
+    fig:{label:'6 exercises', build:prac(P3A)} },
+  { nav:'3 · OR', title:'Part 3B · Addition rule (OR)', kind:'activity', minutes:20,
+    narration:[`No overlap: just add. BOTH given: add, then subtract BOTH. Fill the Venn diagram from the middle out.`], src:'Data: illustrative.',
+    fig:{label:'6 exercises', build:prac(P3B)} },
+  { nav:'3 · AND', title:'Part 3C · Multiplication rule (AND)', kind:'activity', minutes:10,
+    narration:[`Independent and fair: every choice of two is 1/2. Multiply.`], src:'Data: illustrative.',
+    fig:{label:'3 exercises', build:prac(P3C)} },
+  { nav:'4 · Tree diagrams', title:'Part 4 · Tree diagrams', kind:'activity', minutes:20,
+    narration:[`Every step splits into two equal branches of 1/2. Multiply along a path; add paths for OR.`], src:'Data: illustrative.',
+    fig:{label:'5 exercises', build:prac(P4)} },
+  { nav:'5 · Valid and k', title:'Part 5A · Valid distribution and k', kind:'activity', minutes:15,
+    narration:[`Every P(x) between 0 and 1, and the sum equals 1.`], src:'Data: illustrative.',
+    fig:{label:'6 exercises', build:prac(P5A)} },
+  { nav:'5 · E, Var, SD', title:'Part 5B · E(X), Var(X) and SD', kind:'activity', minutes:20,
+    narration:[`E(X) = Σx·P(x). Var(X) = Σ(x − μ)²·P(x). SD = √Var(X). Interpret in one sentence.`], src:'Data: illustrative.',
+    fig:{label:'4 exercises', build:prac(P5B)} },
+  { nav:'Exam day', title:'Exam day', kind:'review', minutes:2,
+    narration:[`Monday 19 October 2026, 9:30 AM, HUB-Yard Zones A, B, D. Bring your ID and a standard calculator. Good luck.`],
+    fig:{label:'Formulas on one page', mindmap:{center:'Midterm', branches:[
+      {t:'Graphs',items:['Histogram: boundaries','Polygon: midpoints','Boxplot: 5 numbers']},
+      {t:'Centre',items:['x̄ = Σx ÷ n','Median at (n + 1) ÷ 2','Mode: most frequent']},
+      {t:'Spread',items:['Range, IQR = Q3 − Q1','s² = Σ(x − x̄)² ÷ (n − 1)','CV = s ÷ x̄ × 100%']},
+      {t:'Rules',items:['AND × · OR +','OR with BOTH: − both','NOT: 1 − P']},
+      {t:'Trees',items:['Each branch 1/2','Multiply along, add across']},
+      {t:'Discrete',items:['ΣP = 1','E = Σx·P','Var = Σ(x − μ)²·P']}]}} }
   ]
 });
 </script>

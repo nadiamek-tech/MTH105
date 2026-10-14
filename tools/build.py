@@ -27,7 +27,7 @@ TPL = """<!doctype html>
 <script src="assets/assistant.js"></script>
 <script src="assets/site.js"></script>
 <script>
-const {{W}} = Lecture; const esc = W.esc;
+const {{W}} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
 const {{T, fr, sq, SG, XB, PH, v}} = F;
 const goScene = i => {{ const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); }};
 const practice = (items, label) => el => W.practice(el, items, {{label: label||'Show answer', prefix: ''}});

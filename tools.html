@@ -34,7 +34,7 @@
 <script src="assets/calc.js"></script>
 <script>
 CALC.mount(document.getElementById('calcbox'));
-const T=[['Mean and SD',el=>ST.spreadTool(el)],['Boxplot',ST.boxTool],['Frequency table',el=>ST.freqTool(el)],['Venn',ST.vennTool],['Tree',ST.treeTool],['Discrete X',ST.distTool],['Binomial',ST.binomTool],['Normal',ST.normalTool],['Confidence interval',ST.ciTool],['Chi-square',el=>ST.chiTool(el)],['Regression',el=>ST.regTool(el)]];
+const T=[['Mean and SD',el=>ST.spreadTool(el)],['Boxplot',ST.boxTool],['Frequency table',el=>ST.freqTool(el)],['Venn',ST.vennTool],['Tree',ST.treeTool],['Discrete X',ST.distTool]];
 const tabs=document.getElementById('tabs'), box=document.getElementById('tool');
 tabs.innerHTML=T.map((t,i)=>'<button type="button" aria-pressed="'+(i===0)+'">'+t[0]+'</button>').join('');
 const open=i=>{ tabs.querySelectorAll('button').forEach((b,j)=>b.setAttribute('aria-pressed',i===j)); box.innerHTML=''; T[i][1](box); };

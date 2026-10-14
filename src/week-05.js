@@ -12,7 +12,7 @@ function dieTool(el){
 
 Lecture.mount({
   id:'mth105-w5', course:'MTH 105', home:'lectures.html', homeLabel:'Lectures', short:'Week 5 · Probability', eyebrow:'Week 5 · CLO 2', noTeacher:true,
-  title:'Probability Theory', meta:'Ch 5: Modeling Variation with Probability · Gould, Ryan & Wong (2020)', endLabel:'Weeks 6–7 →',
+  title:'Probability Theory', meta:'Ch 5: Modeling Variation with Probability · Gould, Ryan & Wong (2020)', endLabel:'Week 6 →',
   scenes:[
   { nav:'Start here', title:'From describing to predicting', minutes:3,
     narration:[`Weeks 1–4 described data we have. Probability measures how likely something is before it happens: a number from 0 (impossible) to 1 (certain). <span class="mono">Topics: Definitions of events and sample space · Operations on probabilities. CLO 2.</span>`],
@@ -47,6 +47,11 @@ Lecture.mount({
     narration:[`For <b>independent</b> events, P(A and B) = P(A) × P(B). In a tree, multiply along a path; add paths for “or”.`],
     fig:{label:'Drag the probabilities', build:ST.treeTool} },
 
+  { nav:'Tree diagram', title:'Tree diagrams with two equal branches', minutes:10,
+    narration:[`Each step splits into two equally likely options, so every branch is 1/2. List the sample space from the ends of the paths, then multiply along a path: 1/2 × 1/2 = 1/4.`],
+    src:'Example: a student is assigned a gender group (Male or Female) and a lab session (Morning or Evening) at random.',
+    fig:{label:'Sample space: 4 outcomes', html:ST.treeSVG([['Male','Female'],['Morning','Evening']],{hl:['Female, Evening']})+`<div class="steps" style="margin-top:8px">S = {(M, Mo), (M, Ev), (F, Mo), (F, Ev)} → 2 × 2 = <b>4</b> outcomes<br>P(Female <b>and</b> Evening) = 1/2 × 1/2 = <b>1/4</b><br>P(Evening) = 1/4 + 1/4 = <b>1/2</b> (add the paths)</div>`} },
+
   { nav:'Types of events', title:'Activity · Name the relationship', kind:'activity', minutes:8,
     narration:[`Pick the relationship between the two events.`],
     fig:{label:'6 pairs', build:el=>W.sort(el,{buckets:['Mutually exclusive','Independent','Dependent','Complementary'],items:[
@@ -68,15 +73,14 @@ Lecture.mount({
       {type:'Hard',q:'Two independent machines: P(A works) = 0.95, P(B works) = 0.90. P(both work)? P(at least one works)?',hint:'Both: 0.95 × 0.90 = <b>0.855</b>. At least one: 1 − (0.05 × 0.10) = <b>0.995</b>.'},
       {type:'Hard',q:'A box has 3 defective and 7 good batteries. Pick 2 without replacement. P(both defective)?',hint:'Dependent: 3/10 × 2/9 = 6/90 ≈ <b>0.067</b>.'}])} },
 
-  { nav:'Exit quiz', title:'Exit quiz', kind:'check', minutes:5, narration:[`Five quick questions.`],
-    fig:{label:'Check yourself', build:el=>W.quiz(el,[
-      {q:'Which can be a probability?',o:['1.2','−0.3','0.85'],a:2,why:'Between 0 and 1.'},
-      {q:'P(rain) = 0.25. P(no rain) =',o:['0.25','0.75','1.25'],a:1,why:'1 − 0.25.'},
-      {q:'A and B are mutually exclusive. P(A or B) =',o:['P(A) + P(B)','P(A) + P(B) − P(A and B)','P(A) × P(B)'],a:0,why:'No overlap to subtract.'},
-      {q:'P(A) = 0.6, P(B) = 0.5, P(A and B) = 0.3. P(A or B) =',o:['1.1','0.8','0.3'],a:1,why:'0.6 + 0.5 − 0.3.'},
-      {q:'Coin and die: P(heads and 4) =',o:['1/2','1/6','1/12'],a:2,why:'1/2 × 1/6.'}])} },
+  { nav:'Quick check', title:'Quick check', kind:'check', minutes:5, narration:[`Calculate, then open the answer.`],
+    fig:{label:'4 calculations', build:practice([
+      {q:'A box has 3 red and 7 blue pens. P(red)?',hint:'3 ÷ 10 = <b>0.3</b>.'},
+      {q:'P(A) = 0.35. P(not A)?',hint:'1 − 0.35 = <b>0.65</b>.'},
+      {q:'P(A) = 0.4, P(B) = 0.5, P(A and B) = 0.2. P(A or B)?',hint:'OR → add, minus both: 0.4 + 0.5 − 0.2 = <b>0.7</b>.'},
+      {q:'Toss two fair coins. P(two heads)?',hint:'AND → multiply: 1/2 × 1/2 = <b>1/4 = 0.25</b>.'}])} },
 
-  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Weeks 6–7, discrete probability distributions.`],
+  { nav:'Takeaways', title:'Takeaways', kind:'review', minutes:2, narration:[`Next: Week 6, discrete probability distributions.`],
     fig:{label:'Week 5 on one page', mindmap:{center:'Probability', branches:[
       {t:'Words',items:['Experiment, outcome','Sample space S','Event E']},
       {t:'Basic rule',items:['P(E) = favourable ÷ total','0 ≤ P ≤ 1','All outcomes add to 1']},

@@ -43,19 +43,16 @@
   const SUGGEST={'index.html':['When is the midterm?','How is the course graded?','How do I find the IQR?'],
     'week-01.html':['What is a parameter?','What are the types of data?','What is an outlier?'],
     'week-02.html':['How do I find the class width?','What is an ogive?','How do I know if a histogram is skewed?'],
-    'week-03.html':['How do I find the sample variance?','What is the coefficient of variation?','How do I find Q1 and Q3?'],
+    'week-03.html':['How do I find the mean?','How do I find the median?','How do I find Q1 and Q3?'],
     'week-05.html':['What is the addition rule?','How do I fill a Venn diagram?','What is the multiplication rule?'],
-    'week-06.html':['How do I find E(X)?','What are the binomial conditions?','What is the binomial formula?'],
-    'week-08.html':['How do I find a z-score?','How do I read the Z-table?','What is the empirical rule?'],
-    'week-10.html':['What z* do I use?','How do I build a confidence interval for a mean?','What is the standard error?'],
-    'week-12.html':['How do I find expected counts?','How do I calculate chi-square?','When do I reject H0?'],
-    'week-13.html':['How do I find the regression line?','What does r² mean?','How do I interpret the slope?'],
-    'lectures.html':['How do I find E(X)?','How do I find a z-score?','Is there an online calculator?'],
+    'week-04.html':['How do I find the sample variance?','What is the coefficient of variation?','How do I find the IQR?'],
+    'week-06.html':['How do I find E(X)?','How do I find k in a probability table?','How do I find Var(X)?'],
+    'lectures.html':['Which lectures are available?','How do I find E(X)?','Is there an online calculator?'],
     'lab.html':['How do I turn on the Analysis ToolPak?','How do I submit my lab work?','Which Excel function gives the sample SD?'],
     'exams.html':['When is the midterm?','What does the midterm cover?','What is on the final exam?'],
-    'tools.html':['How do I find the IQR?','What is the binomial formula?','How do I build a confidence interval for a mean?'],
-    'midterm-practice.html':['When is the midterm?','What does the midterm cover?','Can I use a calculator?']};
-  const TOPICS=['Midterm date','Grading','Skewness','IQR','Variance','Venn diagram','Binomial','z-score','Confidence interval','Chi-square','Regression'];
+    'tools.html':['How do I find the IQR?','How do I find the sample variance?','How do I find E(X)?'],
+    'midterm-practice.html':['What is the addition rule?','How do I find Var(X)?','How do I use a tree diagram?']};
+  const TOPICS=['Midterm date','Grading','Skewness','IQR','Variance','CV','Venn diagram','Tree diagram','Expected value'];
 
   /* ---------- UI ---------- */
   let panel,log,chips,input,opened=false;

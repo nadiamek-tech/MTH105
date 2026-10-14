@@ -31,7 +31,7 @@ a.card:hover{border-color:var(--wk)}
 .card .meta span.as{border-color:var(--wk);color:var(--wk)}
 .card.dash{border-style:dashed}
 .note{border:1px dashed var(--wk);background:var(--wk-soft);border-radius:12px;padding:10px 14px}
-@media (max-width:700px){.hub .logo img{height:28px}.hub nav a{padding:7px 12px;font-size:.9rem}.hub .crs{display:none}}
+@media (max-width:700px){.hub .logo img{height:28px}.hub nav a{padding:7px 12px;font-size:.9rem}}
 /* calculator */
 .calc{max-width:420px;display:grid;gap:10px;outline:none}
 .cdisp{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-height:86px;display:grid;align-content:end;gap:4px}

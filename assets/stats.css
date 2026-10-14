@@ -35,7 +35,7 @@
 .tool select{padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:inherit}
 .tblwrap{overflow-x:auto}
 .tbl td.hi{background:var(--wk-soft);font-weight:700}
-.steps{display:grid;gap:4px;font-family:var(--f-mono);font-size:.9rem;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-x:auto}
+.steps{display:block;line-height:1.7;font-family:var(--f-mono);font-size:.9rem;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-x:auto}
 .steps b{color:var(--wk)}
 /* ---------- formula breakdown (Mind the Gap method) ---------- */
 .dc{display:grid;gap:10px}
@@ -74,3 +74,13 @@
 .keys kbd.eq{background:var(--wk);border-color:var(--wk);color:#fff}
 .calcnote{text-align:center;font-size:.85rem;color:var(--muted)}
 .tool>*,.dc>*{min-width:0}
+/* model answers, Mind the Gap layout */
+.mg{display:grid;gap:4px;margin-top:4px}
+.mg>div{display:grid;grid-template-columns:96px minmax(0,1fr);gap:8px;align-items:start}
+.mg>div>span:first-child{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.mg .keys{justify-content:flex-start}
+.mg .keys kbd{font-size:.8rem;min-width:22px;padding:3px 5px}
+.mg .fin b{color:var(--wk)}
+.mg .how{font-size:.8rem;color:var(--muted);font-style:italic;grid-template-columns:minmax(0,1fr)}
+.pq svg{width:100%;max-width:560px;height:auto;display:block;margin:6px 0}
+@media (max-width:560px){.mg>div{grid-template-columns:minmax(0,1fr)}}
