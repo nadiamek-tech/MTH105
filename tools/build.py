@@ -13,6 +13,7 @@ TPL = """<!doctype html>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
 <link rel="stylesheet" href="assets/course.css">
 <link rel="stylesheet" href="assets/stats.css">
+<link rel="stylesheet" href="assets/banner.css">
 <style>
 :root{{--wk:{wk};--wk-soft:{wks};--wk-d:{wkd};--wk-soft-d:{wksd}}}
 </style>
@@ -24,6 +25,7 @@ TPL = """<!doctype html>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
+<script src="assets/site.js"></script>
 <script>
 const {{W}} = Lecture; const esc = W.esc;
 const {{T, fr, sq, SG, XB, PH, v}} = F;
