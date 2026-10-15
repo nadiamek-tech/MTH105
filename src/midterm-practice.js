@@ -24,12 +24,12 @@ function gMean(xs,o={}){ const n=xs.length, S=sum(xs), m=S/n;
     B.fr(XBb,xs.map(num).join(' + '),String(n),{plain:true}),
     B.line(`${XBb} = ${B.frac(num(S),String(n))} = <b>${num(m)}</b>${o.unit?' '+o.unit:''}`,'ans')],
     calc:[`(${xs.map(num).join('+')})÷${n}`,lcd(m)]}; }
-/* sample variance with the table */
-function gVar(xs,o={}){ const n=xs.length, m=sum(xs)/n, d=xs.map(x=>x-m), q=d.map(x=>x*x), S=sum(q);
-  return {t:o.t,lines:[B.tb(['x',`x − ${XBb}`,`(x − ${XBb})${sq2}`],xs.map((x,i)=>[num(x),num(d[i]),num(q[i])]),['','Σ =',num(S)]),
-    B.fr(`s${sq2}`,`Σ(x − ${XBb})${sq2}`,'n − 1',{n:`${num(S)} (table)`,d:`${n} − 1 = ${n-1}`}),
+/* sample variance, bracket method: every (x − x̄)² in brackets, same entry on the calculator */
+function gVar(xs,o={}){ const n=xs.length, m=sum(xs)/n, S=sum(xs.map(x=>(x-m)**2)), M=num(m);
+  return {t:o.t,lines:[B.fr(`s${sq2}`,`Σ(x − ${XBb})${sq2}`,'n − 1',{n:`${XBb} = ${M}`,d:`n = ${n}`}),
+    B.line(`s${sq2} = [ ${xs.map(x=>`<span class="nw">(${num(x)} − ${M})${sq2}</span>`).join(' + ')} ] ÷ <span class="nw">(${n} − 1)</span>`),
     B.line(`s${sq2} = ${B.frac(num(S),String(n-1))} = <b>${num(S/(n-1))}</b>`,'ans')],
-    calc:[`(${q.map(num).join('+')})÷(${n}−1)`,lcd(S/(n-1))]}; }
+    calc:[`(${xs.map(x=>`(${num(x)}−${M})²`).join('+')})÷(${n}−1)`,lcd(S/(n-1))]}; }
 /* standard deviation from a variance */
 function gSD(v,o={}){ const s=Math.sqrt(v), lhs=o.lhs||'s', inner=o.inner||`s${sq2}`, exact=Number.isInteger(s);
   return {t:o.t,lines:[B.line(`${lhs} = √<span class="g">${inner}</span> <span class="g">&nbsp;⟶ ${num(v)}</span>`),B.line(`${lhs} = √${num(v)} ${exact?'=':'≈'} <b>${exact?num(s):r2(s)}</b>`,'ans')],calc:[`√(${num(v)})`,lcd(s)]}; }
@@ -43,12 +43,12 @@ function gE(xs,ps,o={}){ const e=sum(xs.map((x,i)=>x*ps[i]));
   return {t:o.t,lines:[B.line(`E(X) = Σ <span class="g">x</span> · <span class="r">P(x)</span>`),B.dec([['x',xs.join(', ')],['P(x)',ps.join(', ')]]),
     B.line(`E(X) = ${xs.map((x,i)=>`${x}(${ps[i]})`).join(' + ')}`),B.line(`E(X) = <b>${num(e)}</b>`,'ans')],
     calc:[xs.map((x,i)=>`${x}×${ps[i]}`).join('+'),lcd(e)]}; }
-/* discrete: Var(X) with the table */
-function gVarX(xs,ps,o={}){ const mu=sum(xs.map((x,i)=>x*ps[i])), d=xs.map(x=>x-mu), t=d.map((v,i)=>v*v*ps[i]), V=sum(t);
-  return {t:o.t,lines:[B.line(`Var(X) = Σ(<span class="g">x</span> − <span class="r">μ</span>)${sq2} · P(x) <span class="r">&nbsp;⟶ μ = E(X) = ${num(mu)}</span>`),
-    B.tb(['x','x − μ',`(x − μ)${sq2}`,'P(x)',`(x − μ)${sq2}·P(x)`],xs.map((x,i)=>[x,num(d[i]),num(d[i]*d[i]),ps[i],num(t[i])]),['','','','Σ =',num(V)]),
+/* discrete: Var(X), bracket method */
+function gVarX(xs,ps,o={}){ const mu=sum(xs.map((x,i)=>x*ps[i])), V=sum(xs.map((x,i)=>(x-mu)**2*ps[i])), M=num(mu);
+  return {t:o.t,lines:[B.line(`Var(X) = Σ(<span class="g">x</span> − <span class="r">μ</span>)${sq2} · P(x)`),B.dec([['x',xs.join(', ')],['μ = E(X)',M],['P(x)',ps.join(', ')]]),
+    B.line(`Var(X) = ${xs.map((x,i)=>`<span class="nw">(${x} − ${M})${sq2}(${ps[i]})</span>`).join(' + ')}`),
     B.line(`Var(X) = <b>${num(V)}</b>`,'ans')],
-    calc:[xs.map((x,i)=>`(${x}−${num(mu)})²×${ps[i]}`).join('+'),lcd(V)]}; }
+    calc:[xs.map((x,i)=>`(${x}−${M})²×${ps[i]}`).join('+'),lcd(V)]}; }
 const board=(groups)=>B.make(groups,HOW);
 const stepsNH=a=>`<div class="mg">${a.map(([l,t])=>`<div${l==='Answer'?' class="fin"':''}><span>${l}</span><span>${t}</span></div>`).join('')}</div>`;
 
@@ -134,7 +134,7 @@ const SHUTTLE=[12,8,24,9,6,16,8,14,11];
 const BIG2={type:'Scenario',q:`<b>The campus shuttle.</b> Nine students record how many minutes they waited for the shuttle this morning: <b>12, 8, 24, 9, 6, 16, 8, 14, 11</b>.
   <ol class="parts" type="a"><li>Find the mean.</li><li>Sort the data and find the median.</li><li>Find the mode.</li><li>Find the range, Q1, Q3 and IQR.</li><li>Use the fences Q1 − 1.5 × IQR and Q3 + 1.5 × IQR. Is 24 an outlier?</li><li>Find the sample variance s² and the standard deviation s.</li><li>Find the CV.</li><li>Compare the mean and the median. Which way is the data skewed? Which centre would you report?</li></ol>`,
   hint:B.make([gMean(SHUTTLE,{t:'(a)',unit:'minutes'})])+stepsNH([['(b)','Sorted: 6, 8, 8, 9, <b>11</b>, 12, 14, 16, 24 → position (9 + 1) ÷ 2 = 5 → median = <b>11</b>.'],['(c)','8 appears twice → mode = <b>8</b>.'],['(d)','Range = 24 − 6 = <b>18</b>. Lower half 6, 8, 8, 9 → Q1 = (8 + 8) ÷ 2 = <b>8</b>. Upper half 12, 14, 16, 24 → Q3 = (14 + 16) ÷ 2 = <b>15</b>. IQR = <b>7</b>.'],['(e)','8 − 10.5 = −2.5 and 15 + 10.5 = <b>25.5</b>. 24 is inside the fences → <b>not an outlier</b>.']])
-   +B.make([gVar([6,8,8,9,11,12,14,16,24],{t:'(f) Variance'}),gSD(30.25,{t:'(f) Standard deviation'}),gCV(5.5,12,{t:'(g)'})])
+   +B.make([gVar(SHUTTLE,{t:'(f) Variance'}),gSD(30.25,{t:'(f) Standard deviation'}),gCV(5.5,12,{t:'(g)'})])
    +steps([['Answer','(h) Mean 12 &gt; median 11 → the long wait of 24 pulls the mean to the <b>right</b>: <b>right-skewed</b>. Report the <b>median</b>.']])};
 
 /* ---------------- Part 3 · Probability: rules, trees, sample space ---------------- */

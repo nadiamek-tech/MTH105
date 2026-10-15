@@ -14,7 +14,7 @@
 .bd-w{min-width:0;overflow-x:auto}
 .bd-l{margin:.3em 0}
 .bd-l.ans b{color:var(--bi);border-bottom:3px solid var(--br);padding:0 .1em}
-.bd b{font-weight:700}
+.bd b{font-weight:700}.bd .nw{white-space:nowrap}
 .bd .g{color:var(--bg2)}.bd .r{color:var(--br)}
 .bfx{display:flex;align-items:center;gap:.35em;margin:.35em 0;white-space:nowrap}
 .bfr{display:inline-flex;flex-direction:column;align-items:stretch;vertical-align:middle;margin:0 .1em}
