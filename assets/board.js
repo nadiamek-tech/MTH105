@@ -2,7 +2,7 @@
    that shows the exact entry (brackets included) and the result.
    Board.make(groups, foot) → html. A group = {t:'(a)', lines:[html…], calc:[entry, result]}.
    Line helpers: Board.line(html,'ans'), Board.fr(lhs, num, den, {n, d, after, plain}), Board.frac(n, d),
-   Board.dec([[symbol, value]…]), Board.tb(head, rows, foot). Colours: green = top of the fraction, red = bottom. */
+   Board.dec([[symbol, value]…]), Board.tb(head, rows, foot). Colours: green = top of the fraction, red = bottom, purple = brackets, orange = + and Σ. */
 (function(){
   const css=`
 @font-face{font-family:BoardHand;src:url(assets/fonts/patrick-hand-latin-400-normal.woff2) format('woff2');font-display:swap}
@@ -15,7 +15,7 @@
 .bd-l{margin:.3em 0}
 .bd-l.ans b{color:var(--bi);border-bottom:3px solid var(--br);padding:0 .1em}
 .bd b{font-weight:700}.bd .nw{white-space:nowrap}
-.bd .g{color:var(--bg2)}.bd .r{color:var(--br)}
+.bd .nm{font-size:.78em;color:#5b6b8c}.bd .kb{color:#8e24aa;font-weight:700}.bd .ks{color:#e8590c;font-weight:700}.bd .g{color:var(--bg2)}.bd .r{color:var(--br)}
 .bfx{display:flex;align-items:center;gap:.35em;margin:.35em 0;white-space:nowrap}
 .bfr{display:inline-flex;flex-direction:column;align-items:stretch;vertical-align:middle;margin:0 .1em}
 .bfr>span{text-align:center;padding:0 .25em;line-height:1.35}
@@ -55,6 +55,8 @@
       s+=`<rect x="${x}" y="${y}" width="33" height="18" rx="5" fill="${eq?'#c62828':fn?'#4a505b':'#e8e8e4'}"/><text x="${x+16.5}" y="${y+13}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${k.length>2?8.5:11}" font-weight="700" fill="${eq||fn?'#fff':'#20232a'}">${k}</text>`; }));
     return s+'</svg>';
   }
-  const make=(groups,foot)=>`<div class="bd">${groups.map(g=>`<div class="bd-g${g.calc?'':' nocalc'}">${g.t?`<div class="bd-t">${g.t}</div>`:''}<div class="bd-w">${g.lines.join('')}</div>${g.calc?`<div class="bcalc"><span>Calculator</span>${calc(g.calc[0],g.calc[1])}</div>`:''}</div>`).join('')}</div>${foot?`<p class="bd-foot">${foot}</p>`:''}`;
+  /* one colour for brackets, one for + and Σ (the adding signs), everywhere on the board */
+  const tint=h=>h.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(/[()[\]]/g,c=>`<span class="kb">${c}</span>`).replace(/[+Σ]/g,c=>`<span class="ks">${c}</span>`)+'<');
+  const make=(groups,foot)=>`<div class="bd">${groups.map(g=>`<div class="bd-g${g.calc?'':' nocalc'}">${g.t?`<div class="bd-t">${g.t}</div>`:''}<div class="bd-w">${tint(g.lines.join(''))}</div>${g.calc?`<div class="bcalc"><span>Calculator</span>${calc(g.calc[0],g.calc[1])}</div>`:''}</div>`).join('')}</div>${foot?`<p class="bd-foot">${foot}</p>`:''}`;
   window.Board={make,line,fr,frac,dec,tb,calc};
 })();

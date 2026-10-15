@@ -7,7 +7,9 @@ const steps=a=>`<div class="mg">${a.map(([l,t])=>`<div${l==='Answer'?' class="fi
 const tbl=(h,rows)=>`<table class="tbl" style="margin:6px 0"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</table>`;
 function bars(vals,labels,xl){ const Wd=440,Hd=170,bw=(Wd-60)/vals.length; return `<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Bar chart">${[0,2,4,6,8].map(g=>`<line x1="34" x2="${Wd-10}" y1="${140-g*14}" y2="${140-g*14}" stroke="var(--line)"/><text x="28" y="${144-g*14}" text-anchor="end" ${MONO} font-size="10" fill="var(--muted)">${g}</text>`).join('')}${vals.map((v,i)=>`<rect x="${44+i*bw+bw*.2}" y="${140-v*14}" width="${bw*.6}" height="${v*14}" fill="var(--wk)" opacity=".75"/><text x="${44+i*bw+bw/2}" y="156" text-anchor="middle" ${MONO} font-size="11" fill="var(--ink)">${labels[i]}</text>`).join('')}<line x1="34" x2="${Wd-10}" y1="140" y2="140" stroke="var(--ink)"/><text x="${Wd/2}" y="${Hd-1}" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${xl}</text></svg>`; }
 function ogive(b,c,xl){ const Wd=440,Hd=190,L=34,R=12,T=10,B=34,n=c[c.length-1],X=i=>L+(Wd-L-R)*i/(b.length-1),Y=v=>T+(Hd-T-B)*(1-v/n); return `<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Ogive">${[0,10,20,30,40].map(g=>`<line x1="${L}" x2="${Wd-R}" y1="${Y(g)}" y2="${Y(g)}" stroke="var(--line)"/><text x="${L-5}" y="${Y(g)+4}" text-anchor="end" ${MONO} font-size="10" fill="var(--muted)">${g}</text>`).join('')}<polyline points="${c.map((v,i)=>`${X(i)},${Y(v)}`).join(' ')}" fill="none" stroke="var(--c3)" stroke-width="2.4"/>${c.map((v,i)=>`<circle cx="${X(i)}" cy="${Y(v)}" r="4" fill="var(--c3)"/><text x="${X(i)}" y="${Y(v)-8}" text-anchor="middle" ${MONO} font-size="10" fill="var(--ink)">${v}</text><text x="${X(i)}" y="${Hd-B+16}" text-anchor="middle" ${MONO} font-size="10" fill="var(--muted)">${b[i]}</text>`).join('')}<text x="${(L+Wd-R)/2}" y="${Hd-3}" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${xl}</text></svg>`; }
-function venn(a,ab,b,ne,A,Bn){ return `<svg viewBox="0 0 300 150" style="max-width:300px" role="img" aria-label="Venn diagram"><rect x="2" y="2" width="296" height="146" rx="8" fill="none" stroke="var(--ink)"/><circle cx="118" cy="78" r="56" fill="var(--wk-soft)" stroke="var(--wk)" stroke-width="2"/><circle cx="182" cy="78" r="56" fill="rgba(31,99,181,.08)" stroke="var(--c2)" stroke-width="2"/><text x="78" y="20" ${FT} font-weight="700" font-size="12" fill="var(--wk)">${A}</text><text x="198" y="20" ${FT} font-weight="700" font-size="12" fill="var(--c2)">${Bn}</text>${[[92,a],[150,ab],[208,b],[272,ne]].map(([x,v],i)=>`<text x="${x}" y="${i===3?136:84}" text-anchor="middle" ${FT} font-weight="800" font-size="16" fill="var(--ink)">${v}</text>`).join('')}</svg>`; }
+function venn(a,ab,b,ne,A,Bn){ return `<svg viewBox="0 0 300 150" style="max-width:300px" role="img" aria-label="Diagram"><rect x="2" y="2" width="296" height="146" rx="8" fill="none" stroke="var(--ink)"/><circle cx="118" cy="78" r="56" fill="var(--wk-soft)" stroke="var(--wk)" stroke-width="2"/><circle cx="182" cy="78" r="56" fill="rgba(31,99,181,.08)" stroke="var(--c2)" stroke-width="2"/><text x="78" y="20" ${FT} font-weight="700" font-size="12" fill="var(--wk)">${A}</text><text x="198" y="20" ${FT} font-weight="700" font-size="12" fill="var(--c2)">${Bn}</text>${[[92,a],[150,ab],[208,b],[272,ne]].map(([x,v],i)=>`<text x="${x}" y="${i===3?136:84}" text-anchor="middle" ${FT} font-weight="800" font-size="16" fill="var(--ink)">${v}</text>`).join('')}</svg>`; }
+const blank=(A,Bn)=>venn('?','?','?','?',A,Bn);
+const fill=a=>`<div class="fillin">${a.map(x=>`<span>${x} = ______</span>`).join('')}</div>`;
 const box=(f,lo,hi,st,xl,out)=>ST.boxSVG(f,lo,hi,st,{labels:true,out:out||[],xlabel:xl});
 
 /* ---------- Board answers: written like the professor's board, numbers computed here so they always match ---------- */
@@ -24,19 +26,22 @@ function gMean(xs,o={}){ const n=xs.length, S=sum(xs), m=S/n;
     B.fr(XBb,xs.map(num).join(' + '),String(n),{plain:true}),
     B.line(`${XBb} = ${B.frac(num(S),String(n))} = <b>${num(m)}</b>${o.unit?' '+o.unit:''}`,'ans')],
     calc:[`(${xs.map(num).join('+')})÷${n}`,lcd(m)]}; }
+/* names used in class: Var = s², SD = s, CV */
+const NM=(h)=>B.line(`<span class="nm">${h}</span>`);
 /* sample variance, bracket method: every (x − x̄)² in brackets, same entry on the calculator */
 function gVar(xs,o={}){ const n=xs.length, m=sum(xs)/n, S=sum(xs.map(x=>(x-m)**2)), M=num(m);
-  return {t:o.t,lines:[B.fr(`s${sq2}`,`Σ(x − ${XBb})${sq2}`,'n − 1',{n:`${XBb} = ${M}`,d:`n = ${n}`}),
-    B.line(`s${sq2} = [ ${xs.map(x=>`<span class="nw">(${num(x)} − ${M})${sq2}</span>`).join(' + ')} ] ÷ <span class="nw">(${n} − 1)</span>`),
-    B.line(`s${sq2} = ${B.frac(num(S),String(n-1))} = <b>${num(S/(n-1))}</b>`,'ans')],
+  return {t:o.t,lines:[NM(`Var = s${sq2} (s${sq2} is the maths symbol, Var is what we use)`),
+    B.fr('Var',`Σ(x − ${XBb})${sq2}`,'n − 1',{n:`${XBb} = ${M}`,d:`n = ${n}`}),
+    B.line(`Var = [ ${xs.map(x=>`<span class="nw">(${num(x)} − ${M})${sq2}</span>`).join(' + ')} ] ÷ <span class="nw">(${n} − 1)</span>`),
+    B.line(`Var = ${B.frac(num(S),String(n-1))} = <b>${num(S/(n-1))}</b>`,'ans')],
     calc:[`(${xs.map(x=>`(${num(x)}−${M})²`).join('+')})÷(${n}−1)`,lcd(S/(n-1))]}; }
 /* standard deviation from a variance */
-function gSD(v,o={}){ const s=Math.sqrt(v), lhs=o.lhs||'s', inner=o.inner||`s${sq2}`, exact=Number.isInteger(s);
-  return {t:o.t,lines:[B.line(`${lhs} = √<span class="g">${inner}</span> <span class="g">&nbsp;⟶ ${num(v)}</span>`),B.line(`${lhs} = √${num(v)} ${exact?'=':'≈'} <b>${exact?num(s):r2(s)}</b>`,'ans')],calc:[`√(${num(v)})`,lcd(s)]}; }
+function gSD(v,o={}){ const s=Math.sqrt(v), inner=o.inner||'Var', exact=Number.isInteger(s);
+  return {t:o.t,lines:(o.inner?[]:[NM('SD = s (s is the maths symbol, SD is what we use)')]).concat([B.line(`SD = √<span class="g">${inner}</span> <span class="g">&nbsp;⟶ ${num(v)}</span>`),B.line(`SD = √${num(v)} ${exact?'=':'≈'} <b>${exact?num(s):r2(s)}</b>`,'ans')]),calc:[`√(${num(v)})`,lcd(s)]}; }
 /* coefficient of variation */
-function gCV(s,m,o={}){ const cv=s/m*100, sTxt=o.sTxt||r2(s);
-  return {t:o.t,lines:[B.fr(o.lhs||'CV','s',XBb,{n:sTxt,d:num(m),after:'× 100%'}),
-    B.line(`${o.lhs||'CV'} = ${B.frac(sTxt,num(m))} × 100% ${Number.isInteger(cv)?'=':'≈'} <b>${Number.isInteger(cv)?num(cv):r1(cv)}%</b>`,'ans')],
+function gCV(s,m,o={}){ const cv=s/m*100, sTxt=o.sTxt||r2(s), L=o.lhs||'CV';
+  return {t:o.t,lines:[B.fr(L,'SD',XBb,{n:sTxt,d:num(m),after:'× 100%'}),
+    B.line(`${L} = ${B.frac(sTxt,num(m))} × 100% ${Number.isInteger(cv)?'=':'≈'} <b>${Number.isInteger(cv)?num(cv):r1(cv)}%</b>`,'ans')],
     calc:[`${o.entry||num(s)}÷${num(m)}×100`,lcd(cv)]}; }
 /* discrete: E(X) */
 function gE(xs,ps,o={}){ const e=sum(xs.map((x,i)=>x*ps[i]));
@@ -86,8 +91,6 @@ const P1S=[
   hint:steps([['Peak','Highest point: 80–90, on the <b>right</b>.'],['Tail','From the peak the line drops <b>suddenly</b> on the right. On the left it climbs <b>slowly</b> (1, 2, 4, 8): the long tail is on the <b>left</b>.'],['Answer','<b>Left-skewed</b> (negative): <b>mean &lt; median</b>.']])},
  {type:'Histogram',q:`Heights of 22 students (cm):${G(ST.hist([2,5,8,5,2],['150','155','160','165','170','175'],{ymax:9,xlabel:'Height (cm)'}))}What is the shape?`,
   hint:steps([['Peak','Highest bar: 160–165, in the <b>middle</b>.'],['Tail','Both sides go down the same way: 2, 5 | 8 | 5, 2. No long tail.'],['Answer','<b>Symmetric</b>: mean ≈ median.']])},
- {type:'Boxplot',q:`Delivery times (minutes):${G(box([10,14,16,18,34],5,35,5,'Minutes'))}Is the data skewed? Which way?`,
-  hint:steps([['Read','Min 10 · Q1 14 · Median 16 · Q3 18 · Max 34'],['Whiskers','Left whisker 14 − 10 = 4. Right whisker 34 − 18 = <b>16</b>: much longer on the <b>right</b>.'],['Answer','The long whisker is the tail: <b>right-skewed</b> (positive).']])},
  {type:'Numbers',q:'A class has mean score 72 and median score 78. Is the distribution symmetric, right-skewed or left-skewed?',
   hint:steps([['Compare','Mean 72 &lt; median 78.'],['Why','A few very low scores pull the mean down, toward the <b>left</b>.'],['Answer','<b>Left-skewed</b> (negative).']])},
  {type:'Words',q:'Without a graph, which way is each skewed? (a) Monthly salaries in a large company: most staff earn a normal salary and a few managers earn a lot. (b) An easy quiz: most students score high and a few score very low.',
@@ -102,7 +105,15 @@ const P1B=[
  {type:'Read an ogive',q:`Commute times of students:${G(ogive([0,10,20,30,40,50],[0,6,18,30,36,40],'Minutes · cumulative frequency'))}How many students? How many take less than 30 min? What % take more than 40 min? How many take 10–20 min?`,
   hint:steps([['Read','Last point = <b>40</b> students.'],['Less than 30','Cumulative at 30 = <b>30</b> students (75%).'],['More than 40','40 − 36 = 4 → 4 ÷ 40 = <b>10%</b>.'],['Answer','10–20 min: 18 − 6 = <b>12</b> students.']])},
  {type:'Compare boxplots',q:`Quiz scores of two sections:<p class="mono" style="margin:4px 0">Section A</p>${box([40,55,65,75,90],35,95,5,'')}<p class="mono" style="margin:4px 0">Section B</p>${G(box([50,60,70,72,85],35,95,5,'Score'))}Which section has the higher median? Which has more spread (range and IQR)?`,
-  hint:steps([['Read A','40, 55, 65, 75, 90'],['Read B','50, 60, 70, 72, 85'],['Median','A = 65, B = 70 → <b>B</b> is higher.'],['Answer','Range: A = 50, B = 35. IQR: A = 20, B = 12. <b>A</b> has more spread.']])}];
+  hint:steps([['Read A','40, 55, 65, 75, 90'],['Read B','50, 60, 70, 72, 85'],['Median','A = 65, B = 70 → <b>B</b> is higher.'],['Answer','Range: A = 50, B = 35. IQR: A = 20, B = 12. <b>A</b> has more spread.']])},
+ {type:'Read a polygon',q:`Ages of 40 marathon runners. The points are at the class midpoints.${G(ST.hist([6,14,11,7,2],['19.5','29.5','39.5','49.5','59.5','69.5'],{pad:true,poly:true,hideBars:true,ymax:15,xlabel:'Age (years)'}))}How many runners are in each class? Which is the modal class? How many are 50 or older? What % are under 40?`,
+  hint:steps([['Read','20–29: <b>6</b> · 30–39: <b>14</b> · 40–49: <b>11</b> · 50–59: <b>7</b> · 60–69: <b>2</b> (total 40)'],['Modal class','Highest point: <b>30–39</b>.'],['50 or older','7 + 2 = <b>9</b> runners.'],['Answer','Under 40: 6 + 14 = 20 → 20 ÷ 40 = <b>50%</b>.']])},
+ {type:'Read a boxplot',q:`Quiz scores of a class. The dot is a single student.${G(box([12,18,22,26,30],10,45,5,'Score',[42]))}Find Q1, the median, Q3 and the IQR. Find the upper fence Q3 + 1.5 × IQR. Is 42 an outlier? What % of students scored between 18 and 26?`,
+  hint:steps([['Read','Q1 <b>18</b> · Median <b>22</b> · Q3 <b>26</b>'],['IQR','26 − 18 = <b>8</b>'],['Fence','26 + 1.5 × 8 = 26 + 12 = <b>38</b>. 42 &gt; 38 → <b>42 is an outlier</b> (that is why it is drawn as a dot).'],['Answer','Between Q1 and Q3 (the box) = <b>50%</b> of the students.']])},
+ {type:'Read a histogram',q:`Weekly study hours of 30 students:${G(ST.hist([5,9,8,6,2],['0','4','8','12','16','20'],{ymax:10,xlabel:'Hours per week'}))}What is the class width? How many students study 8 hours or more? What % study less than 4 hours? Which class contains the median?`,
+  hint:steps([['Width','4 − 0 = <b>4</b> hours.'],['8 or more','8 + 6 + 2 = <b>16</b> students.'],['Less than 4','5 ÷ 30 ≈ <b>16.7%</b>.'],['Answer','n = 30 → median between the 15th and 16th values. Cumulative 5, 14, <b>22</b> → class <b>8–12</b>.']])},
+ {type:'Read a bar chart',q:`How 25 students come to campus:${G(bars([7,8,6,4],['Metro','Car','Bus','Walk'],'Transport'))}What is the mode? What % use the Metro? What % take the bus or walk? Can you find the mean?`,
+  hint:steps([['Read','Metro 7 · Car 8 · Bus 6 · Walk 4 → 25'],['Mode','Tallest bar: <b>Car</b>.'],['Percent','Metro 7 ÷ 25 = <b>28%</b>. Bus or walk (6 + 4) ÷ 25 = <b>40%</b>.'],['Answer','<b>No mean</b>: transport is categorical (words, not numbers). Only the mode makes sense.']])}];
 const BIG1={type:'Scenario',q:`<b>A bookshop</b> records how long 40 customers stay in the shop. Each class means “from … up to, not including …” (0–10 = 0 to under 10 minutes).${G(ST.hist([4,12,10,7,4,3],['0','10','20','30','40','50','60'],{ymax:13,xlabel:'Minutes in the shop'}))}
   <ol class="parts" type="a"><li>Write the frequency of each class and check that n = 40.</li><li>What is the modal class?</li><li>Which class contains the median?</li><li>How many customers stayed less than 30 minutes? What percentage is that?</li><li>What percentage stayed 40 minutes or more?</li><li>Describe the shape. Where is the long tail: left or right? Name the skew.</li><li>The mean is 26 minutes. Is the median smaller or larger than 26? Which centre best describes a typical customer?</li></ol>`,
   hint:steps([['(a)','4, 12, 10, 7, 4, 3 → 4 + 12 + 10 + 7 + 4 + 3 = <b>40</b>.'],['(b)','Tallest bar: <b>10–20</b> minutes.'],['(c)','n = 40 → the median is between the 20th and 21st values. Cumulative: 4, 16, <b>26</b> → both are in <b>20–30</b>.'],['(d)','4 + 12 + 10 = <b>26</b> customers → 26 ÷ 40 = <b>65%</b>.'],['(e)','4 + 3 = 7 → 7 ÷ 40 = <b>17.5%</b>.'],['(f)','Peak at 10–20 on the left. The bars go down slowly to 60 on the right: long tail on the <b>RIGHT</b> → <b>right-skewed</b> (positive).'],['Answer','(g) Right-skewed → mean &gt; median, so the median is <b>smaller than 26</b>. The <b>median</b> is the better typical value, because the few long visits pull the mean up.']])};
@@ -122,19 +133,19 @@ const P2A=[
 const P2B=[
  {type:'Range and IQR',q:'Data: 12, 15, 17, 18, 20, 22, 25, 28, 31. Find the range, Q1, Q3 and IQR.',
   hint:MG({f:'Range = max − min · IQR = Q3 − Q1',d:'n = 9 → median is the 5th value (20); leave it out of both halves',s:'Lower half 12, 15, 17, 18 → Q1 = (15 + 17) ÷ 2 · Upper half 22, 25, 28, 31 → Q3 = (25 + 28) ÷ 2',a:'Range = 31 − 12 = <b>19</b> · Q1 = <b>16</b> · Q3 = <b>26.5</b> · IQR = <b>10.5</b>'})},
- {type:'Variance and SD',q:'Data: 4, 7, 8, 9, 12. Find the sample variance and standard deviation.',
-  hint:board([gMean([4,7,8,9,12],{t:'Mean first'}),gVar([4,7,8,9,12],{t:'Variance'}),gSD(8.5,{t:'Standard deviation'})])},
- {type:'Variance, SD, CV',q:'Data: 10, 12, 14, 16, 18. Find s², s and CV.',
-  hint:board([gMean([10,12,14,16,18],{t:'Mean first'}),gVar([10,12,14,16,18],{t:'Variance'}),gSD(10,{t:'Standard deviation'}),gCV(Math.sqrt(10),14,{t:'Coefficient of variation',entry:'√(10)'})])},
+ {type:'Var and SD',q:'Data: 4, 7, 8, 9, 12. Find the variance (Var) and the standard deviation (SD).',
+  hint:board([gMean([4,7,8,9,12],{t:'Mean first'}),gVar([4,7,8,9,12],{t:'Variance (Var)'}),gSD(8.5,{t:'Standard deviation (SD)'})])},
+ {type:'Var, SD, CV',q:'Data: 10, 12, 14, 16, 18. Find Var, SD and CV.',
+  hint:board([gMean([10,12,14,16,18],{t:'Mean first'}),gVar([10,12,14,16,18],{t:'Variance (Var)'}),gSD(10,{t:'Standard deviation (SD)'}),gCV(Math.sqrt(10),14,{t:'Coefficient of variation (CV)',entry:'√(10)'})])},
  {type:'Compare with CV',q:'Exam A: mean 60, s = 12. Exam B: mean 75, s = 9. Which exam has more consistent results?',
   hint:board([gCV(12,60,{t:'Exam A',lhs:'CV<sub>A</sub>'}),gCV(9,75,{t:'Exam B',lhs:'CV<sub>B</sub>'}),{lines:[B.line('Smaller CV = more consistent ⟶ <b>Exam B</b>','ans')]}])},
- {type:'Full summary',q:'Daily maximum temperature (°C) for 5 days: 21, 23, 25, 25, 26. Find the range, IQR, s², s and CV.',
-  hint:stepsNH([['Range','26 − 21 = <b>5</b>'],['IQR','Median 25. Halves 21, 23 and 25, 26 → Q1 = 22, Q3 = 25.5 → IQR = <b>3.5</b>']])+board([gMean([21,23,25,25,26],{t:'Mean first'}),gVar([21,23,25,25,26],{t:'Variance'}),gSD(4,{t:'Standard deviation'}),gCV(2,24,{t:'Coefficient of variation'})])}];
+ {type:'Full summary',q:'Daily maximum temperature (°C) for 5 days: 21, 23, 25, 25, 26. Find the range, IQR, Var, SD and CV.',
+  hint:stepsNH([['Range','26 − 21 = <b>5</b>'],['IQR','Median 25. Halves 21, 23 and 25, 26 → Q1 = 22, Q3 = 25.5 → IQR = <b>3.5</b>']])+board([gMean([21,23,25,25,26],{t:'Mean first'}),gVar([21,23,25,25,26],{t:'Variance (Var)'}),gSD(4,{t:'Standard deviation (SD)'}),gCV(2,24,{t:'Coefficient of variation (CV)'})])}];
 const SHUTTLE=[12,8,24,9,6,16,8,14,11];
 const BIG2={type:'Scenario',q:`<b>The campus shuttle.</b> Nine students record how many minutes they waited for the shuttle this morning: <b>12, 8, 24, 9, 6, 16, 8, 14, 11</b>.
-  <ol class="parts" type="a"><li>Find the mean.</li><li>Sort the data and find the median.</li><li>Find the mode.</li><li>Find the range, Q1, Q3 and IQR.</li><li>Use the fences Q1 − 1.5 × IQR and Q3 + 1.5 × IQR. Is 24 an outlier?</li><li>Find the sample variance s² and the standard deviation s.</li><li>Find the CV.</li><li>Compare the mean and the median. Which way is the data skewed? Which centre would you report?</li></ol>`,
+  <ol class="parts" type="a"><li>Find the mean.</li><li>Sort the data and find the median.</li><li>Find the mode.</li><li>Find the range, Q1, Q3 and IQR.</li><li>Use the fences Q1 − 1.5 × IQR and Q3 + 1.5 × IQR. Is 24 an outlier?</li><li>Find the variance (Var = s²) and the standard deviation (SD = s).</li><li>Find the CV.</li><li>Compare the mean and the median. Which way is the data skewed? Which centre would you report?</li></ol>`,
   hint:B.make([gMean(SHUTTLE,{t:'(a)',unit:'minutes'})])+stepsNH([['(b)','Sorted: 6, 8, 8, 9, <b>11</b>, 12, 14, 16, 24 → position (9 + 1) ÷ 2 = 5 → median = <b>11</b>.'],['(c)','8 appears twice → mode = <b>8</b>.'],['(d)','Range = 24 − 6 = <b>18</b>. Lower half 6, 8, 8, 9 → Q1 = (8 + 8) ÷ 2 = <b>8</b>. Upper half 12, 14, 16, 24 → Q3 = (14 + 16) ÷ 2 = <b>15</b>. IQR = <b>7</b>.'],['(e)','8 − 10.5 = −2.5 and 15 + 10.5 = <b>25.5</b>. 24 is inside the fences → <b>not an outlier</b>.']])
-   +B.make([gVar(SHUTTLE,{t:'(f) Variance'}),gSD(30.25,{t:'(f) Standard deviation'}),gCV(5.5,12,{t:'(g)'})])
+   +B.make([gVar(SHUTTLE,{t:'(f) Variance (Var)'}),gSD(30.25,{t:'(f) Standard deviation (SD)'}),gCV(5.5,12,{t:'(g)'})])
    +steps([['Answer','(h) Mean 12 &gt; median 11 → the long wait of 24 pulls the mean to the <b>right</b>: <b>right-skewed</b>. Report the <b>median</b>.']])};
 
 /* ---------------- Part 3 · Probability: rules, trees, sample space ---------------- */
@@ -148,14 +159,16 @@ const P3=[
  {q:'P(the bus is late) = 0.15. P(the bus is not late)?',hint:MG({r:'Key word <b>not</b> → complement',f:'P(not A) = 1 − P(A)',s:'1 − 0.15',a:'<b>0.85</b>'})},
  {q:'Roll a fair die. P(1 or 6)?',hint:MG({r:'Key word <b>or</b>; 1 and 6 cannot happen together → addition, no overlap',f:'P(A or B) = P(A) + P(B)',s:'1/6 + 1/6',a:'2/6 ≈ <b>0.333</b>'})},
  {q:'Toss a fair coin twice. P(heads and heads)?',hint:MG({r:'Key word <b>and</b>, independent tosses → multiplication',f:'P(A and B) = P(A) × P(B)',d:'Fair coin → each side 1/2',s:'1/2 × 1/2',k:'0 . 5 × 0 . 5 =',a:'<b>1/4 = 0.25</b>'})},
- {q:'Of 50 people, 30 drink coffee, 20 drink tea and 10 drink both. Draw the Venn diagram. P(coffee or tea)?',hint:MG({r:'Key word <b>or</b> and BOTH is given → addition, subtract BOTH once',f:'P(C or T) = P(C) + P(T) − P(C and T)',s:'30/50 + 20/50 − 10/50 = 40/50',a:venn(20,10,10,10,'Coffee','Tea')+'P(C or T) = <b>0.8</b> · neither = 10/50 = 0.2'})},
+ {q:`Of 50 people, 30 drink coffee, 20 drink tea and 10 drink both. Fill the numbers in the diagram, then find P(coffee or tea).${blank('Coffee','Tea')}`,hint:MG({r:'Key word <b>or</b> and BOTH is given → addition, subtract BOTH once',d:'Fill from the middle: both 10 · coffee only 30 − 10 = 20 · tea only 20 − 10 = 10 · outside 50 − 40 = 10',f:'P(C or T) = P(C) + P(T) − P(C and T)',s:'30/50 + 20/50 − 10/50 = 40/50',a:venn(20,10,10,10,'Coffee','Tea')+'P(C or T) = <b>0.8</b> · neither = 10/50 = 0.2'})},
+ {q:`40 students were asked if they play football and basketball. Read the numbers from the diagram and fill in below.${venn(12,8,10,10,'Football','Basketball')}${fill(['P(Football)','P(Basketball)','P(Football and Basketball)','P(Football or Basketball)','P(neither)'])}`,hint:MG({r:'Read the diagram: each circle = everything inside it, the middle = BOTH',d:'Football = 12 + 8 = 20 · Basketball = 8 + 10 = 18 · both = 8 · outside = 10',s:'P(F) = 20/40 · P(B) = 18/40 · P(F and B) = 8/40 · P(F or B) = (12 + 8 + 10)/40 · P(neither) = 10/40',a:'P(F) = <b>0.5</b> · P(B) = <b>0.45</b> · P(F and B) = <b>0.2</b> · P(F or B) = <b>0.75</b> (check: 0.5 + 0.45 − 0.2) · P(neither) = <b>0.25</b>'})},
  {q:'A spinner has 8 equal sections numbered 1 to 8. P(a number greater than 5)?',hint:MG({r:'Count the outcomes → <b>simple</b>',f:'P(E) = favourable ÷ total',d:'Greater than 5: {6, 7, 8} → 3 outcomes',s:'3 ÷ 8',a:'<b>0.375</b>'})},
  {q:'Same spinner (1 to 8). P(not an 8)?',hint:MG({r:'Key word <b>not</b> → complement',f:'P(not A) = 1 − P(A)',s:'1 − 1/8',k:'1 − 1 ÷ 8 =',a:'<b>7/8 = 0.875</b>'})},
  {q:'A student picks one elective: Arabic 0.35, French 0.25, Chinese 0.40. P(Arabic or Chinese)?',hint:MG({r:'Key word <b>or</b>; only one elective → no overlap',f:'P(A or B) = P(A) + P(B)',s:'0.35 + 0.40',a:'<b>0.75</b>'})},
  {q:'Toss a fair coin and spin a spinner with two equal halves (red, blue). P(tails and blue)?',hint:MG({r:'Key word <b>and</b>, independent → multiplication',f:'P(A and B) = P(A) × P(B)',s:'1/2 × 1/2',a:'<b>0.25</b>'})},
- {q:'Of 80 students, 45 use Instagram, 35 use TikTok and 20 use both. Draw the Venn diagram. P(Instagram or TikTok)? P(neither)?',hint:MG({r:'<b>or</b> with BOTH → addition minus BOTH; <b>neither</b> → complement',f:'P(I or T) = P(I) + P(T) − P(I and T)',s:'45/80 + 35/80 − 20/80 = 60/80',a:venn(25,20,15,20,'Instagram','TikTok')+'P(I or T) = <b>0.75</b> · P(neither) = 1 − 0.75 = <b>0.25</b>'})},
+ {q:`Of 80 students, 45 use Instagram, 35 use TikTok and 20 use both. Fill the numbers in the diagram. P(Instagram or TikTok)? P(neither)?${blank('Instagram','TikTok')}`,hint:MG({r:'<b>or</b> with BOTH → addition minus BOTH; <b>neither</b> → complement',f:'P(I or T) = P(I) + P(T) − P(I and T)',s:'45/80 + 35/80 − 20/80 = 60/80',a:venn(25,20,15,20,'Instagram','TikTok')+'P(I or T) = <b>0.75</b> · P(neither) = 1 − 0.75 = <b>0.25</b>'})},
  {q:'Toss a fair coin three times. P(heads, heads, heads)?',hint:MG({r:'Three independent tosses, all must happen → multiplication',f:'P(A and B and C) = P(A) × P(B) × P(C)',s:'1/2 × 1/2 × 1/2',k:'0 . 5 ^ 3 =',a:'<b>1/8 = 0.125</b>'})},
- {q:'P(A) = 0.5, P(B) = 0.3, P(A and B) = 0.1. Find P(A or B) and P(neither). Show the Venn diagram.',hint:MG({r:'<b>or</b> with BOTH given, then <b>neither</b> = complement',f:'P(A or B) = P(A) + P(B) − P(A and B)',s:'0.5 + 0.3 − 0.1',a:venn('0.4','0.1','0.2','0.3','A','B')+'P(A or B) = <b>0.7</b> · P(neither) = <b>0.3</b>'})}];
+ {q:`P(A) = 0.5, P(B) = 0.3, P(A and B) = 0.1. Fill the probabilities in the diagram, then find P(A or B) and P(neither).${blank('A','B')}`,hint:MG({r:'<b>or</b> with BOTH given, then <b>neither</b> = complement',f:'P(A or B) = P(A) + P(B) − P(A and B)',s:'0.5 + 0.3 − 0.1',a:venn('0.4','0.1','0.2','0.3','A','B')+'P(A or B) = <b>0.7</b> · P(neither) = <b>0.3</b>'})},
+ {q:`Read the probabilities from the diagram and fill in below.${venn('0.3','0.15','0.25','0.3','A','B')}${fill(['P(A)','P(B)','P(A and B)','P(A or B)','P(not A)'])}`,hint:MG({r:'Read the diagram: a circle = everything inside it · <b>not</b> = 1 − P',d:'A = 0.3 + 0.15 · B = 0.15 + 0.25 · middle = A and B',s:'P(A or B) = 0.3 + 0.15 + 0.25 · P(not A) = 1 − 0.45',a:'P(A) = <b>0.45</b> · P(B) = <b>0.4</b> · P(A and B) = <b>0.15</b> · P(A or B) = <b>0.7</b> · P(not A) = <b>0.55</b>'})}];
 const P4=[
  {type:'Draw',q:'A student is chosen at random: Male or Female. Then a lab session is assigned at random: Morning or Evening. Draw the tree, list the sample space and find P(Female and Evening).',
   hint:steps([['Tree',ST.treeSVG([['Male','Female'],['Morning','Evening']],{hl:['Female, Evening']})],['Sample space','{(M, Mo), (M, Ev), (F, Mo), (F, Ev)} → 2 × 2 = <b>4</b> outcomes'],['Answer','AND → multiply along the path: 1/2 × 1/2 = <b>1/4</b>']])},
@@ -170,7 +183,7 @@ const P4=[
 const BIG3={type:'Scenario',q:`<b>The campus café meal deal.</b> A customer chooses at random a main (<b>Burger</b> or <b>Wrap</b>), then a drink (<b>Juice</b> or <b>Water</b>), then whether to add a dessert (<b>Yes</b> or <b>No</b>). Every choice is equally likely.
   <ol class="parts" type="a"><li>Draw the tree diagram.</li><li>List the sample space. How many outcomes are there?</li><li>P(Wrap and Juice and dessert)?</li><li>P(Juice)?</li><li>P(Burger or Water)?</li><li>P(no dessert)?</li><li>P(not the meal Burger, Juice, Yes)?</li></ol>
   Last week the café also counted 60 customers: 36 bought coffee, 24 bought cake and 15 bought both.
-  <ol class="parts" type="a" start="8"><li>Draw the Venn diagram.</li><li>P(coffee or cake)? P(neither)?</li><li>Are “coffee” and “cake” mutually exclusive? Why?</li><li>Two customers buy independently, and P(coffee) = 0.6 for each. P(both buy coffee)?</li></ol>`,
+  <ol class="parts" type="a" start="8"><li>Fill the numbers in the diagram below.${blank('Coffee','Cake')}</li><li>P(coffee or cake)? P(neither)?</li><li>Are “coffee” and “cake” mutually exclusive? Why?</li><li>Two customers buy independently, and P(coffee) = 0.6 for each. P(both buy coffee)?</li></ol>`,
   hint:steps([['(a)',ST.treeSVG([['Burger','Wrap'],['Juice','Water'],['Yes','No']],{hl:['Wrap, Juice, Yes']})],['(b)','2 × 2 × 2 = <b>8</b> outcomes, each 1/8: {(Burger, Juice, Yes), (Burger, Juice, No), (Burger, Water, Yes), (Burger, Water, No), (Wrap, Juice, Yes), (Wrap, Juice, No), (Wrap, Water, Yes), (Wrap, Water, No)}.'],['(c)','AND → multiply along one path: 1/2 × 1/2 × 1/2 = <b>1/8</b>.'],['(d)','Paths with Juice: 4 of 8 → <b>1/2</b>.'],['(e)','OR with overlap: P(Burger) + P(Water) − P(Burger and Water) = 1/2 + 1/2 − 1/4 = <b>3/4</b>. Check: 6 of the 8 paths.'],['(f)','NOT: 1 − P(dessert) = 1 − 1/2 = <b>1/2</b>.'],['(g)','NOT: 1 − 1/8 = <b>7/8</b>.'],['(h)',venn(21,15,9,15,'Coffee','Cake')+'Coffee only 36 − 15 = 21 · cake only 24 − 15 = 9 · neither 60 − 45 = 15'],['(i)','P(coffee or cake) = 36/60 + 24/60 − 15/60 = 45/60 = <b>0.75</b> · P(neither) = 1 − 0.75 = <b>0.25</b>.'],['(j)','<b>No</b>: 15 customers bought both, so the two events can happen together.'],['Answer','(k) AND, independent: 0.6 × 0.6 = <b>0.36</b>.']])};
 
 /* ---------------- Part 4 · Discrete distributions ---------------- */
@@ -181,20 +194,20 @@ const P5A=[
  {type:'Valid?',q:'x: 0, 1, 2, 3 with P(x): 0.25, 0.25, 0.25, 0.25. Valid?',hint:MG({f:'Valid if 0 ≤ P(x) ≤ 1 and ΣP(x) = 1',s:'0.25 × 4 = 1',a:'<b>Valid</b>.'})},
  {type:'Find k',q:'x: 0, 1, 2, 3 with P(x): 0.2, 0.4, k, 0.1. Find k.',hint:MG({f:'ΣP(x) = 1 → k = 1 − (others)',s:'k = 1 − (0.2 + 0.4 + 0.1)',k:'1 − ( 0 . 2 + 0 . 4 + 0 . 1 ) =',a:'<b>k = 0.3</b>'})},
  {type:'Find k',q:'x: 0, 1, 2 with P(x): k, 2k, 0.4. Find k.',hint:MG({f:'ΣP(x) = 1',s:'k + 2k + 0.4 = 1 → 3k = 0.6',k:'0 . 6 ÷ 3 =',a:'<b>k = 0.2</b> → P(0) = 0.2, P(1) = 0.4'})}];
-const SDX=v=>gSD(v,{t:'Standard deviation',lhs:'SD',inner:'Var(X)'});
+const SDX=v=>gSD(v,{t:'Standard deviation (SD)',inner:'Var(X)'});
 const P5B=[
  {type:'E(X)',q:'Number of online orders a student makes per week: x: 0, 1, 2, 3 with P(x): 0.1, 0.2, 0.3, 0.4. Find E(X) and interpret.',
   hint:board([gE([0,1,2,3],[0.1,0.2,0.3,0.4]),{lines:[B.line('On average, a student makes <b>2</b> online orders per week.')]}])},
  {type:'Var(X), SD',q:'Same table (E(X) = 2). Find Var(X) and SD, and interpret SD.',
-  hint:board([gVarX([0,1,2,3],[0.1,0.2,0.3,0.4],{t:'Variance'}),SDX(1),{lines:[B.line('Weekly orders typically vary by about <b>1</b> order from the mean of 2.')]}])},
+  hint:board([gVarX([0,1,2,3],[0.1,0.2,0.3,0.4],{t:'Variance (Var)'}),SDX(1),{lines:[B.line('Weekly orders typically vary by about <b>1</b> order from the mean of 2.')]}])},
  {type:'Full',q:'Defective phones per box: x: 0, 1, 2 with P(x): 0.7, 0.2, k. Find k, E(X), Var(X), SD and interpret E(X).',
-  hint:stepsNH([['k','ΣP(x) = 1 → k = 1 − (0.7 + 0.2) = <b>0.1</b>']])+board([gE([0,1,2],[0.7,0.2,0.1],{t:'Expected value'}),gVarX([0,1,2],[0.7,0.2,0.1],{t:'Variance'}),SDX(0.44),{lines:[B.line('On average, a box has <b>0.4</b> defective phones.')]}])},
+  hint:stepsNH([['k','ΣP(x) = 1 → k = 1 − (0.7 + 0.2) = <b>0.1</b>']])+board([gE([0,1,2],[0.7,0.2,0.1],{t:'Expected value'}),gVarX([0,1,2],[0.7,0.2,0.1],{t:'Variance (Var)'}),SDX(0.44),{lines:[B.line('On average, a box has <b>0.4</b> defective phones.')]}])},
  {type:'Full',q:'Rainy days per week in a city (illustrative): x: 0, 1, 2, 3 with P(x): 0.4, 0.3, 0.2, 0.1. Find E(X), Var(X), SD and interpret.',
-  hint:board([gE([0,1,2,3],[0.4,0.3,0.2,0.1],{t:'Expected value'}),gVarX([0,1,2,3],[0.4,0.3,0.2,0.1],{t:'Variance'}),SDX(1),{lines:[B.line('On average <b>1</b> rainy day per week, typically varying by about 1 day.')]}])}];
+  hint:board([gE([0,1,2,3],[0.4,0.3,0.2,0.1],{t:'Expected value'}),gVarX([0,1,2,3],[0.4,0.3,0.2,0.1],{t:'Variance (Var)'}),SDX(1),{lines:[B.line('On average <b>1</b> rainy day per week, typically varying by about 1 day.')]}])}];
 const BIG4={type:'Scenario',q:`<b>A food delivery app.</b> X = the number of late deliveries a rider has in one day.${tbl(['x','0','1','2','3'],[['P(x)','0.2','0.3','k','0.1']])}
   <ol class="parts" type="a"><li>Is X discrete or continuous? Why?</li><li>Find k.</li><li>Find P(X ≥ 2) and P(at least one late delivery).</li><li>Find P(X = 0 or X = 3).</li><li>Find E(X) and interpret it.</li><li>Find Var(X) and SD.</li><li>About how many late deliveries should the rider expect in 30 days?</li><li>Days are independent. P(no late delivery on both of two days)?</li></ol>`,
   hint:stepsNH([['(a)','<b>Discrete</b>: we count late deliveries (0, 1, 2, 3).'],['(b)','ΣP(x) = 1 → k = 1 − (0.2 + 0.3 + 0.1) = <b>0.4</b>.'],['(c)','P(X ≥ 2) = 0.4 + 0.1 = <b>0.5</b>. At least one = NOT zero = 1 − 0.2 = <b>0.8</b>.'],['(d)','OR, no overlap: 0.2 + 0.1 = <b>0.3</b>.']])
-   +B.make([gE([0,1,2,3],[0.2,0.3,0.4,0.1],{t:'(e)'}),{lines:[B.line('On average, <b>1.4</b> late deliveries per day.')]},gVarX([0,1,2,3],[0.2,0.3,0.4,0.1],{t:'(f) Variance'}),gSD(0.84,{t:'(f) Standard deviation',lhs:'SD',inner:'Var(X)'})])
+   +B.make([gE([0,1,2,3],[0.2,0.3,0.4,0.1],{t:'(e)'}),{lines:[B.line('On average, <b>1.4</b> late deliveries per day.')]},gVarX([0,1,2,3],[0.2,0.3,0.4,0.1],{t:'(f) Variance (Var)'}),gSD(0.84,{t:'(f) Standard deviation (SD)',inner:'Var(X)'})])
    +steps([['(g)','30 × 1.4 = <b>42</b> late deliveries.'],['Answer','(h) AND, independent: 0.2 × 0.2 = <b>0.04</b>.']])};
 
 /* ---------------- The paper ---------------- */
@@ -252,6 +265,7 @@ body.mt{background:var(--bg)}
 .big>h3{display:flex;justify-content:space-between;gap:10px;align-items:baseline;font-family:var(--f-display);font-size:1.12rem;margin:0 0 6px}
 .big>h3 small{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--wk)}
 .big ol.parts{margin:8px 0;padding-left:26px}.big ol.parts li{margin:3px 0}
+.fillin{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 18px;margin:8px 0 4px;font-family:var(--f-mono);font-size:.88rem}
 .pspace{display:none}
 .mt-end{margin-top:34px;border-top:2px solid var(--ink);padding-top:18px}
 .mt-end h2{font-family:var(--f-display);text-align:center;margin:0 0 6px}
