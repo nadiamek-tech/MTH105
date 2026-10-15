@@ -103,7 +103,9 @@
         const hint=pq.querySelector('.hint'), g=pq.querySelector('.guide');
         const tmp=document.createElement('div'); tmp.innerHTML=hint.innerHTML;
         let parts; const mg=tmp.querySelector('.mg');
-        if(mg) parts=[...mg.children].filter(c=>!c.classList.contains('how')).map(c=>c.outerHTML);
+        const bds=[...tmp.querySelectorAll('.bd-g')];
+        if(bds.length) parts=[...tmp.children].flatMap(c=>c.classList.contains('bd')?[...c.querySelectorAll('.bd-g')].map(g=>`<div class="bd">${g.outerHTML}</div>`):c.classList.contains('mg')?[...c.children].filter(x=>!x.classList.contains('how')).map(x=>`<div class="mg">${x.outerHTML}</div>`):c.classList.contains('bd-foot')?[]:[c.outerHTML]);
+        else if(mg) parts=[...mg.children].filter(c=>!c.classList.contains('how')).map(c=>c.outerHTML);
         else { const blocks=[...tmp.children].filter(c=>/^(DIV|P|UL|OL|TABLE)$/.test(c.tagName)); parts=blocks.length>1?blocks.map(c=>c.outerHTML):tmp.innerHTML.split(/(?<=[.:])\s+(?=[A-Z<])/).filter(x=>x.trim()); }
         const stages=[
           ['Read','What is given? What is asked? Say it in your own words.'],
