@@ -23,6 +23,7 @@
 <script src="assets/lesson.js"></script>
 <script src="assets/pad.js"></script>
 <script src="assets/board.js"></script>
+<script src="assets/board-answers.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -33,6 +34,8 @@ const {T, fr, sq, SG, XB, PH, v} = F;
 const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
 const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
 const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice board answers: the calculator result is computed from the typed entry, so board and calculator always agree */
+const BB=Board, KC=e=>[e,BA.lcd(Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/√\(/g,'Math.sqrt(').replace(/²/g,'**2'))())];
 const W2='<a href="https://nadiamek-tech.github.io/MindTheGap/workshop-02.html" target="_blank" rel="noopener">Every symbol, step by step: Mind the Gap Workshop 2 ↗</a>';
 
 Lesson.mount({
@@ -83,13 +86,13 @@ Lesson.mount({
     {t:'SD',items:['s = √s²','Same units as the data']},
     {t:'CV',items:['CV = s ÷ x̄ × 100%','Smaller CV = more consistent']}]}},
   practice:[
-    {type:'Easy',q:'Find the range of 4, 9, 2, 15, 7.',hint:'15 − 2 = <b>13</b>.'},
-    {type:'Easy',q:'Find s² and s for 2, 4, 6.',hint:'Mean 4. Squares 4, 0, 4 → Σ = 8. s² = 8 ÷ 2 = <b>4</b>, s = <b>2</b>.'},
-    {type:'Easy',q:'Mean = 50, s = 5. Find the CV.',hint:'5 ÷ 50 × 100% = <b>10%</b>.'},
-    {type:'Medium',q:'Daily steps (thousands): 3.2, 4.5, 5.1, 5.8, 6.0, 6.4, 7.2, 7.9, 8.3, 14.6. Q1 = 5.1, Q3 = 7.9. Is 14.6 an outlier?',hint:'IQR = 2.8. Upper fence = 7.9 + 1.5 × 2.8 = 12.1. 14.6 &gt; 12.1 → <b>yes, outlier</b>.'},
-    {type:'Medium',q:'Water used per shower (L) by 5 students: 40, 45, 50, 55, 60. Find s², s and CV.',hint:'Mean 50. Squares: 100, 25, 0, 25, 100 → Σ = 250. <b>s² = 250 ÷ 4 = 62.5</b>, <b>s ≈ 7.91</b>, <b>CV ≈ 15.8%</b>.'},
-    {type:'Medium',q:'Two desalination plants. A: mean 120 ML/day, s = 9. B: mean 45 ML/day, s = 5. Which is more consistent?',hint:'CV(A) = 7.5%, CV(B) ≈ 11.1%. <b>Plant A</b> is more consistent.'},
-    {type:'Hard',q:'Temperatures (°C): 21, 23, 25, 25, 26. Find the range, IQR, s², s and CV.',hint:'Range = <b>5</b>. Q1 = 22, Q3 = 25.5 → IQR = <b>3.5</b>. Mean 24, squares 9, 1, 1, 1, 4 → Σ = 16. s² = 16 ÷ 4 = <b>4</b>, s = <b>2</b>, CV = 2 ÷ 24 ≈ <b>8.3%</b>.'}],
+    {type:'Easy',q:'Find the range of 4, 9, 2, 15, 7.',hint:BA.board([{lines:[BB.line('Range = max − min'),BB.dec([['max','15'],['min','2']]),BB.line('Range = 15 − 2 = <b>13</b>','ans')],calc:KC('15−2')}])},
+    {type:'Easy',q:'Find s² and s for 2, 4, 6.',hint:BA.board([BA.mean([2,4,6],{t:'Mean first'}),BA.var([2,4,6],{t:'Variance (Var)'}),BA.sd(4,{t:'Standard deviation (SD)'})])},
+    {type:'Easy',q:'Mean = 50, s = 5. Find the CV.',hint:BA.board([BA.cv(5,50)])},
+    {type:'Medium',q:'Daily steps (thousands): 3.2, 4.5, 5.1, 5.8, 6.0, 6.4, 7.2, 7.9, 8.3, 14.6. Q1 = 5.1, Q3 = 7.9. Is 14.6 an outlier?',hint:BA.board([{t:'IQR',lines:[BB.line('IQR = Q3 − Q1'),BB.dec([['Q3','7.9'],['Q1','5.1']]),BB.line('IQR = 7.9 − 5.1 = <b>2.8</b>','ans')],calc:KC('7.9−5.1')},{t:'Upper fence',lines:[BB.line('Upper fence = Q3 + 1.5 × IQR'),BB.line('= 7.9 + (1.5 × 2.8) = <b>12.1</b>','ans')],calc:KC('7.9+(1.5×2.8)')},{lines:[BB.line('14.6 &gt; 12.1 ⟶ <b>yes, outlier</b>','ans')]}])},
+    {type:'Medium',q:'Water used per shower (L) by 5 students: 40, 45, 50, 55, 60. Find s², s and CV.',hint:BA.board([BA.mean([40,45,50,55,60],{t:'Mean first'}),BA.var([40,45,50,55,60],{t:'Variance (Var)'}),BA.sd(62.5,{t:'Standard deviation (SD)'}),BA.cv(Math.sqrt(62.5),50,{t:'Coefficient of variation (CV)',entry:'√(62.5)'})])},
+    {type:'Medium',q:'Two desalination plants. A: mean 120 ML/day, s = 9. B: mean 45 ML/day, s = 5. Which is more consistent?',hint:BA.board([BA.cv(9,120,{t:'Plant A',lhs:'CV<sub>A</sub>'}),BA.cv(5,45,{t:'Plant B',lhs:'CV<sub>B</sub>'}),{lines:[BB.line('Smaller CV = more consistent ⟶ <b>Plant A</b>','ans')]}])},
+    {type:'Hard',q:'Temperatures (°C): 21, 23, 25, 25, 26. Find the range, IQR, s², s and CV.',hint:BA.steps([['Range','26 − 21 = <b>5</b>'],['IQR','Median 25. Halves 21, 23 and 25, 26 → Q1 = 22, Q3 = 25.5 → IQR = <b>3.5</b>']])+BA.board([BA.mean([21,23,25,25,26],{t:'Mean first'}),BA.var([21,23,25,25,26],{t:'Variance (Var)'}),BA.sd(4,{t:'Standard deviation (SD)'}),BA.cv(2,24,{t:'Coefficient of variation (CV)'})])}],
   next:'Next: Week 5, Ch 5 Modeling Variation with Probability. <a href="week-05.html">Open Week 5 →</a>'
 });
 </script>

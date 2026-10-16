@@ -1,5 +1,7 @@
 // {"file": "week-02.html", "title": "MTH 105 Week 2 · Describing and Organizing Data", "wk": "#1F63B5", "wkd": "#7FB2FF"}
 const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice board answers: the calculator result is computed from the typed entry, so board and calculator always agree */
+const BB=Board, KC=e=>[e,BA.lcd(Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/√\(/g,'Math.sqrt(').replace(/²/g,'**2'))())];
 const COM=[['Car',16],['Metro',12],['Bus',8],['Walk',4]];
 function barPie(el){
   el.innerHTML=`<div class="tool"><div class="seg2"><button type="button" aria-pressed="true">Bar chart</button><button type="button" aria-pressed="false">Pie chart</button></div><div class="pic"></div>
@@ -57,12 +59,12 @@ Lesson.mount({
     {t:'Graphs for numbers',items:['Histogram: touching bars','Polygon: midpoints','Ogive: cumulative, upper boundaries']},
     {t:'Shape',items:['Symmetric','Right tail → positive skew','Left tail → negative skew']}]}},
   practice:[
-    {type:'Easy',q:'12 of 48 students walk to campus. Find the relative frequency.',hint:'rf = 12 ÷ 48 = <b>0.25</b> (25%).'},
-    {type:'Easy',q:'Blood types of 50 donors: O 22, A 14, B 10, AB 4. Find each relative frequency and the mode.',hint:'O 0.44, A 0.28, B 0.20, AB 0.08 (sum = 1). Mode: <b>O</b>.'},
-    {type:'Easy',q:'For the class 40–49, find the midpoint and the class boundaries.',hint:'Midpoint = (40 + 49) ÷ 2 = <b>44.5</b>. Boundaries <b>39.5 – 49.5</b>.'},
-    {type:'Medium',q:'Daily PM10 readings range from 31 to 88. Make 6 classes. What is the width and what are the classes?',hint:'(88 − 31) ÷ 6 = 9.5 → <b>10</b>. Classes 31–40, 41–50, 51–60, 61–70, 71–80, 81–90.'},
-    {type:'Medium',q:'Frequencies: 3, 8, 12, 5. Find the cumulative frequencies.',hint:'<b>3, 11, 23, 28</b>. The last one equals n = 28.'},
-    {type:'Medium',q:`Ages of 30 visitors:${H_AGE}Find the midpoints, the cumulative frequencies and the shape.`,hint:'Classes 10–19 … 60–69, f = 4, 9, 8, 5, 3, 1. Midpoints 14.5, 24.5, 34.5, 44.5, 54.5, 64.5. Cum. f = 4, 13, 21, 26, 29, 30. <b>Right-skewed</b>.'},
-    {type:'Hard',q:'Same data: what percentage of visitors were younger than 49.5? Which graph shows this directly?',hint:'Cum. f at 49.5 = 26 → 26 ÷ 30 ≈ <b>86.7%</b>. The <b>ogive</b>.'}],
+    {type:'Easy',q:'12 of 48 students walk to campus. Find the relative frequency.',hint:BA.board([{lines:[BB.fr('rf','f','n',{n:'12 walk',d:'48 students'}),BB.line(`rf = ${BB.frac('12','48')} = <b>0.25</b> (25%)`,'ans')],calc:KC('12÷48')}])},
+    {type:'Easy',q:'Blood types of 50 donors: O 22, A 14, B 10, AB 4. Find each relative frequency and the mode.',hint:BA.board([['O',22],['A',14],['B',10],['AB',4]].map(([t,f],i)=>({t,lines:(i?[]:[BB.fr('rf','f','n',{n:'donors of the type',d:'50 donors'})]).concat([BB.line(`rf = ${BB.frac(f,50)} = <b>${BA.num(f/50)}</b>`,'ans')]),calc:KC(`${f}÷50`)})))+BA.steps([['Check','0.44 + 0.28 + 0.2 + 0.08 = 1'],['Mode','Largest frequency (22): <b>O</b>.']])},
+    {type:'Easy',q:'For the class 40–49, find the midpoint and the class boundaries.',hint:BA.board([{t:'Midpoint',lines:[BB.fr('Midpoint','lower + upper','2',{n:'40, 49'}),BB.line('Midpoint = (40 + 49) ÷ 2 = <b>44.5</b>','ans')],calc:KC('(40+49)÷2')}])+BA.steps([['Boundaries','40 − 0.5 and 49 + 0.5 → <b>39.5 – 49.5</b>']])},
+    {type:'Medium',q:'Daily PM10 readings range from 31 to 88. Make 6 classes. What is the width and what are the classes?',hint:BA.board([{t:'Class width',lines:[BB.fr('Width','max − min','classes',{n:'88 and 31',d:'6 classes'}),BB.line('Width = (88 − 31) ÷ 6 = 9.5'),BB.line('Always round <b>up</b> ⟶ Width = <b>10</b>','ans')],calc:KC('(88−31)÷6')}])+BA.steps([['Classes','Start at 31, add 10: 31–40, 41–50, 51–60, 61–70, 71–80, 81–90']])},
+    {type:'Medium',q:'Frequencies: 3, 8, 12, 5. Find the cumulative frequencies.',hint:BA.board([{t:'Cumulative frequency',lines:[BB.line('cum f = f + the cum f before it'),BB.tb(['f','cum f'],[['3','3'],['8','3 + 8 = 11'],['12','11 + 12 = 23'],['5','23 + 5 = 28']]),BB.line('<b>3, 11, 23, 28</b>. Last = n = 28','ans')],calc:KC('3+8+12+5')}])},
+    {type:'Medium',q:`Ages of 30 visitors:${H_AGE}Find the midpoints, the cumulative frequencies and the shape.`,hint:BA.board([{t:'Midpoints',lines:[BB.fr('Midpoint','lower + upper','2',{n:'10, 19'}),BB.line('First class: (10 + 19) ÷ 2 = 14.5'),BB.line('Then + 10 (the width) each time'),BB.line('<b>14.5, 24.5, 34.5, 44.5, 54.5, 64.5</b>','ans')],calc:KC('(10+19)÷2')},{t:'Cumulative frequency',lines:[BB.tb(['Class','f','cum f'],[['10–19','4','4'],['20–29','9','4 + 9 = 13'],['30–39','8','13 + 8 = 21'],['40–49','5','21 + 5 = 26'],['50–59','3','26 + 3 = 29'],['60–69','1','29 + 1 = 30']]),BB.line('Last = n = <b>30</b>','ans')],calc:KC('4+9+8+5+3+1')}])+BA.steps([['Shape','Peak at 20–29 on the left, long tail on the <b>right</b> → <b>right-skewed</b>.']])},
+    {type:'Hard',q:'Same data: what percentage of visitors were younger than 49.5? Which graph shows this directly?',hint:BA.board([{lines:[BB.fr('%','cum f','n',{n:'26 at 49.5',d:'30 visitors',after:'× 100'}),BB.line(`% = ${BB.frac('26','30')} × 100 ≈ <b>86.7%</b>`,'ans')],calc:KC('26÷30×100')}])+BA.steps([['Graph','The <b>ogive</b>: it plots cumulative frequency, so 26 is read at 49.5.']])}],
   next:'Next: Week 3, Ch.3 Numerical Summaries of Center and Variation. <a href="week-03.html">Open Week 3 →</a>'
 });

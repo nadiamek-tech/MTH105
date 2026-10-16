@@ -23,6 +23,7 @@
 <script src="assets/lesson.js"></script>
 <script src="assets/pad.js"></script>
 <script src="assets/board.js"></script>
+<script src="assets/board-answers.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -33,6 +34,8 @@ const {T, fr, sq, SG, XB, PH, v} = F;
 const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
 const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
 const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice board answers: the calculator result is computed from the typed entry, so board and calculator always agree */
+const BB=Board, KC=e=>[e,BA.lcd(Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/√\(/g,'Math.sqrt(').replace(/²/g,'**2'))())];
 
 function sampleTool(el){
   el.innerHTML=`<div class="tool"><div class="sl"><label for="sm-n">Sample size n</label><input type="range" id="sm-n" min="5" max="200" step="5" value="10"><b class="mono" id="sm-nv"></b></div><div class="pic"></div><div class="feedback"></div><p class="mono" style="margin:0;color:var(--muted)">Population: 1,000 students, 60% prefer evening classes (illustrative). 20 random samples.</p></div>`;
@@ -138,12 +141,12 @@ Lesson.mount({
     {t:'Outliers',items:['Pull the mean','Median resists them']}]}},
   practice:[
     {type:'Easy',q:'A health survey asks 400 adults in Dubai and finds 28% exercise daily. Name the population, sample, parameter and statistic.',hint:'Population: all adults in Dubai. Sample: the 400 surveyed. Statistic: <b>28%</b>. Parameter: the true % of <b>all</b> Dubai adults who exercise daily (unknown).'},
-    {type:'Easy',q:'Classify: (a) blood type (b) number of emails received today (c) height in cm (d) class rank (1st, 2nd, 3rd).',hint:'(a) Nominal (b) Discrete (c) Continuous (d) Ordinal.'},
-    {type:'Easy',q:'In a sample of 250 residents, 85 use the Metro. Find p̂ as a percentage.',hint:'p̂ = 85 ÷ 250 = <b>0.34 = 34%</b>.'},
-    {type:'Medium',q:'Descriptive or inferential? “From 1,200 shoppers surveyed, we estimate 35% of UAE shoppers buy groceries online.”',hint:'<b>Inferential</b>: it generalises from 1,200 shoppers to all UAE shoppers.'},
+    {type:'Easy',q:'Classify: (a) blood type (b) number of emails received today (c) height in cm (d) class rank (1st, 2nd, 3rd).',hint:BA.steps([['(a)','<b>Nominal</b>: categories with no order. Not ordinal (no ranking), not a number.'],['(b)','<b>Discrete</b>: counted 0, 1, 2 … Not continuous (no 2.5 emails), not a category.'],['(c)','<b>Continuous</b>: measured, any value (165.3 cm). Not discrete: it is not counted.'],['(d)','<b>Ordinal</b>: categories with an order. Not nominal (order matters), not a measured number.']])},
+    {type:'Easy',q:'In a sample of 250 residents, 85 use the Metro. Find p̂ as a percentage.',hint:BA.board([{lines:[BB.fr('p̂','x','n',{n:'85 use the Metro',d:'250 residents'}),BB.line(`p̂ = ${BB.frac('85','250')} = 0.34 = <b>34%</b>`,'ans')],calc:KC('85÷250')}])},
+    {type:'Medium',q:'Descriptive or inferential? “From 1,200 shoppers surveyed, we estimate 35% of UAE shoppers buy groceries online.”',hint:BA.steps([['Why','It uses 1,200 shoppers to estimate a value for <b>all</b> UAE shoppers.'],['Not descriptive','Descriptive would only summarise the 1,200 surveyed.'],['Answer','<b>Inferential</b>.']])},
     {type:'Medium',q:'To estimate gym use at CUD, a researcher asks students as they leave the gym. What is wrong, and how would you fix it?',hint:'Every person asked already uses the gym: the sample is <b>biased</b>. Take a <b>random</b> sample of all students.'},
-    {type:'Hard',q:'Commute times (min): 20, 22, 25, 24, 23, 95. Find the mean and the median. Which is the better typical value?',hint:'Mean = 209 ÷ 6 ≈ <b>34.8</b>. Median = (23 + 24) ÷ 2 = <b>23.5</b>. The <b>median</b>: the outlier 95 pulls the mean up.'},
-    {type:'Hard',q:'Remove 95 from the commute data. Find the new mean and median. Which measure changed more?',hint:'Mean = 114 ÷ 5 = <b>22.8</b>; median = <b>23</b>. The <b>mean</b> changed more (34.8 → 22.8).'}],
+    {type:'Hard',q:'Commute times (min): 20, 22, 25, 24, 23, 95. Find the mean and the median. Which is the better typical value?',hint:BA.board([BA.mean([20,22,25,24,23,95],{t:'Mean',unit:'min'})])+BA.steps([['Median','Sorted: 20, 22, <b>23, 24</b>, 25, 95 → (23 + 24) ÷ 2 = <b>23.5</b> min'],['Answer','The <b>median</b>: the outlier 95 pulls the mean up.']])},
+    {type:'Hard',q:'Remove 95 from the commute data. Find the new mean and median. Which measure changed more?',hint:BA.board([BA.mean([20,22,25,24,23],{t:'New mean',unit:'min'})])+BA.steps([['New median','Sorted: 20, 22, <b>23</b>, 24, 25 → <b>23</b> min'],['Answer','The <b>mean</b> changed more (34.83 → 22.8). The median only moved from 23.5 to 23.']])}],
   next:'Next: Week 2, Ch.2 Picturing Variation with Graphs. <a href="week-02.html">Open Week 2 →</a>'
 });
 </script>

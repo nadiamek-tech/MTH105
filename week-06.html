@@ -23,6 +23,7 @@
 <script src="assets/lesson.js"></script>
 <script src="assets/pad.js"></script>
 <script src="assets/board.js"></script>
+<script src="assets/board-answers.js"></script>
 <script src="assets/kb.js"></script>
 <script src="assets/search-index.js"></script>
 <script src="assets/assistant.js"></script>
@@ -33,6 +34,12 @@ const {T, fr, sq, SG, XB, PH, v} = F;
 const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
 const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
 const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* board model answers for practice: BA / Board from assets/board-answers.js and assets/board.js */
+const Bd=Board, MA=(...p)=>{ const li=p.map(x=>!!x.b).lastIndexOf(true); return p.map((x,i)=>x.b?(i===li?BA.board(x.b):Bd.make(x.b)):BA.steps(x.s)).join(''); };
+function gK(known,o={}){ const k=1-BA.sum(known), L=known.map(BA.num).join(' + ');
+  return {t:o.t||'k',lines:[Bd.line(`k = 1 − Σ <span class="g">P(others)</span>`),Bd.dec([['P(others)',known.map(BA.num).join(', ')]]),
+    Bd.line(`k = 1 − (${L})`),Bd.line(`k = 1 − ${BA.num(BA.sum(known))} = <b>${BA.num(k)}</b>`,'ans')],calc:[`1−(${known.map(BA.num).join("+")})`,BA.lcd(k)]}; }
+const SDX=(v,o={})=>BA.sd(v,{t:'SD',inner:'Var(X)',...o});
 const W2='<a href="https://nadiamek-tech.github.io/MindTheGap/workshop-02.html" target="_blank" rel="noopener">E(X) and Var(X), step by step: Mind the Gap Workshop 2 ↗</a>';
 const bern=`<svg viewBox="0 0 520 170" role="img" aria-label="Bernoulli distribution"><line x1="80" x2="440" y1="140" y2="140" stroke="var(--ink)"/>
   <rect x="140" y="${140-0.96*110}" width="80" height="${0.96*110}" fill="var(--c2)" opacity=".6"/><rect x="300" y="${140-0.04*110}" width="80" height="${0.04*110}" fill="var(--wk)"/>
@@ -77,12 +84,12 @@ Lesson.mount({
     {t:'Discrete',items:['Countable values 0, 1, 2 …']},{t:'Valid',items:['0 ≤ P(x) ≤ 1','ΣP(x) = 1','k = 1 − others']},
     {t:'Summaries',items:['E(X) = Σx·P(x)','Var(X) = Σ(x − μ)²·P(x)','SD = √Var(X)']}]}},
   practice:[
-    {type:'Easy',q:'Is this valid? x: 0, 1, 2, 3 with P(x): 0.2, 0.3, 0.4, 0.2',hint:'<b>No</b>: the sum is 1.1.'},
-    {type:'Easy',q:'P(x) for x = 0, 1, 2, 3 is 0.15, 0.25, k, 0.20. Find k.',hint:'k = 1 − 0.60 = <b>0.40</b>.'},
-    {type:'Easy',q:'x: 1, 2, 3 with P(x): 0.2, 0.5, 0.3. Find E(X).',hint:'1(0.2) + 2(0.5) + 3(0.3) = <b>2.1</b>.'},
-    {type:'Medium',q:'x: 0, 1, 2 with P(x): 0.5, 0.3, 0.2. Find E(X), Var(X) and SD.',hint:'E(X) = <b>0.7</b>. (0 − 0.7)²(0.5) + (1 − 0.7)²(0.3) + (2 − 0.7)²(0.2) = 0.245 + 0.027 + 0.338 = <b>0.61</b>. SD = √0.61 ≈ <b>0.78</b>.'},
-    {type:'Medium',q:'Goals per match: P(0) = 0.25, P(1) = 0.35, P(2) = k, P(3) = 0.15. Find k and E(X).',hint:'k = 1 − 0.75 = <b>0.25</b>. E(X) = 0 + 0.35 + 0.50 + 0.45 = <b>1.3</b> goals per match on average.'},
-    {type:'Hard',q:'Same goals table: find Var(X) and SD, and interpret SD in one sentence.',hint:'Σ(x − 1.3)²P(x) = 0.4225 + 0.0315 + 0.1225 + 0.4335 = <b>1.01</b>. SD = √1.01 ≈ <b>1.005</b>: a typical match is about 1 goal away from the average of 1.3.'}],
+    {type:'Easy',q:'Is this valid? x: 0, 1, 2, 3 with P(x): 0.2, 0.3, 0.4, 0.2',hint:BA.steps([['Each P(x)','All between 0 and 1 ✓'],['ΣP(x)','0.2 + 0.3 + 0.4 + 0.2 = 1.1 ≠ 1 ✗'],['Answer','<b>No</b>, not valid: the probabilities must add to exactly 1.']])},
+    {type:'Easy',q:'P(x) for x = 0, 1, 2, 3 is 0.15, 0.25, k, 0.20. Find k.',hint:BA.board([gK([0.15,0.25,0.20])])},
+    {type:'Easy',q:'x: 1, 2, 3 with P(x): 0.2, 0.5, 0.3. Find E(X).',hint:BA.board([BA.e([1,2,3],[0.2,0.5,0.3],{t:'E(X)'})])},
+    {type:'Medium',q:'x: 0, 1, 2 with P(x): 0.5, 0.3, 0.2. Find E(X), Var(X) and SD.',hint:BA.board([BA.e([0,1,2],[0.5,0.3,0.2],{t:'E(X)'}),BA.varX([0,1,2],[0.5,0.3,0.2],{t:'Var(X)'}),SDX(0.61)])},
+    {type:'Medium',q:'Goals per match: P(0) = 0.25, P(1) = 0.35, P(2) = k, P(3) = 0.15. Find k and E(X).',hint:MA({b:[gK([0.25,0.35,0.15]),BA.e([0,1,2,3],[0.25,0.35,0.25,0.15],{t:'E(X)'})]},{s:[['Meaning','On average <b>1.3</b> goals per match.']]})},
+    {type:'Hard',q:'Same goals table: find Var(X) and SD, and interpret SD in one sentence.',hint:MA({b:[BA.varX([0,1,2,3],[0.25,0.35,0.25,0.15],{t:'Var(X)'}),(g=>(g.lines[1]=Bd.line('SD = √1.01 ≈ <b>1.005</b>','ans'),g))(SDX(1.01))]},{s:[['Meaning','A typical match is about <b>1 goal</b> away from the average of 1.3.']]})}],
   next:'Next: Week 7, Bernoulli and binomial distributions (in preparation).'
 });
 </script>

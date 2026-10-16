@@ -1,5 +1,7 @@
 // {"file": "week-03.html", "title": "MTH 105 Week 3 · Central Tendency and Position", "wk": "#0E7C66", "wkd": "#5FD3B5"}
 const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice board answers: the calculator result is computed from the typed entry, so board and calculator always agree */
+const BB=Board, KC=e=>[e,BA.lcd(Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/√\(/g,'Math.sqrt(').replace(/²/g,'**2'))())];
 const W2='<a href="https://nadiamek-tech.github.io/MindTheGap/workshop-02.html" target="_blank" rel="noopener">Every symbol, step by step: Mind the Gap Workshop 2 ↗</a>';
 const CASES=[['Exam scores (difficult exam)','30, 45, 50, 82, 85, 87, 88, 90, 91, 92, 93, 95, 95','78.69','88','95','Mean < median < mode → <b>left-skewed</b>'],
              ['Coffee cups sold per day','45, 47, 48, 49, 50, 50, 50, 51, 52, 53, 55','50','50','50','Mean = median = mode → <b>symmetric</b>'],
@@ -57,12 +59,12 @@ Lesson.mount({
     {t:'Mean',items:['x̄ = Σx ÷ n']},{t:'Median',items:['Sort first','Position (n + 1) ÷ 2']},{t:'Mode',items:['Most frequent','Only centre for nominal data']},
     {t:'Skew',items:['Mean pulled to the tail','Skewed data → median']},{t:'Position',items:['Q1 = P25, median = P50, Q3 = P75']}]}},
   practice:[
-    {type:'Easy',q:'Find the mean of 4, 8, 6, 10, 7.',hint:'x̄ = 35 ÷ 5 = <b>7</b>.'},
-    {type:'Easy',q:'Find the median of 15, 3, 9, 12, 6, 18.',hint:'Sorted: 3, 6, 9, 12, 15, 18. n = 6 → (9 + 12) ÷ 2 = <b>10.5</b>.'},
-    {type:'Easy',q:'Favourite campus café of 10 students: A, B, A, C, A, B, A, C, B, A. Which centre can you use, and what is it?',hint:'Nominal data: only the <b>mode</b>. Mode = <b>A</b> (5 times).'},
-    {type:'Medium',q:'Hours of sleep of 8 students: 6, 7, 5, 8, 7, 9, 7, 6. Find the mean, median and mode.',hint:'Sorted: 5, 6, 6, 7, 7, 7, 8, 9. Mean = 55 ÷ 8 = <b>6.875</b>. Median = (7 + 7) ÷ 2 = <b>7</b>. Mode = <b>7</b>.'},
+    {type:'Easy',q:'Find the mean of 4, 8, 6, 10, 7.',hint:BA.board([BA.mean([4,8,6,10,7])])},
+    {type:'Easy',q:'Find the median of 15, 3, 9, 12, 6, 18.',hint:BA.steps([['Sort','3, 6, <b>9, 12</b>, 15, 18'],['Answer','n = 6 (even) → (9 + 12) ÷ 2 = <b>10.5</b>']])},
+    {type:'Easy',q:'Favourite campus café of 10 students: A, B, A, C, A, B, A, C, B, A. Which centre can you use, and what is it?',hint:BA.steps([['Data','Café names are <b>nominal</b>: categories, not numbers.'],['Not mean / median','You cannot add or order café names.'],['Answer','Only the <b>mode</b>: <b>A</b> (5 times).']])},
+    {type:'Medium',q:'Hours of sleep of 8 students: 6, 7, 5, 8, 7, 9, 7, 6. Find the mean, median and mode.',hint:BA.board([BA.mean([6,7,5,8,7,9,7,6],{t:'Mean',unit:'h'})])+BA.steps([['Median','Sorted: 5, 6, 6, <b>7, 7</b>, 7, 8, 9 → (7 + 7) ÷ 2 = <b>7</b>'],['Mode','7 appears 3 times → <b>7</b>']])},
     {type:'Medium',q:'Find Q1 and Q3 of 1, 3, 4, 6, 8, 9, 11, 14.',hint:'Lower half 1, 3, 4, 6 → Q1 = (3 + 4) ÷ 2 = <b>3.5</b>. Upper half 8, 9, 11, 14 → Q3 = (9 + 11) ÷ 2 = <b>10</b>.'},
-    {type:'Hard',q:'Weekly study hours of 40 students: 0–5: 8, 6–10: 15, 11–15: 12, 16–20: 5. Estimate the mean using midpoints.',hint:'Midpoints 2.5, 8, 13, 18. Σf·m = 20 + 120 + 156 + 90 = 386. Mean ≈ 386 ÷ 40 = <b>9.65 hours</b>.'},
-    {type:'Hard',q:'Monthly salaries (thousand AED) of 6 staff: 8, 9, 9, 10, 11, 40. Find the mean, median and mode. Which is the best typical value?',hint:'Mean = 87 ÷ 6 = <b>14.5</b>. Median = (9 + 10) ÷ 2 = <b>9.5</b>. Mode = <b>9</b>. The <b>median</b>: 40 pulls the mean up.'}],
+    {type:'Hard',q:'Weekly study hours of 40 students: 0–5: 8, 6–10: 15, 11–15: 12, 16–20: 5. Estimate the mean using midpoints.',hint:BA.board([{t:'Grouped mean',lines:[BB.line('m = (lower + upper) ÷ 2'),BB.tb(['Class','f','m','f × m'],[['0–5','8','2.5','20'],['6–10','15','8','120'],['11–15','12','13','156'],['16–20','5','18','90']],['Σ','40','','386']),BB.fr(BA.XB,'Σ(f × m)','n',{n:'386',d:'40'}),BB.line(`${BA.XB} = [ <span class="nw">(8 × 2.5)</span> + <span class="nw">(15 × 8)</span> + <span class="nw">(12 × 13)</span> + <span class="nw">(5 × 18)</span> ] ÷ 40`),BB.line(`${BA.XB} = ${BB.frac('386','40')} = <b>9.65</b> hours`,'ans')],calc:KC('((8×2.5)+(15×8)+(12×13)+(5×18))÷40')}])},
+    {type:'Hard',q:'Monthly salaries (thousand AED) of 6 staff: 8, 9, 9, 10, 11, 40. Find the mean, median and mode. Which is the best typical value?',hint:BA.board([BA.mean([8,9,9,10,11,40],{t:'Mean',unit:'thousand AED'})])+BA.steps([['Median','8, 9, <b>9, 10</b>, 11, 40 → (9 + 10) ÷ 2 = <b>9.5</b>'],['Mode','9 appears twice → <b>9</b>'],['Answer','The <b>median</b>: 40 pulls the mean up.']])}],
   next:'Next: Week 4, measures of dispersion. <a href="week-04.html">Open Week 4 →</a>'
 });

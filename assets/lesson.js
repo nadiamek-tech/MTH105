@@ -24,7 +24,7 @@
     p.appendChild(row); return p;
   }
 
-  window.Lesson={ mount(cfg){
+  window.Lesson={ mount(cfg){ window.__LESSON=cfg;
     document.title=cfg.pageTitle||document.title;
     document.body.classList.add('lesson');
     const builds=[];
