@@ -22,6 +22,8 @@
 <script src="assets/decode.js"></script>
 <script src="assets/lesson.js"></script>
 <script src="assets/pad.js"></script>
+<script src="assets/calc.js"></script>
+<script src="assets/casio.js"></script>
 <script src="assets/board.js"></script>
 <script src="assets/board-answers.js"></script>
 <script src="assets/kb.js"></script>
@@ -84,12 +86,12 @@ Lesson.mount({
     {t:'Discrete',items:['Countable values 0, 1, 2 …']},{t:'Valid',items:['0 ≤ P(x) ≤ 1','ΣP(x) = 1','k = 1 − others']},
     {t:'Summaries',items:['E(X) = Σx·P(x)','Var(X) = Σ(x − μ)²·P(x)','SD = √Var(X)']}]}},
   practice:[
-    {type:'Easy',q:'Is this valid? x: 0, 1, 2, 3 with P(x): 0.2, 0.3, 0.4, 0.2',hint:BA.steps([['Each P(x)','All between 0 and 1 ✓'],['ΣP(x)','0.2 + 0.3 + 0.4 + 0.2 = 1.1 ≠ 1 ✗'],['Answer','<b>No</b>, not valid: the probabilities must add to exactly 1.']])},
-    {type:'Easy',q:'P(x) for x = 0, 1, 2, 3 is 0.15, 0.25, k, 0.20. Find k.',hint:BA.board([gK([0.15,0.25,0.20])])},
-    {type:'Easy',q:'x: 1, 2, 3 with P(x): 0.2, 0.5, 0.3. Find E(X).',hint:BA.board([BA.e([1,2,3],[0.2,0.5,0.3],{t:'E(X)'})])},
-    {type:'Medium',q:'x: 0, 1, 2 with P(x): 0.5, 0.3, 0.2. Find E(X), Var(X) and SD.',hint:BA.board([BA.e([0,1,2],[0.5,0.3,0.2],{t:'E(X)'}),BA.varX([0,1,2],[0.5,0.3,0.2],{t:'Var(X)'}),SDX(0.61)])},
-    {type:'Medium',q:'Goals per match: P(0) = 0.25, P(1) = 0.35, P(2) = k, P(3) = 0.15. Find k and E(X).',hint:MA({b:[gK([0.25,0.35,0.15]),BA.e([0,1,2,3],[0.25,0.35,0.25,0.15],{t:'E(X)'})]},{s:[['Meaning','On average <b>1.3</b> goals per match.']]})},
-    {type:'Hard',q:'Same goals table: find Var(X) and SD, and interpret SD in one sentence.',hint:MA({b:[BA.varX([0,1,2,3],[0.25,0.35,0.25,0.15],{t:'Var(X)'}),(g=>(g.lines[1]=Bd.line('SD = √1.01 ≈ <b>1.005</b>','ans'),g))(SDX(1.01))]},{s:[['Meaning','A typical match is about <b>1 goal</b> away from the average of 1.3.']]})}],
+    {check:[{l:'ΣP(x)',v:1.1},{l:'Valid?',opts:['Yes','No'],v:'No'}],type:'Easy',q:'Is this valid? x: 0, 1, 2, 3 with P(x): 0.2, 0.3, 0.4, 0.2',hint:BA.steps([['Each P(x)','All between 0 and 1 ✓'],['ΣP(x)','0.2 + 0.3 + 0.4 + 0.2 = 1.1 ≠ 1 ✗'],['Answer','<b>No</b>, not valid: the probabilities must add to exactly 1.']])},
+    {check:[{l:'k',v:0.4}],type:'Easy',q:'P(x) for x = 0, 1, 2, 3 is 0.15, 0.25, k, 0.20. Find k.',hint:BA.board([gK([0.15,0.25,0.20])])},
+    {check:[{l:'E(X)',v:2.1}],type:'Easy',q:'x: 1, 2, 3 with P(x): 0.2, 0.5, 0.3. Find E(X).',hint:BA.board([BA.e([1,2,3],[0.2,0.5,0.3],{t:'E(X)'})])},
+    {check:[{l:'E(X)',v:0.7},{l:'Var(X)',v:0.61},{l:'SD',v:0.781025}],type:'Medium',q:'x: 0, 1, 2 with P(x): 0.5, 0.3, 0.2. Find E(X), Var(X) and SD.',hint:BA.board([BA.e([0,1,2],[0.5,0.3,0.2],{t:'E(X)'}),BA.varX([0,1,2],[0.5,0.3,0.2],{t:'Var(X)'}),SDX(0.61)])},
+    {check:[{l:'k',v:0.25},{l:'E(X)',v:1.3}],type:'Medium',q:'Goals per match: P(0) = 0.25, P(1) = 0.35, P(2) = k, P(3) = 0.15. Find k and E(X).',hint:MA({b:[gK([0.25,0.35,0.15]),BA.e([0,1,2,3],[0.25,0.35,0.25,0.15],{t:'E(X)'})]},{s:[['Meaning','On average <b>1.3</b> goals per match.']]})},
+    {check:[{l:'Var(X)',v:1.01},{l:'SD',v:1.004988},{l:'Meaning',opts:['A typical match is about 1 goal from the average','Most matches have exactly 1 goal','The average is 1 goal'],v:'A typical match is about 1 goal from the average'}],type:'Hard',q:'Same goals table: find Var(X) and SD, and interpret SD in one sentence.',hint:MA({b:[BA.varX([0,1,2,3],[0.25,0.35,0.25,0.15],{t:'Var(X)'}),(g=>(g.lines[1]=Bd.line('SD = √1.01 ≈ <b>1.005</b>','ans'),g))(SDX(1.01))]},{s:[['Meaning','A typical match is about <b>1 goal</b> away from the average of 1.3.']]})}],
   next:'Next: Week 7, Bernoulli and binomial distributions (in preparation).'
 });
 </script>
