@@ -69,3 +69,17 @@ body.lesson{font-family:var(--f-body)}
 .lc-tips ol{margin:6px 0 0;padding-left:20px;display:grid;gap:3px}
 .lc-ans{font-family:var(--f-mono);font-size:.75rem;color:var(--muted);margin:6px 0 0}
 @media (max-width:700px){.lc-how{grid-template-columns:minmax(0,1fr)}.lclass .lc-paper{padding:20px 12px 8px}}
+/* worked example: step by step (left) and on the board (right) */
+.ltwo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.ltwo .lcol>.eyebrow{display:block;margin-bottom:6px}
+.ltwo .ldecode{max-width:none}
+.lboard .bd{margin:0}
+.lboard .bd-g{grid-template-columns:minmax(0,1fr) 190px}
+.lboard .m,.lboard .tk{font-family:inherit!important;font-size:1em!important;line-height:1.5;text-align:left;white-space:normal;background:none!important;box-shadow:none!important;opacity:1!important}
+.lboard .bd-f{font-size:1.15em}
+.lboard .v{font-style:normal}
+.lboard .bd-parts div{font-size:.82em;color:var(--bi);white-space:normal}
+.lboard .bd-parts b{color:var(--bg2)}
+.lboard .bd-ans b{border-bottom:3px solid var(--br);padding:0 .1em}
+@media (max-width:980px){.ltwo{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){.lboard .bd-g{grid-template-columns:minmax(0,1fr)}}

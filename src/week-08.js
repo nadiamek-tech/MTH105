@@ -1,0 +1,95 @@
+// {"file": "week-08.html", "title": "MTH 105 Week 8 · The Normal Distribution", "wk": "#4338CA", "wkd": "#A5B4FF"}
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* board model answers for practice: BA / Board from assets/board-answers.js and assets/board.js */
+const Bd=Board, MA=(...p)=>{ const li=p.map(x=>!!x.b).lastIndexOf(true); return p.map((x,i)=>x.b?(i===li?BA.board(x.b):Bd.make(x.b)):BA.steps(x.s)).join(''); };
+/* μ ± kσ: lower end, then upper end with the answer */
+function gBand(mu,s,k,pc,unit=''){ const lo=mu-k*s, hi=mu+k*s, u=unit?' '+unit:'';
+  return [{t:`μ ± ${k}σ`,lines:[Bd.line(`Lower = <span class="g">μ</span> − ${k}<span class="r">σ</span>`),Bd.dec([['μ',mu],['σ',s]]),Bd.line(`Lower = ${mu} − ${k}(${s}) = <b>${lo}</b>`,'ans')],calc:[`${mu}−${k}×${s}`,BA.lcd(lo)]},
+    {lines:[Bd.line(`Upper = <span class="g">μ</span> + ${k}<span class="r">σ</span>`),Bd.line(`Upper = ${mu} + ${k}(${s}) = <b>${hi}</b>`,'ans'),Bd.line(`About ${pc}% lie between <b>${lo} and ${hi}${u}</b>.`)],calc:[`${mu}+${k}×${s}`,BA.lcd(hi)]}]; }
+/* one tail outside μ ± kσ */
+function gTail(lhs,pc){ const v=(100-pc)/2;
+  return {t:'Tail',lines:[Bd.fr('P',`100% − ${pc}%`,'2',{n:'outside',d:'2 tails'}),Bd.line(`${lhs} = (100% − ${pc}%) ÷ 2 = <b>${BA.num(v)}%</b>`,'ans')],calc:[`(100−${pc})÷2`,BA.lcd(v)]}; }
+/* two halves of bands on either side of μ */
+function gHalves(lhs,a,b,na,nb){ const v=a/2+b/2;
+  return {t:'Two halves',lines:[Bd.line(`${lhs} = <span class="g">${a}%</span> ÷ 2 + <span class="r">${b}%</span> ÷ 2`),Bd.dec([[`${a}%`,na],[`${b}%`,nb]]),Bd.line(`${lhs} = ${BA.num(a/2)}% + ${BA.num(b/2)}% = <b>${BA.num(v)}%</b>`,'ans')],calc:[`${a}÷2+${b}÷2`,BA.lcd(v)]}; }
+function smoothTool(el){
+  el.innerHTML=`<div class="tool"><div class="seg2"><button type="button" aria-pressed="true">50 heights</button><button type="button" aria-pressed="false">500 heights</button><button type="button" aria-pressed="false">50,000 heights</button></div><div class="pic"></div><p class="mono" style="margin:0;color:var(--muted)">Simulated student heights, μ = 170 cm, σ = 8 cm.</p></div>`;
+  const draw=i=>{ const N=[50,500,50000][i], k=[8,16,40][i]; let seed=3; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+    const g=()=>170+8*Math.sqrt(-2*Math.log(rnd()))*Math.cos(2*Math.PI*rnd()); const lo=140,hi=200,w=(hi-lo)/k,f=Array(k).fill(0);
+    for(let j=0;j<N;j++){ const x=g(), b=Math.floor((x-lo)/w); if(b>=0&&b<k) f[b]++; }
+    const Wd=520,Hd=190,L=10,B=26, dens=f.map(c=>c/(N*w)), mx=Math.max(...dens,0.05), X=x=>L+(Wd-2*L)*(x-lo)/(hi-lo), Y=d=>Hd-B-(Hd-B-10)*d/mx;
+    const pdf=x=>Math.exp(-(((x-170)/8)**2)/2)/(8*Math.sqrt(2*Math.PI)); const pts=[]; for(let x=lo;x<=hi;x+=.5) pts.push(`${X(x)},${Y(pdf(x))}`);
+    el.querySelector('.pic').innerHTML=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Histogram turning into a curve">${dens.map((d,j)=>`<rect x="${X(lo+j*w)}" y="${Y(d)}" width="${(Wd-2*L)/k-1}" height="${Hd-B-Y(d)}" fill="var(--wk)" opacity=".35"/>`).join('')}${i===2?`<polyline points="${pts.join(' ')}" fill="none" stroke="var(--ink)" stroke-width="2.4"/>`:''}<line x1="${L}" x2="${Wd-L}" y1="${Hd-B}" y2="${Hd-B}" stroke="var(--ink)"/>${[146,154,162,170,178,186,194].map(t=>`<text x="${X(t)}" y="${Hd-8}" text-anchor="middle" ${MONO} font-size="10" fill="var(--muted)">${t}</text>`).join('')}</svg>`; };
+  el.querySelectorAll('.seg2 button').forEach((b,i)=>b.addEventListener('click',()=>{ el.querySelectorAll('.seg2 button').forEach(x=>x.setAttribute('aria-pressed',x===b)); draw(i); })); draw(0);
+}
+function shapeNormal(el){
+  el.innerHTML=`<div class="tool"><div class="sl"><label for="ns-mu">μ</label><input type="range" id="ns-mu" min="50" max="90" value="70"><b class="mono" id="ns-muv"></b></div><div class="sl"><label for="ns-sd">σ</label><input type="range" id="ns-sd" min="3" max="20" value="10"><b class="mono" id="ns-sdv"></b></div><div class="pic"></div></div>`;
+  const run=()=>{ const mu=+el.querySelector('#ns-mu').value, sd=+el.querySelector('#ns-sd').value; el.querySelector('#ns-muv').textContent=mu; el.querySelector('#ns-sdv').textContent=sd;
+    const Wd=520,Hd=180,L=14,B=26,lo=10,hi=130,X=x=>L+(Wd-2*L)*(x-lo)/(hi-lo),Y=d=>Hd-B-(Hd-B-10)*d/0.135;
+    const pdf=(x,m,s)=>Math.exp(-(((x-m)/s)**2)/2)/(s*Math.sqrt(2*Math.PI)); const line=(m,s)=>{ const p=[]; for(let x=lo;x<=hi;x+=.5) p.push(`${X(x)},${Y(pdf(x,m,s))}`); return p.join(' '); };
+    el.querySelector('.pic').innerHTML=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="Normal curve shape"><polyline points="${line(70,10)}" fill="none" stroke="var(--muted)" stroke-dasharray="4 4"/><polyline points="${line(mu,sd)}" fill="var(--wk-soft)" stroke="var(--wk)" stroke-width="2.4"/><line x1="${X(mu)}" x2="${X(mu)}" y1="10" y2="${Hd-B}" stroke="var(--wk)" stroke-dasharray="5 4"/><line x1="${L}" x2="${Wd-L}" y1="${Hd-B}" y2="${Hd-B}" stroke="var(--ink)"/>${[20,40,60,80,100,120].map(t=>`<text x="${X(t)}" y="${Hd-8}" text-anchor="middle" ${MONO} font-size="10" fill="var(--muted)">${t}</text>`).join('')}<text x="${X(mu)+6}" y="22" ${FT} font-size="12" font-weight="700" fill="var(--wk)">μ = ${mu}</text></svg>`; };
+  el.querySelectorAll('input').forEach(i=>i.addEventListener('input',run)); run();
+}
+/* empirical rule on resting heart rate, μ = 72, σ = 6 */
+function hrRule(el){
+  el.innerHTML=`<div class="tool"><div class="seg2"><button type="button" aria-pressed="true">±1σ · 68%</button><button type="button" aria-pressed="false">±2σ · 95%</button><button type="button" aria-pressed="false">±3σ · 99.7%</button></div><div class="pic"></div><div class="feedback"></div></div>`;
+  const draw=k=>{ el.querySelector('.pic').innerHTML=ST.normalCurve(72,6,72-k*6,72+k*6,[]); el.querySelector('.feedback').innerHTML=`Resting heart rate, μ = 72, σ = 6: about <b>${['68%','95%','99.7%'][k-1]}</b> of adults are between <b>${72-k*6}</b> and <b>${72+k*6}</b> bpm.`; };
+  el.querySelectorAll('.seg2 button').forEach((b,i)=>b.addEventListener('click',()=>{ el.querySelectorAll('.seg2 button').forEach(x=>x.setAttribute('aria-pressed',x===b)); draw(i+1); })); draw(1);
+}
+/* the curve cut into the rule's pieces: 34%, 13.5%, 2.35%, 0.15% */
+const pieces=(()=>{ const X=k=>14+492*(k+3.6)/7.2;
+  const lab=[[0.5,'34%',140],[1.5,'13.5%',140],[2.5,'2.35%',118]];
+  return ST.normalCurve(72,6,78,1e9,[66,78]).replace('</svg>',lab.map(([k,t,y])=>[k,-k].map(s=>`<text x="${X(s)}" y="${y}" text-anchor="middle" ${MONO} font-size="11" font-weight="600" fill="var(--ink)">${t}</text>`).join('')).join('')+'</svg>'); })();
+
+Lesson.mount({
+  week:8, clo:'CLO 2', title:'The Normal Distribution', chapter:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)',
+  intro:'Binomial X was counted. Height, time and weight are measured: they are continuous. Their most common model is the bell-shaped normal curve.',
+  topics:[
+  { id:'density', title:'From histogram to density curve',
+    def:'A <b>continuous</b> random variable can take any value in a range, decimals included. Its distribution is a smooth <b>density curve</b>. The total area under the curve is 1.',
+    life:{text:'Student heights in cm. With more data and thinner bars, the histogram turns into a smooth curve. Data: simulated.', fig:{label:'Add more data', build:smoothTool}},
+    meaning:{text:'For a continuous X, <b>probability = area under the curve</b> between two values. P(X = one exact value) is 0, so P(X &lt; a) and P(X ≤ a) are the same.'} },
+
+  { id:'normal-curve', title:'The normal distribution N(μ, σ)',
+    def:'The <b>normal distribution</b> is bell-shaped and symmetric. Mean = median = mode, at the peak. It is written <b>X ~ N(μ, σ)</b>.',
+    life:{text:'Exam scores, blood pressure, reaction times and newborn weights are approximately normal: most values near the middle, few in the tails.'},
+    meaning:{text:'<b>μ</b> moves the curve left or right. <b>σ</b> makes it narrow and tall (small σ) or wide and flat (large σ). The total area stays 1.', fig:{label:'Drag the mean and SD', build:shapeNormal, caption:'Dashed: μ = 70, σ = 10.'}} },
+
+  { id:'empirical-rule', demo:'Your professor draws the bell curve and marks μ ± 1σ, 2σ, 3σ on the board.', title:'The 68–95–99.7 rule',
+    def:'In a normal distribution about <b>68%</b> of values lie within 1σ of μ, <b>95%</b> within 2σ, and <b>99.7%</b> within 3σ.',
+    life:{text:'Adult resting heart rate: μ = 72 bpm, σ = 6 bpm. Between which values are the middle 95%? Data: illustrative.'},
+    formula:{f:`${T('mu','μ')} ± ${T('k',v('k'))} · ${T('s','σ')}`,
+      parts:[['mu','<b>μ</b>: the mean, the centre of the curve.'],['k','<b>k</b>: 1, 2 or 3 standard deviations (68%, 95%, 99.7%).'],['s','<b>σ</b>: the standard deviation.']],
+      sub:'72 − 2 × 6 &nbsp; and &nbsp; 72 + 2 × 6', subNote:'95% → k = 2.', keys:'7 2 − 2 × 6 =',
+      ans:`<div class="m"><b>60</b> to <b>84</b> bpm</div><p class="calcnote">Second end: 7 2 + 2 × 6 = 84.</p>`, ansRaw:true},
+    meaning:{text:'About 95% of adults have a resting heart rate between 60 and 84 bpm. Pick a range below.', fig:{label:'Pick a range', build:hrRule}} },
+
+  { id:'rule-areas', title:'Areas from the rule',
+    def:'The curve is symmetric, so each piece outside a band is split equally between the two tails. Area = percentage = probability.',
+    life:{text:'Same heart rates, μ = 72, σ = 6. What percentage of adults are above 78 bpm (μ + 1σ)?'},
+    formula:{f:`${T('P','P('+v('X')+' &gt; μ + σ)')} = ${fr(T('all','100%')+' − '+T('in','68%'),T('two','2'))}`,
+      parts:[['P','<b>P(X &gt; μ + σ)</b>: the right tail beyond 1σ.'],['all','<b>100%</b>: the whole area.'],['in','<b>68%</b>: inside μ ± 1σ.'],['two','<b>2</b>: two equal tails, by symmetry.']],
+      sub:`P(X &gt; 78) = ${fr('100% − 68%','2')}`, keys:'( 1 0 0 − 6 8 ) ÷ 2 =', ans:`<div class="m">P(X &gt; 78) = <b>16%</b> = 0.16</div>`, ansRaw:true},
+    meaning:{text:'Add the pieces: 50% on each side of μ, then 34%, 13.5%, 2.35% and 0.15% moving out. Above 78: 13.5 + 2.35 + 0.15 = 16%.', fig:{label:'Heart rate · shaded: above 78 bpm', html:pieces}} }
+  ],
+  inClass:{intro:'We draw the curve and mark the bands together on the board.', items:[
+    {q:'The battery life of a phone model is normal with μ = 20 hours and σ = 2 hours. Draw the curve and mark μ ± 1σ, 2σ and 3σ. Between which values do about 68%, 95% and 99.7% of batteries last? Data: illustrative.', draw:true, tips:['Put μ in the middle of the axis.','Add and subtract σ each step.','Label each band with its percentage.']},
+    {q:'Same batteries. What percentage last (a) more than 24 hours, (b) less than 18 hours, (c) between 18 and 24 hours? Shade each area first.', draw:true, tips:['24 = μ + 2σ; 18 = μ − 1σ.','Use 34%, 13.5%, 2.35%, 0.15%.','Tail beyond kσ = (100% − band) ÷ 2.']}]},
+  takeaways:{label:'Week 8 on one page', mindmap:{center:'Normal', branches:[
+    {t:'Continuous',items:['Measured values','Density curve, area = 1','Area = probability']},
+    {t:'Shape',items:['Bell, symmetric','Mean = median = mode','μ: centre, σ: width']},
+    {t:'Rule',items:['68% within μ ± 1σ','95% within μ ± 2σ','99.7% within μ ± 3σ']},
+    {t:'Tails',items:['Tail = (100% − band) ÷ 2','34%, 13.5%, 2.35%, 0.15%']}]}},
+  practice:[
+    {check:[{l:'Lower',v:46},{l:'Upper',v:54}],revise:'About 68% of the data lie within μ ± 1σ.',see:{t:'Revise: The 68–95–99.7 rule',href:'#empirical-rule'},type:'Easy',q:'X ~ N(50, 4). Between which values are about 68% of the data?',hint:BA.board(gBand(50,4,1,68))},
+    {check:[{l:'Lower',v:140,u:'cm'},{l:'Upper',v:180,u:'cm'}],revise:'About 95% lie within μ ± 2σ: subtract and add 2 × σ, not σ.',see:{t:'Revise: The 68–95–99.7 rule',href:'#empirical-rule'},type:'Easy',q:'Adult heights: μ = 160 cm, σ = 10 cm. Between which heights are about 95%? Data: illustrative.',hint:BA.board(gBand(160,10,2,95,'cm'))},
+    {check:[{l:'Lower',v:455,u:'g'},{l:'Upper',v:545,u:'g'}],revise:'About 99.7% lie within μ ± 3σ.',see:{t:'Revise: The 68–95–99.7 rule',href:'#empirical-rule'},type:'Easy',q:'Packets of rice: μ = 500 g, σ = 15 g. Find the 99.7% range.',hint:BA.board(gBand(500,15,3,99.7,'g'))},
+    {check:[{l:'P(X &gt; 15)',v:16,u:'%',pct:true}],revise:'First write the value as μ + kσ. Above μ + 1σ lies (100% − 68%) ÷ 2.',see:{t:'Revise: Areas from the rule',href:'#rule-areas'},type:'Medium',q:'Taxi waiting time: μ = 12 min, σ = 3 min. What percentage wait more than 15 minutes? Data: illustrative.',hint:MA({s:[['Locate','15 = 12 + 3 = μ + 1σ']]},{b:[gTail('P(X > 15)',68)]})},
+    {check:[{l:'P(X &lt; 6)',v:2.5,u:'%',pct:true}],revise:'First write the value as μ − kσ. Each tail outside μ ± 2σ holds (100% − 95%) ÷ 2.',see:{t:'Revise: Areas from the rule',href:'#rule-areas'},type:'Medium',q:'Same taxis: what percentage wait less than 6 minutes?',hint:MA({s:[['Locate','6 = 12 − 2(3) = μ − 2σ']]},{b:[gTail('P(X < 6)',95)]})},
+    {check:[{l:'P(9 &lt; X &lt; 18)',v:81.5,u:'%',pct:true}],revise:'Split the interval at μ. Each side is half of 68%, 95% or 99.7%; then add the two halves.',see:{t:'Revise: Areas from the rule',href:'#rule-areas'},type:'Medium',q:'Same taxis: what percentage wait between 9 and 18 minutes?',hint:MA({s:[['Locate','9 = μ − 1σ (left), 18 = μ + 2σ (right)']]},{b:[gHalves('P(9 < X < 18)',68,95,'μ − 1σ to μ','μ to μ + 2σ')]})},
+    {check:[{l:'P(X &gt; 265)',v:0.15,u:'%',pct:true},{l:'P(240 &lt; X &lt; 265)',v:97.35,u:'%',pct:true}],revise:'Write 265 and 240 as μ ± kσ. Use half of the matching percentage on each side of μ.',see:{t:'Revise: Areas from the rule',href:'#rule-areas'},type:'Hard',q:'Juice bottles: μ = 250 ml, σ = 5 ml. What percentage contain more than 265 ml? Between 240 and 265 ml?',hint:MA({s:[['Locate','265 = 250 + 3(5) = μ + 3σ; 240 = 250 − 2(5) = μ − 2σ']]},{b:[gTail('P(X > 265)',99.7),gHalves('P(240 < X < 265)',95,99.7,'μ − 2σ to μ','μ to μ + 3σ')]})},
+    {check:[{l:'μ',v:50},{l:'σ',v:10}],revise:'μ is the midpoint of the 95% range. The range is 4σ wide, so σ = width ÷ 4.',see:{t:'Revise: The 68–95–99.7 rule',href:'#empirical-rule'},type:'Hard',q:'A normal variable has about 95% of its values between 30 and 70. Find μ and σ.',hint:BA.board([
+      {t:'μ',lines:[Bd.fr('μ','30 + 70','2',{n:'the two ends',d:'μ is in the middle'}),Bd.line('μ = (30 + 70) ÷ 2 = <b>50</b>','ans')],calc:['(30+70)÷2','50']},
+      {t:'σ',lines:[Bd.fr('σ','70 − 30','4',{n:'width of the 95% band',d:'μ ± 2σ is 4σ wide'}),Bd.line('σ = (70 − 30) ÷ 4 = <b>10</b>','ans')],calc:['(70−30)÷4','10']}])}],
+  next:'Next: Week 9, the standard normal distribution and z-scores (in preparation).'
+});

@@ -24,6 +24,18 @@
     p.appendChild(row); return p;
   }
 
+  /* the same worked example, written like the professor's whiteboard: formula, what each symbol is, numbers in, answer, calculator */
+  function boardVersion(el,F0){ if(!window.Board) return;
+    const strip=h=>(h||'').replace(/^\s*<div class="m">([\s\S]*)<\/div>\s*$/,'$1');
+    const lines=[`<div class="bd-l bd-f">${F0.f}</div>`];
+    if(F0.parts&&F0.parts.length) lines.push(`<div class="bdec bd-parts">${F0.parts.map(([k,m])=>`<div><span class="g">⟶</span> ${m}</div>`).join('')}</div>`);
+    if(F0.sub) lines.push(`<div class="bd-l">${F0.sub}</div>`);
+    if(F0.ans) lines.push(`<div class="bd-l ans bd-ans">${strip(F0.ans)}</div>`);
+    let calc=null;
+    if(F0.keys&&window.CALC){ const entry=F0.keys.split(' ').filter(Boolean).filter(k=>k!=='=').join('').replace(/x²/g,'²').replace(/nCr/g,'C');
+      try{ const v=CALC.parse(CALC.tokenize(entry.replace(/C/g,'C'),0)); if(isFinite(v)) calc=[entry.replace(/C/g,'C'),String(parseFloat(v.toPrecision(10))).replace('-','−')]; }catch(e){} }
+    el.innerHTML=Board.make([{lines,calc}]);
+  }
   window.Lesson={ mount(cfg){ window.__LESSON=cfg;
     document.title=cfg.pageTitle||document.title;
     document.body.classList.add('lesson');
@@ -53,7 +65,10 @@
       if(t.life) s.appendChild(part('life',t.life.text,t.life.fig,builds));
       if(t.formula){ const p=el('div',{class:'lpart lp-formula','data-part':'formula'}); p.appendChild(el('span',{class:'ltag'},PARTS.formula));
         if(t.formulaNote){ const n=el('p',{class:'ltext say'}); n.innerHTML=t.formulaNote; p.appendChild(n); }
-        const box=el('div',{class:'ldecode'}); p.appendChild(box); builds.push(()=>F.decode(box,t.formula)); s.appendChild(p); }
+        const two=el('div',{class:'ltwo'}), box=el('div',{class:'ldecode'}), bw=el('div',{class:'lboard'});
+        two.appendChild(el('div',{class:'lcol'},'<span class="eyebrow">Step by step</span>')).appendChild(box);
+        two.appendChild(el('div',{class:'lcol'},'<span class="eyebrow">On the board</span>')).appendChild(bw);
+        p.appendChild(two); builds.push(()=>{ F.decode(box,t.formula); boardVersion(bw,t.formula); }); s.appendChild(p); }
       if(t.meaning) s.appendChild(part('meaning',t.meaning.text,t.meaning.fig,builds));
       main.appendChild(s);
     });

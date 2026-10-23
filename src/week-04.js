@@ -23,7 +23,7 @@ Lesson.mount({
     formula:{f:`${T('s2',v('s')+'<sup>2</sup>')} = ${fr(`${T('S',SG)}${T('d','('+v('x')+' − '+XB+')<sup>2</sup>')}`,T('n1',v('n')+' − 1'))}`,
       parts:[['s2','<b>s²</b>: the sample variance (squared units).'],['S','<b>Σ</b>: add up.'],['d','<b>(x − x̄)²</b>: distance from the mean, squared. Subtract first, then square.'],['n1','<b>n − 1</b>: one less than the sample size.']],
       sub:`${v('s')}<sup>2</sup> = ${fr('(−4)² + (−2)² + (−1)² + 1² + 6²','5 − 1')}`, subNote:'Data: 4, 6, 7, 9, 14. Mean = 8.',
-      keys:'( 1 6 + 4 + 1 + 1 + 3 6 ) ÷ ( 5 − 1 ) =', ans:`<div class="m">s² = 58 ÷ 4 = <b>14.5</b></div>`, ansRaw:true, ansNote:'Population variance σ² divides by N instead of n − 1.'},
+      keys:'( ( 4 − 8 ) x² + ( 6 − 8 ) x² + ( 7 − 8 ) x² + ( 9 − 8 ) x² + ( 1 4 − 8 ) x² ) ÷ ( 5 − 1 ) =', ans:`<div class="m">s² = 58 ÷ 4 = <b>14.5</b></div>`, ansRaw:true, ansNote:'Population variance σ² divides by N instead of n − 1.'},
     meaning:{text:'Variance is in squared units (points²), so it is hard to read. That is why we take its square root next.'} },
 
   { id:'sd', title:'Standard deviation',
