@@ -20,6 +20,8 @@ body.live{margin:0;display:flex;flex-direction:column;background:var(--bg);color
 .lv-st.on::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#fff;margin-right:6px;vertical-align:1px;animation:lvp 1.6s infinite}
 @keyframes lvp{50%{opacity:.25}}
 .lv-sp{flex:1}
+.lv-prof{font-size:.75rem;color:var(--muted);text-decoration:none}
+body.teach .lv-prof{display:none}
 .lv-ctl{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .lv-ctl button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:7px 11px;font:600 .88rem var(--f-display);cursor:pointer}
 .lv-ctl button[aria-pressed="true"]{outline:2.5px solid var(--wk);outline-offset:1px}
@@ -54,35 +56,43 @@ body.full .lv-stage{border-radius:0;border:0}
 <body class="live">
 <header class="lv-bar">
   <a class="brand" href="index.html"><b>MTH 105</b><span>Live board · Eng. Nadia Mek</span></a>
-  <span class="lv-st" id="st">Not connected</span>
+  <span class="lv-st" id="st">Connecting…</span>
   <span class="lv-sp"></span>
   <div class="lv-ctl" id="ctl"></div>
+  <a class="lv-prof" href="live.html#teach" title="Professor">Professor</a>
 </header>
 <main class="lv-main" id="main"></main>
 <dialog class="lv-share" id="share">
   <b>Class link</b>
-  <p style="margin:6px 0 0;color:var(--muted);font-size:.9rem">Open it on the projector computer. Students can scan the code to follow on their phones. It shows the board only; nobody else can write.</p>
+  <p style="margin:6px 0 0;color:var(--muted);font-size:.9rem">Open it on the projector. Students can scan the code to follow on their phones. They can only watch.</p>
   <div class="qr" id="qr"></div>
   <code id="link"></code>
   <div class="row"><button type="button" class="btn" id="copy">Copy link</button><button type="button" class="btn ghost" id="closeShare">Close</button></div>
 </dialog>
 <p class="support-note">This website is interactive course support. It does not replace classes, attendance or class activities.</p>
-<script src="assets/vendor/peerjs.min.js"></script>
+<script src="assets/vendor/mqtt.min.js"></script>
 <script src="assets/vendor/qrcode.js"></script>
 <script>
 /* MTH 105 live board.
-   Professor: live.html#teach → type the code → write on a phone or tablet.
-   Projector and students: the class link (live.html#c=…) shows the same board live, view only.
-   Tablet and screens connect directly (WebRTC); a free public PeerJS service only introduces them. No accounts. */
+   Projector and students: live.html shows the board live, view only.
+   Professor: live.html#teach, then the professor code. Only the right code unlocks the signing key, so only her strokes are shown.
+   The strokes travel through free public relay servers (MQTT over secure WebSocket), several at once in case one is blocked. No accounts. */
 (function(){
   const $=s=>document.querySelector(s), main=$('#main'), ctl=$('#ctl'), st=$('#st');
-  const PREFIX='mth105-live-';
+  const KEY={"pub": {"kty": "EC", "crv": "P-256", "x": "yNOeRNhmcmzz7wchKgJzKjZD8tRFhVjS1eUfqlL--SY", "y": "c8OI9H1KFhTT7Z09vEik4H1nnur0aV-JIylhLND9EIk"}, "enc": {"salt": "XgC2JV4qzldXaGM0Heh7Kg==", "iv": "Oih84kcIwUCgMhgE", "ct": "MoaBR+qNlcgIIMSNhIqQ3lfqqZsfCqKYhoIJMdO2HZwt4A1OsYQ4TLxBd8zZIH35urIdzxhTgiF53rJLSVTzy2lfg7sWheTrSAwdpA7ui9bBKDI+wFTv9+NeG5ZOtF7aqLEGVd66I70MomXncIdlchV+tCslRhHqkWZrs9IEDYyoQKMHA6/1ExeCLkxgzS5b30GYzj0Yvx+xg2qDXPxecp8OBEuBd4TwXf29SCyEm1PN20OrpTehFBjytiC2elMPS92wSKzGOcpNxjieXS11gCNTM6PewIqFdbQ/5nIP"}}, ROOM='d1605d0472753433918f989c', TOPIC='mth105cud/live/'+ROOM;
   const q=new URLSearchParams(location.search), srv=q.get('srv');
-  const peerOpts=srv?{host:srv.split(':')[0],port:+(srv.split(':')[1]||9000),path:'/',secure:false}:{};
+  const RELAYS=srv?[{url:'ws://'+srv}]:[{url:'wss://broker.emqx.io:8084/mqtt'},{url:'wss://broker.hivemq.com:8884/mqtt'},{url:'wss://public.cloud.shiftr.io',username:'public',password:'public'}];
   const hash=location.hash.slice(1);
   const status=(t,on)=>{ st.textContent=t; st.classList.toggle('on',!!on); };
-  const sha=async s=>{ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,20); };
+  const B64=b=>btoa(String.fromCharCode(...new Uint8Array(b))), U8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
   const BOARD='#fbfaf5', INKS=[['Blue','#1c3a9c'],['Red','#c62828'],['Green','#15803d'],['Black','#16202b']];
+  /* connect to every relay; returns {clients, publish(topic,msg)} */
+  function relays(onMsg,onUp,subs){
+    const cs=RELAYS.map(r=>{ const c=mqtt.connect(r.url,{username:r.username,password:r.password,clientId:'mth105_'+Math.random().toString(16).slice(2,12),reconnectPeriod:3000,connectTimeout:8000,clean:true});
+      c.on('connect',()=>{ subs.forEach(t=>c.subscribe(t,{qos:0})); onUp&&onUp(c); });
+      c.on('message',(t,m)=>onMsg(t,m.toString())); c.on('error',()=>{}); return c; });
+    return {cs,up:()=>cs.filter(c=>c.connected).length,pub:(t,m)=>cs.forEach(c=>{ if(c.connected) c.publish(t,m,{qos:0}); })};
+  }
 
   /* ---------- the board surface (same drawing for professor and viewers) ---------- */
   function Surface(){
@@ -109,48 +119,71 @@ body.full .lv-stage{border-radius:0;border:0}
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&document.body.classList.contains('full')){ document.body.classList.remove('full'); window.dispatchEvent(new Event('resize')); } });
 
   /* ---------- viewer: projector and students ---------- */
-  function viewer(room){
+  async function viewer(){
     const S=Surface(); const wait=document.createElement('div'); wait.className='lv-wait'; wait.innerHTML='<div><b>Waiting for your professor</b>The board appears here as soon as she starts writing.</div>'; S.stage.appendChild(wait);
     ctl.innerHTML=''; ctl.appendChild(fullBtn()); const sv=document.createElement('button'); sv.type='button'; sv.textContent='Save image'; sv.onclick=()=>S.save(); ctl.appendChild(sv);
-    status('Connecting…'); let peer, conn, timer;
-    const retry=()=>{ clearTimeout(timer); timer=setTimeout(connect,3000); };
-    const connect=()=>{ if(!peer||peer.destroyed||peer.disconnected){ return start(); } conn=peer.connect(PREFIX+room,{reliable:true});
-      conn.on('open',()=>{ status('Live',true); wait.hidden=true; });
-      conn.on('data',m=>{ if(m.t==='state'){ S.grid=!!m.grid; S.strokes=m.strokes||[]; }
-        else if(m.t==='begin') S.add({id:m.id,c:m.c,w:m.w,e:m.e,p:m.p});
-        else if(m.t==='pts') S.extend(m.id,m.p);
-        else if(m.t==='end') S.redraw();
-        else if(m.t==='undo'){ S.strokes=S.strokes.filter(s=>s.id!==m.id); }
-        else if(m.t==='clear') S.strokes=[];
-        else if(m.t==='grid') S.grid=!!m.v; });
-      conn.on('close',()=>{ status('Waiting for the board…'); wait.hidden=false; retry(); });
-      conn.on('error',()=>retry()); };
-    const start=()=>{ peer=new Peer(peerOpts); peer.on('open',connect);
-      peer.on('error',e=>{ if(e.type==='peer-unavailable'){ status('Waiting for the board…'); wait.hidden=false; retry(); } else if(e.type==='network'||e.type==='server-error'||e.type==='socket-error'){ status('No connection, retrying…'); setTimeout(()=>{ try{ peer.destroy(); }catch(x){} start(); },4000); } });
-      peer.on('disconnected',()=>{ try{ peer.reconnect(); }catch(x){} }); };
-    start();
+    const pk=await crypto.subtle.importKey('jwk',{...KEY.pub,ext:true},{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+    const me=Math.random().toString(36).slice(2,10), seen=new Set(); let chain=Promise.resolve(), last=0;
+    const apply=m=>{ last=Date.now(); wait.hidden=true; status('Live',true);
+      if(m.t==='reset'){ S.grid=!!m.grid; S.strokes=[]; }
+      else if(m.t==='add'){ m.strokes.forEach(x=>{ if(!S.strokes.some(y=>y.id===x.id)) S.strokes.push(x); }); S.redraw(); }
+      else if(m.t==='begin') S.add({id:m.id,c:m.c,w:m.w,e:m.e,p:m.p});
+      else if(m.t==='pts') S.extend(m.id,m.p);
+      else if(m.t==='end') S.redraw();
+      else if(m.t==='undo') S.strokes=S.strokes.filter(s=>s.id!==m.id);
+      else if(m.t==='clear') S.strokes=[];
+      else if(m.t==='grid') S.grid=!!m.v; };
+    const onMsg=(t,raw)=>{ let o,m; try{ o=JSON.parse(raw); m=JSON.parse(o.d); }catch(e){ return; } const k=m.sid+':'+m.q; if(seen.has(k)) return;
+      chain=chain.then(async()=>{ if(seen.has(k)) return; let ok=false; try{ ok=await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},pk,U8(o.s),new TextEncoder().encode(o.d)); }catch(e){} if(!ok) return; seen.add(k); if(seen.size>8000) seen.clear(); apply(m); }); };
+    const hello=first=>R.pub(TOPIC+'/h',JSON.stringify({v:me,first}));
+    status('Connecting…');
+    const R=relays(onMsg,()=>{ hello(true); if(!last) status('Connected · waiting'); },[TOPIC+'/d']);
+    setInterval(()=>{ hello(false); if(!R.up()) status('No connection, retrying…'); else if(last&&Date.now()-last>15000){ status('Paused'); } },10000);
   }
 
   /* ---------- professor: code, then write ---------- */
+  async function unlock(code){
+    const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(code.trim().toUpperCase()),'PBKDF2',false,['deriveKey']);
+    const k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:U8(KEY.enc.salt),iterations:250000,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']);
+    const jwk=new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:U8(KEY.enc.iv)},k,U8(KEY.enc.ct)));  /* throws on a wrong code */
+    return jwk;
+  }
+  const importPriv=jwk=>crypto.subtle.importKey('jwk',JSON.parse(jwk),{name:'ECDSA',namedCurve:'P-256'},false,['sign']);
   function lock(){
+    let saved=null; try{ saved=sessionStorage.getItem('live-key'); }catch(e){}
+    if(saved){ importPriv(saved).then(teach).catch(()=>{ try{ sessionStorage.removeItem('live-key'); }catch(e){} lock(); }); return; }
     ctl.innerHTML=''; status('Locked');
-    main.innerHTML=`<div class="lv-card"><h1>Professor board</h1><p>Type your board code. The same code always opens the same class link.</p>
-      <input id="code" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" aria-label="Board code"><div class="err" id="err"></div>
-      <div class="row"><button type="button" class="btn" id="go">Unlock the board</button><a class="btn ghost" href="live.html" style="text-decoration:none">I am a student</a></div></div>`;
-    const go=async()=>{ const c=$('#code').value.trim(); if(c.length<4){ $('#err').textContent='Use at least 4 characters.'; return; } teach(await sha('mth105|'+c)); };
+    main.innerHTML=`<div class="lv-card"><h1>Professor board</h1><p>Type the professor code to write on the board.</p>
+      <input id="code" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="••••-••••" aria-label="Professor code"><div class="err" id="err"></div>
+      <div class="row"><button type="button" class="btn" id="go">Unlock the board</button><a class="btn ghost" href="live.html" style="text-decoration:none">Back to the board</a></div></div>`;
+    const go=async()=>{ const c=$('#code').value; $('#err').textContent=''; $('#go').disabled=true; $('#go').textContent='Checking…';
+      try{ const jwk=await unlock(c); try{ sessionStorage.setItem('live-key',jwk); }catch(e){} teach(await importPriv(jwk)); }
+      catch(e){ $('#err').textContent='Wrong code. Try again.'; $('#go').disabled=false; $('#go').textContent='Unlock the board'; $('#code').select(); } };
     $('#go').onclick=go; $('#code').addEventListener('keydown',e=>{ if(e.key==='Enter') go(); }); $('#code').focus();
   }
-  function teach(room){
-    const S=Surface(); const key='live-board:'+room; let conns=[], cur=null, buf=[], col=INKS[0][1], width=5, eraser=false;
+  function teach(sk){
+    const S=Surface(); const key='live-board:'+ROOM; let cur=null, buf=[], col=INKS[0][1], width=5, eraser=false;
     try{ const saved=JSON.parse(localStorage.getItem(key)||'null'); if(saved){ S.strokes=saved.strokes||[]; S.grid=!!saved.grid; } }catch(e){}
     const persist=()=>{ try{ localStorage.setItem(key,JSON.stringify({strokes:S.strokes.slice(-1500),grid:S.grid})); }catch(e){} };
-    const send=m=>conns.forEach(c=>{ if(c.open) try{ c.send(m); }catch(e){} });
-    const count=()=>status(`Live · ${conns.filter(c=>c.open).length} watching`,true);
+    /* every message is signed in order, then sent through all relays */
+    const SID=Math.random().toString(36).slice(2,9); let seq=0, chain=Promise.resolve();
+    const send=m=>{ m.sid=SID; m.q=++seq; const d=JSON.stringify(m);
+      chain=chain.then(async()=>{ const sg=await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},sk,new TextEncoder().encode(d)); R.pub(TOPIC+'/d',JSON.stringify({d,s:B64(sg)})); }).catch(()=>{}); };
+    const sendState=()=>{ send({t:'reset',grid:S.grid}); let pack=[], size=0;
+      S.strokes.forEach(x=>{ const n=JSON.stringify(x).length; if(size+n>40000&&pack.length){ send({t:'add',strokes:pack}); pack=[]; size=0; } pack.push(x); size+=n; });
+      if(pack.length) send({t:'add',strokes:pack}); };
+    let stT=0; const stateSoon=()=>{ if(stT) return; stT=setTimeout(()=>{ stT=0; sendState(); },700); };
+    const viewers=new Map();
+    const count=()=>{ const now=Date.now(); viewers.forEach((t,v)=>{ if(now-t>35000) viewers.delete(v); });
+      status(R.up()?`Live · ${viewers.size} watching`:'No connection, retrying…',!!R.up()); };
+    const R=relays((t,raw)=>{ if(!t.endsWith('/h')) return; let h; try{ h=JSON.parse(raw); }catch(e){ return; } if(!h||typeof h.v!=='string') return; const isNew=!viewers.has(h.v); viewers.set(h.v,Date.now()); if(h.first||isNew) stateSoon(); count(); },
+      ()=>{ stateSoon(); count(); },[TOPIC+'/h']);
+    setInterval(()=>{ send({t:'hb'}); count(); },5000);
     /* toolbar */
     ctl.innerHTML=INKS.map(([n,c],i)=>`<button type="button" class="pen" data-c="${c}" title="${n} marker" aria-label="${n} marker" aria-pressed="${i===0}" style="background:${c}"></button>`).join('')+
       `<span class="sep"></span><button type="button" data-w="3" aria-pressed="false">Thin</button><button type="button" data-w="5" aria-pressed="true">Normal</button><button type="button" data-w="9" aria-pressed="false">Thick</button>
        <span class="sep"></span><button type="button" id="er" aria-pressed="false">Eraser</button><button type="button" id="un">Undo</button><button type="button" id="cl">Clear</button><button type="button" id="gr" aria-pressed="${S.grid}">Grid</button>
-       <span class="sep"></span><button type="button" id="sh">Class link</button>`;
+       <span class="sep"></span><button type="button" id="sh">Class link</button><button type="button" id="lo">Lock</button>`;
     ctl.appendChild(fullBtn());
     const pens=[...ctl.querySelectorAll('.pen')], sizes=[...ctl.querySelectorAll('[data-w]')];
     pens.forEach(b=>b.onclick=()=>{ col=b.dataset.c; eraser=false; $('#er').setAttribute('aria-pressed','false'); pens.forEach(x=>x.setAttribute('aria-pressed',x===b)); });
@@ -159,33 +192,25 @@ body.full .lv-stage{border-radius:0;border:0}
     $('#un').onclick=()=>{ const s=S.strokes[S.strokes.length-1]; if(!s) return; S.strokes=S.strokes.slice(0,-1); send({t:'undo',id:s.id}); persist(); };
     $('#cl').onclick=()=>{ if(!S.strokes.length||!confirm('Clear the board for everyone?')) return; S.strokes=[]; send({t:'clear'}); persist(); };
     $('#gr').onclick=()=>{ S.grid=!S.grid; $('#gr').setAttribute('aria-pressed',S.grid); send({t:'grid',v:S.grid}); persist(); };
-    const url=location.href.split('#')[0].split('?')[0]+(srv?'?srv='+srv:'')+'#c='+room;
+    $('#lo').onclick=()=>{ try{ sessionStorage.removeItem('live-key'); }catch(e){} location.href='live.html'+(srv?'?srv='+srv:''); };
+    const url=location.href.split('#')[0];
     $('#sh').onclick=()=>{ const qr=qrcode(0,'M'); qr.addData(url); qr.make(); $('#qr').innerHTML=qr.createSvgTag({scalable:true,margin:2}); $('#link').textContent=url; $('#share').showModal(); };
     $('#copy').onclick=()=>{ navigator.clipboard&&navigator.clipboard.writeText(url).then(()=>{ $('#copy').textContent='Copied'; setTimeout(()=>$('#copy').textContent='Copy link',1500); }); };
     $('#closeShare').onclick=()=>$('#share').close();
-    /* drawing: points are sent every 40 ms while the pen moves */
+    /* drawing: points are sent every 60 ms while the pen moves */
     const pos=e=>{ const b=S.cv.getBoundingClientRect(); return [+((e.clientX-b.left)/b.width).toFixed(4),+((e.clientY-b.top)/b.height).toFixed(4),e.pointerType==='mouse'||!e.pressure?.5:+e.pressure.toFixed(2)]; };
     const flush=()=>{ if(cur&&buf.length){ send({t:'pts',id:cur.id,p:buf}); buf=[]; } };
-    setInterval(flush,40);
+    setInterval(flush,60);
     S.cv.addEventListener('pointerdown',e=>{ e.preventDefault(); S.cv.setPointerCapture(e.pointerId); const p=pos(e); cur={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),c:col,w:width,e:eraser,p:[p]}; S.add({...cur,p:[p]}); send({t:'begin',id:cur.id,c:cur.c,w:cur.w,e:cur.e,p:[p]}); });
-    S.cv.addEventListener('pointermove',e=>{ if(!cur) return; e.preventDefault(); const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e]; const pts=evs.map(pos); S.extend(cur.id,pts); buf.push(...pts); });
+    S.cv.addEventListener('pointermove',e=>{ if(!cur) return; e.preventDefault(); const evs=e.getCoalescedEvents?e.getCoalescedEvents():[e]; const s=S.strokes.find(x=>x.id===cur.id); let lp=s.p[s.p.length-1];
+      const pts=evs.map(pos).filter(p=>{ if(Math.hypot(p[0]-lp[0],p[1]-lp[1])<0.0012) return false; lp=p; return true; }); if(!pts.length) return; S.extend(cur.id,pts); buf.push(...pts); });
     const end=()=>{ if(!cur) return; flush(); send({t:'end'}); cur=null; S.redraw(); persist(); };
     S.cv.addEventListener('pointerup',end); S.cv.addEventListener('pointercancel',end); S.cv.addEventListener('pointerleave',end);
-    /* connection: this tablet is the board; every screen connects to it */
-    status('Starting…'); let peer;
-    const start=()=>{ peer=new Peer(PREFIX+room,peerOpts);
-      peer.on('open',()=>count());
-      peer.on('connection',c=>{ conns.push(c); c.on('open',()=>{ c.send({t:'state',strokes:S.strokes,grid:S.grid}); count(); }); c.on('close',()=>{ conns=conns.filter(x=>x!==c); count(); }); c.on('data',()=>{}); });
-      peer.on('disconnected',()=>{ status('Reconnecting…'); try{ peer.reconnect(); }catch(x){} });
-      peer.on('error',e=>{ if(e.type==='unavailable-id'){ status('Board open elsewhere'); alert('This board is already open on another device. Close it there, then reload this page.'); }
-        else if(e.type==='network'||e.type==='server-error'||e.type==='socket-error'){ status('No connection, retrying…'); setTimeout(()=>{ try{ peer.destroy(); }catch(x){} start(); },4000); } }); };
-    start();
+    status('Connecting…');
   }
 
   /* ---------- entry ---------- */
-  if(hash==='teach') lock();
-  else if(hash.startsWith('c=')) viewer(hash.slice(2).replace(/[^0-9a-f]/g,''));
-  else { status('Not connected'); main.innerHTML=`<div class="lv-card"><h1>Live board</h1><p>Your professor's board, live in class. Scan the code on the projector, or open the class link she shares.</p><div class="row"><a class="btn ghost" href="live.html#teach" style="text-decoration:none">I am the professor</a></div></div>`; }
+  if(hash==='teach'){ document.body.classList.add('teach'); lock(); } else viewer();
   addEventListener('hashchange',()=>location.reload());
 })();
 </script>

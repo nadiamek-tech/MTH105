@@ -59,6 +59,10 @@ body.lesson{font-family:var(--f-body)}
 .lc-how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:0;margin:0 0 14px;list-style:none;counter-reset:h}
 .lc-how li{counter-increment:h;font-family:var(--f-display);font-size:.88rem;border-top:2px solid var(--paper-line);padding-top:8px}
 .lc-how li::before{content:counter(h);display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--c3,#B4562F);color:#fff;font-size:.72rem;margin-right:6px}
+.lc-btns{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px}.lc-btns .lc-print{margin-bottom:0}
+.lc-live{display:inline-flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:700;background:#1E7F4F;color:#fff;border-radius:8px;padding:8px 15px;text-decoration:none}
+.lc-live .lc-dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:lcp 1.6s infinite}@keyframes lcp{50%{opacity:.3}}
+@media print{.lc-btns{display:none}}
 .lc-print{font-family:var(--f-display);font-weight:700;border:1.5px solid var(--c3,#B4562F);color:var(--c3,#B4562F);background:transparent;border-radius:8px;padding:7px 14px;cursor:pointer;margin-bottom:16px}
 .lc-ex{border-top:1px solid var(--paper-line);padding:16px 0 12px}
 .lc-exh{display:flex;gap:8px;align-items:center;font-family:var(--f-display)}

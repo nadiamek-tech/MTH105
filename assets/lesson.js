@@ -85,7 +85,7 @@
       sec.appendChild(el('div',{class:'lc-paper'},`<span class="lc-stamp">On the board · on paper</span>
         <p class="lc-lead say">${ic.intro||'We solve these together in class. Bring the handout, or write in the box below each exercise.'}</p>
         <ol class="lc-how"><li><b>Watch</b> your professor demonstrate the method on the board.</li><li><b>Try</b> it yourself on the handout or in the writing box.</li><li><b>Check</b> the answer together in class. It is not posted online.</li></ol>
-        <button type="button" class="lc-print">Print handout</button>`));
+        <div class="lc-btns"><a class="lc-live" href="live.html" target="_blank" rel="noopener"><span class="lc-dot"></span>Live board</a><button type="button" class="lc-print">Print handout</button></div>`));
       ic.items.forEach((x,i)=>{ const card=el('div',{class:'lc-ex'});
         card.innerHTML=`<div class="lc-exh"><b>Exercise ${i+1}</b>${x.draw?'<span class="lc-tag">Draw</span>':''}</div><p class="lc-q say">${x.q}</p>${x.tips?`<details class="lc-tips"><summary>Before you start</summary><ol>${x.tips.map(t=>`<li>${t}</li>`).join('')}</ol></details>`:''}<div class="lc-pad"></div><p class="lc-ans">Answer: solved together in class.</p>`;
         sec.querySelector('.lc-paper').appendChild(card);
