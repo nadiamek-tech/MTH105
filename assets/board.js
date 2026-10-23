@@ -50,7 +50,7 @@
     let s=`<svg viewBox="0 0 210 ${H}" role="img" aria-label="Calculator: ${entry} = ${res}"><rect x="1" y="1" width="208" height="${H-2}" rx="18" fill="#2c3038" stroke="#15171b" stroke-width="2"/>
       <rect x="14" y="16" width="182" height="${sh}" rx="7" fill="#c8d6bd" stroke="#1d2024" stroke-width="2"/>`;
     lines.forEach((l,i)=>{ s+=`<text x="22" y="${36+i*17}" font-family="JetBrains Mono,Consolas,monospace" font-size="13" fill="#15181c" xml:space="preserve">${l.replace(/&/g,'&amp;').replace(/</g,'&lt;')}</text>`; });
-    s+=`<text x="188" y="${16+sh-10}" text-anchor="end" font-family="JetBrains Mono,Consolas,monospace" font-size="19" font-weight="700" fill="#15181c">${res}</text>`;
+    s+=`<text x="188" y="${16+sh-10}" text-anchor="end" font-family="JetBrains Mono,Consolas,monospace" font-size="${String(res).length>9?(String(res).length>11?14:16):19}" font-weight="700" fill="#15181c">${res}</text>`;
     K.forEach((row,r)=>row.forEach((k,c)=>{ const x=14+c*37, y=ky+r*24, eq=k==='=', fn=r===0||k==='DEL'||k==='AC';
       s+=`<rect x="${x}" y="${y}" width="33" height="18" rx="5" fill="${eq?'#c62828':fn?'#4a505b':'#e8e8e4'}"/><text x="${x+16.5}" y="${y+13}" text-anchor="middle" font-family="Arial,sans-serif" font-size="${k.length>2?8.5:11}" font-weight="700" fill="${eq||fn?'#fff':'#20232a'}">${k}</text>`; }));
     return s+'</svg>';

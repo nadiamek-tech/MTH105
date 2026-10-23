@@ -41,22 +41,63 @@ const pieces=(()=>{ const X=k=>14+492*(k+3.6)/7.2;
   const lab=[[0.5,'34%',140],[1.5,'13.5%',140],[2.5,'2.35%',118]];
   return ST.normalCurve(72,6,78,1e9,[66,78]).replace('</svg>',lab.map(([k,t,y])=>[k,-k].map(s=>`<text x="${X(s)}" y="${y}" text-anchor="middle" ${MONO} font-size="11" font-weight="600" fill="var(--ink)">${t}</text>`).join('')).join('')+'</svg>'); })();
 
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const G8=(()=>{ const {svg,card,text,arrow,pill,bell,bellArea,zx,axis}=CG;
+  const H=[2,6,14,20,14,6,2];
+  const dens=svg(520,240,
+    H.map((h,i)=>`<rect x="${24+i*28}" y="${170-h*6}" width="26" height="${h*6}" fill="var(--c2)" fill-opacity=".45" stroke="var(--c2)"/>`).join('')+axis(18,222,170)+
+    text(120,200,'histogram: bars',{a:'middle',s:13,w:700})+text(120,218,'counted in classes',{a:'middle',s:12,c:'var(--muted)'})+
+    arrow(232,110,284,110,'var(--wk)',2.4)+text(258,98,'more data',{a:'middle',s:11,c:'var(--muted)'})+
+    bellArea(294,506,170,128,-3.6,3.6,'var(--wk)',.28)+bell(294,506,170,128)+axis(290,510,170)+
+    text(400,140,'area = 1',{a:'middle',s:17,w:800,c:'var(--wk)'})+
+    text(400,200,'density curve',{a:'middle',s:13,w:700})+text(400,218,'area = probability',{a:'middle',s:12,c:'var(--muted)'}),
+    'A histogram of many values becomes a smooth density curve; the total area under the curve is 1');
+  const nrm=svg(520,250,
+    bellArea(40,480,190,140,-3.6,0,'var(--c2)',.16)+bellArea(40,480,190,140,0,3.6,'var(--c3)',.16)+bell(40,480,190,140)+axis(30,490,190)+
+    `<line x1="260" x2="260" y1="40" y2="190" stroke="var(--ink)" stroke-dasharray="5 4"/>`+
+    text(260,30,'mean = median = mode',{a:'middle',s:14,w:800})+
+    arrow(260,128,zx(40,480,1),128,'var(--wk)',2.2)+text((260+zx(40,480,1))/2,120,'σ',{a:'middle',s:18,w:800,c:'var(--wk)',it:true})+
+    text(zx(40,480,-1.15),182,'left half',{a:'middle',s:12,c:'var(--c2)',w:700})+text(zx(40,480,1.25),182,'mirror image',{a:'middle',s:12,c:'var(--c3)',w:700})+
+    text(260,212,'μ',{a:'middle',s:16,w:800,it:true})+
+    pill(20,214,150,30,'X ~ N(μ, σ)','var(--wk)',{s:14}),'Bell-shaped and symmetric: the mean, median and mode are at the peak; sigma sets the width');
+  const x0=40,x1=480,base=150,h=112, Z=z=>zx(x0,x1,z);
+  const emp=svg(520,260,
+    bellArea(x0,x1,base,h,-3,3,'var(--wk)',.12)+bellArea(x0,x1,base,h,-2,2,'var(--wk)',.16)+bellArea(x0,x1,base,h,-1,1,'var(--wk)',.3)+bell(x0,x1,base,h)+axis(30,490,base)+
+    [-3,-2,-1,0,1,2,3].map(k=>`<line x1="${Z(k)}" x2="${Z(k)}" y1="${base}" y2="${base+5}" stroke="var(--ink)"/>`+text(Z(k),base+19,k===0?'μ':(k>0?'+':'−')+Math.abs(k)+'σ',{a:'middle',s:12,mono:true})).join('')+
+    [[1,'68%',186],[2,'95%',212],[3,'99.7%',238]].map(([k,t,y])=>`<path d="M${Z(-k)},${y-8} L${Z(-k)},${y} L${Z(k)},${y} L${Z(k)},${y-8}" fill="none" stroke="var(--wk)" stroke-width="2"/>`+text(Z(k)+8,y+5,t,{s:15,w:800,c:'var(--wk)'})).join(''),
+    'About 68% of values lie within one sigma of the mean, 95% within two, 99.7% within three');
+  const seg=[[-3.6,-3,'var(--muted)',.35],[-3,-2,'var(--c3)',.35],[-2,-1,'var(--c2)',.35],[-1,0,'var(--wk)',.35],[0,1,'var(--wk)',.35],[1,2,'var(--c2)',.35],[2,3,'var(--c3)',.35],[3,3.6,'var(--muted)',.35]];
+  const B2=170, Hh=124, Zb=z=>zx(30,490,z);
+  const areas=svg(520,240,
+    seg.map(([a,b,c,o])=>bellArea(30,490,B2,Hh,a,b,c,o)).join('')+bell(30,490,B2,Hh)+axis(20,500,B2)+
+    `<line x1="${Zb(0)}" x2="${Zb(0)}" y1="22" y2="${B2}" stroke="var(--ink)" stroke-dasharray="4 4"/>`+text(Zb(0)-10,22,'50%',{a:'end',s:14,w:800})+text(Zb(0)+10,22,'50%',{s:14,w:800})+
+    [[0.5,'34%',140,14],[1.5,'13.5%',158,13]].map(([z,t,y,sz])=>text(Zb(z),y,t,{a:'middle',s:sz,w:800})+text(Zb(-z),y,t,{a:'middle',s:sz,w:800})).join('')+
+    [[2.5,'2.35%',150],[3.3,'0.15%',150]].map(([z,t,y])=>text(Zb(z)+(z>3?6:0),y-(z>3?18:0),t,{a:'middle',s:11.5,w:700,c:'var(--muted)'})+text(Zb(-z)-(z>3?6:0),y-(z>3?18:0),t,{a:'middle',s:11.5,w:700,c:'var(--muted)'})).join('')+
+    [-3,-2,-1,0,1,2,3].map(k=>text(Zb(k),B2+20,k===0?'μ':(k>0?'+':'−')+Math.abs(k)+'σ',{a:'middle',s:12,mono:true})).join('')+
+    text(260,226,'each tail = (100% − band) ÷ 2',{a:'middle',s:13,w:700,c:'var(--wk)'}),
+    'The curve cut into pieces: 34%, 13.5%, 2.35% and 0.15% on each side of the mean');
+  return {dens,nrm,emp,areas};
+})();
+
 Lesson.mount({
   week:8, clo:'CLO 2', title:'The Normal Distribution', chapter:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)',
   intro:'Binomial X was counted. Height, time and weight are measured: they are continuous. Their most common model is the bell-shaped normal curve.',
   topics:[
   { id:'density', title:'From histogram to density curve',
     def:'A <b>continuous</b> random variable can take any value in a range, decimals included. Its distribution is a smooth <b>density curve</b>. The total area under the curve is 1.',
+    defFig:{label:'From bars to a curve', html:G8.dens},
     life:{text:'Student heights in cm. With more data and thinner bars, the histogram turns into a smooth curve. Data: simulated.', fig:{label:'Add more data', build:smoothTool}},
     meaning:{text:'For a continuous X, <b>probability = area under the curve</b> between two values. P(X = one exact value) is 0, so P(X &lt; a) and P(X ≤ a) are the same.'} },
 
   { id:'normal-curve', title:'The normal distribution N(μ, σ)',
     def:'The <b>normal distribution</b> is bell-shaped and symmetric. Mean = median = mode, at the peak. It is written <b>X ~ N(μ, σ)</b>.',
+    defFig:{label:'The bell curve', html:G8.nrm},
     life:{text:'Exam scores, blood pressure, reaction times and newborn weights are approximately normal: most values near the middle, few in the tails.'},
     meaning:{text:'<b>μ</b> moves the curve left or right. <b>σ</b> makes it narrow and tall (small σ) or wide and flat (large σ). The total area stays 1.', fig:{label:'Drag the mean and SD', build:shapeNormal, caption:'Dashed: μ = 70, σ = 10.'}} },
 
   { id:'empirical-rule', demo:'Your professor draws the bell curve and marks μ ± 1σ, 2σ, 3σ on the board.', title:'The 68–95–99.7 rule',
     def:'In a normal distribution about <b>68%</b> of values lie within 1σ of μ, <b>95%</b> within 2σ, and <b>99.7%</b> within 3σ.',
+    defFig:{label:'68 · 95 · 99.7', html:G8.emp},
     life:{text:'Adult resting heart rate: μ = 72 bpm, σ = 6 bpm. Between which values are the middle 95%? Data: illustrative.'},
     formula:{f:`${T('mu','μ')} ± ${T('k',v('k'))} · ${T('s','σ')}`,
       parts:[['mu','<b>μ</b>: the mean, the centre of the curve.'],['k','<b>k</b>: 1, 2 or 3 standard deviations (68%, 95%, 99.7%).'],['s','<b>σ</b>: the standard deviation.']],
@@ -66,6 +107,7 @@ Lesson.mount({
 
   { id:'rule-areas', title:'Areas from the rule',
     def:'The curve is symmetric, so each piece outside a band is split equally between the two tails. Area = percentage = probability.',
+    defFig:{label:'The pieces of the curve', html:G8.areas},
     life:{text:'Same heart rates, μ = 72, σ = 6. What percentage of adults are above 78 bpm (μ + 1σ)?'},
     formula:{f:`${T('P','P('+v('X')+' &gt; μ + σ)')} = ${fr(T('all','100%')+' − '+T('in','68%'),T('two','2'))}`,
       parts:[['P','<b>P(X &gt; μ + σ)</b>: the right tail beyond 1σ.'],['all','<b>100%</b>: the whole area.'],['in','<b>68%</b>: inside μ ± 1σ.'],['two','<b>2</b>: two equal tails, by symmetry.']],

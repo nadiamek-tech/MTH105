@@ -83,3 +83,10 @@ body.lesson{font-family:var(--f-body)}
 .lboard .bd-ans b{border-bottom:3px solid var(--br);padding:0 .1em}
 @media (max-width:980px){.ltwo{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:640px){.lboard .bd-g{grid-template-columns:minmax(0,1fr)}}
+/* several worked examples in one topic: one box each, with room between them */
+.lfx+.lfx{margin-top:34px;padding-top:26px;border-top:1px dashed var(--line)}
+.lfx-h{font-family:var(--f-display);font-size:1.15rem;margin:0 0 10px;display:flex;gap:10px;align-items:center}
+.lfx-h span{font-family:var(--f-mono);font-size:.78rem;color:var(--wk);border:1.5px solid var(--wk);border-radius:6px;padding:1px 7px}
+/* concept graphic next to the definition */
+.lp-def .lfig.concept{background:var(--surface);padding:10px}
+.lp-def .lfig svg{display:block;width:100%;height:auto}

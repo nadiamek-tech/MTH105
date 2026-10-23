@@ -61,14 +61,20 @@
     cfg.topics.forEach((t,i)=>{
       const s=el('section',{class:'lsec',id:t.id}); s.appendChild(el('h2',{},`<span class="no">${i+1}</span>${esc(t.title)}`));
       if(t.demo) s.appendChild(el('div',{class:'ldemo'},`<b>Demonstrated in class</b><span>${t.demo}</span>`));
-      if(t.def) s.appendChild(part('def',t.def,null,builds));
+      if(t.def) s.appendChild(part('def',t.def,t.defFig||null,builds));
       if(t.life) s.appendChild(part('life',t.life.text,t.life.fig,builds));
       if(t.formula){ const p=el('div',{class:'lpart lp-formula','data-part':'formula'}); p.appendChild(el('span',{class:'ltag'},PARTS.formula));
         if(t.formulaNote){ const n=el('p',{class:'ltext say'}); n.innerHTML=t.formulaNote; p.appendChild(n); }
-        const two=el('div',{class:'ltwo'}), box=el('div',{class:'ldecode'}), bw=el('div',{class:'lboard'});
-        two.appendChild(el('div',{class:'lcol'},'<span class="eyebrow">Step by step</span>')).appendChild(box);
-        two.appendChild(el('div',{class:'lcol'},'<span class="eyebrow">On the board</span>')).appendChild(bw);
-        p.appendChild(two); builds.push(()=>{ F.decode(box,t.formula); boardVersion(bw,t.formula); }); s.appendChild(p); }
+        /* one concept per box: an array of formulas gives one worked example each, one after the other */
+        const list=Array.isArray(t.formula)?t.formula:[t.formula];
+        list.forEach((Fx,k)=>{ const blk=el('div',{class:'lfx'});
+          if(list.length>1) blk.appendChild(el('h3',{class:'lfx-h'},`<span>${k+1}</span>${Fx.name||''}`));
+          if(Fx.note){ const n=el('p',{class:'ltext say'}); n.innerHTML=Fx.note; blk.appendChild(n); }
+          const two=el('div',{class:'ltwo'}), box=el('div',{class:'ldecode'}), bw=el('div',{class:'lboard'});
+          two.appendChild(el('div',{class:'lcol'},'<span class="eyebrow">Step by step</span>')).appendChild(box);
+          two.appendChild(el('div',{class:'lcol'},'<span class="eyebrow">On the board</span>')).appendChild(bw);
+          blk.appendChild(two); p.appendChild(blk); builds.push(()=>{ F.decode(box,Fx); boardVersion(bw,Fx); }); });
+        s.appendChild(p); }
       if(t.meaning) s.appendChild(part('meaning',t.meaning.text,t.meaning.fig,builds));
       main.appendChild(s);
     });

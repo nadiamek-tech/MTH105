@@ -19,6 +19,7 @@
 <script src="assets/supports.js"></script>
 <script src="assets/course.js"></script>
 <script src="assets/stats.js"></script>
+<script src="assets/concept.js"></script>
 <script src="assets/decode.js"></script>
 <script src="assets/lesson.js"></script>
 <script src="assets/pad.js"></script>
@@ -66,21 +67,67 @@ function binomBars(n,p,o={}){
   return s;
 }
 
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G7=(()=>{ const {svg,card,text,arrow,tick,cross,pill}=CG;
+  const bern=svg(520,250,
+    card(20,64,150,118)+text(95,100,'ONE TRIAL',{a:'middle',s:12,w:700,mono:true,c:'var(--wk)'})+text(95,130,'one kick',{a:'middle',s:20,w:700})+text(95,155,'two outcomes',{a:'middle',s:13,c:'var(--muted)'})+
+    arrow(176,104,232,72,'var(--c3)')+arrow(176,144,232,176,RED)+
+    card(240,22,262,96,'var(--c3)')+tick(274,70,16)+text(302,62,'Success',{s:19,w:700})+text(302,88,'x = 1 · scores',{s:14,mono:true})+text(486,82,'p',{a:'end',s:34,w:800,c:'var(--c3)',it:true})+
+    card(240,132,262,96,RED)+cross(274,180,16)+text(302,172,'Failure',{s:19,w:700})+text(302,198,'x = 0 · misses',{s:14,mono:true})+text(486,192,'q',{a:'end',s:34,w:800,c:RED,it:true})+
+    pill(28,200,134,34,'p + q = 1'),'One trial with two outcomes: success x = 1 with probability p, failure x = 0 with probability q = 1 − p');
+  const tile=(x,y,n,title,icon,sub)=>card(x,y,240,112,'var(--wk)',{op:.06,sop:.35})+text(x+16,y+28,`${n} · ${title}`,{s:16,w:700})+icon+text(x+16,y+100,sub,{s:12.5,c:'var(--muted)'});
+  const cond=svg(520,250,
+    tile(12,10,1,'Fixed n',[1,2,3,4,5].map(i=>`<rect x="${12+16+(i-1)*36}" y="46" width="28" height="28" rx="6" fill="var(--wk)" fill-opacity=".18" stroke="var(--wk)"/>`+text(12+30+(i-1)*36,65,i,{a:'middle',s:13,w:700,mono:true})).join(''),'trials decided before you start')+
+    tile(268,10,2,'Two outcomes',tick(268+34,60,15)+text(268+56,65,'success',{s:13})+cross(268+142,60,15,RED)+text(268+164,65,'failure',{s:13}),'nothing in between')+
+    tile(12,128,3,'Same p',[0,1,2,3].map(i=>`<rect x="${12+22+i*52}" y="${128+48}" width="34" height="26" rx="4" fill="var(--c2)" fill-opacity=".55"/>`+text(12+39+i*52,128+44,'p',{a:'middle',s:13,w:700,it:true,c:'var(--c2)'})).join(''),'the same chance on every trial')+
+    tile(268,128,4,'Independent',`<circle cx="${268+60}" cy="${128+60}" r="17" fill="var(--c4)" fill-opacity=".25" stroke="var(--c4)"/><circle cx="${268+178}" cy="${128+60}" r="17" fill="var(--c4)" fill-opacity=".25" stroke="var(--c4)"/>`+`<line x1="${268+84}" x2="${268+154}" y1="${128+60}" y2="${128+60}" stroke="var(--muted)" stroke-dasharray="4 5"/>`+cross(268+119,128+60,9,'var(--muted)'),'one trial does not change another'),
+    'The four binomial conditions: fixed n, two outcomes, same p, independent trials');
+  const rows=[['S','S','S','F','F'],['S','F','S','F','S'],['F','F','S','S','S']];
+  const form=svg(520,260,
+    text(20,22,'n = 5 shots, x = 3 made',{s:13,w:700,c:'var(--muted)',mono:true})+
+    rows.map((r,j)=>r.map((c,i)=>c==='S'?tick(36+i*34,52+j*42,13):cross(36+i*34,52+j*42,13,RED)).join('')+text(206,57+j*42,r.map(c=>c==='S'?'p':'q').join('·')+' = p³q²',{s:14,mono:true})).join('')+
+    text(104,186,'⋮',{a:'middle',s:22,c:'var(--muted)'})+
+    `<path d="M408,34 q10,0 10,10 L418,92 q0,10 10,10 q-10,0 -10,10 L418,166 q0,10 -10,10" fill="none" stroke="var(--wk)" stroke-width="2.2"/>`+
+    text(436,96,'10 ways',{s:17,w:800,c:'var(--wk)'})+text(436,120,'= 5C3',{s:15,w:700,mono:true,c:'var(--wk)'})+
+    pill(90,206,340,38,'P(X = 3) = 5C3 · p³ · q²'),'Three successes in five trials can be placed in 5C3 = 10 ways, each with probability p cubed times q squared');
+  const least=svg(520,250,
+    text(20,26,'All outcomes of the n trials · total = 1',{s:13,w:700,c:'var(--muted)'})+
+    `<rect x="20" y="40" width="80" height="62" rx="10" fill="${RED}" fill-opacity=".18" stroke="${RED}"/><rect x="104" y="40" width="396" height="62" rx="10" fill="var(--wk)" fill-opacity=".14" stroke="var(--wk)"/>`+
+    text(60,77,'none',{a:'middle',s:15,w:700,c:RED})+text(302,77,'at least one success',{a:'middle',s:17,w:700,c:'var(--wk)'})+
+    [0,1,2,3].map(i=>cross(30+i*20,132,8,RED)).join('')+text(20,166,'all fail: qⁿ',{s:13,mono:true})+
+    [['S','F','F','F'],['F','S','S','F'],['S','S','S','S']].map((r,j)=>r.map((c,i)=>c==='S'?tick(170+j*118+i*22,132,8):cross(170+j*118+i*22,132,8,RED)).join('')).join('')+text(170,166,'1, 2, … or all n succeed',{s:14})+
+    pill(100,190,320,38,'P(at least one) = 1 − qⁿ'),'Everything except none: at least one equals one minus q to the power n');
+  const P=[...Array(11)].map((_,x)=>ST.choose(10,x)*.5**10), mx=Math.max(...P);
+  const msd=svg(520,250,
+    P.map((v,x)=>`<rect x="${54+x*38}" y="${196-118*v/mx}" width="28" height="${118*v/mx}" rx="3" fill="${Math.abs(x-5)<=1.58?'var(--wk)':'var(--c2)'}" fill-opacity="${Math.abs(x-5)<=1.58?.8:.4}"/>`).join('')+
+    `<line x1="40" x2="490" y1="196" y2="196" stroke="var(--ink)" stroke-width="1.5"/><line x1="258" x2="258" y1="36" y2="196" stroke="var(--ink)" stroke-dasharray="5 4"/>`+
+    text(266,32,'μ = np',{s:16,w:800,mono:true})+
+    `<path d="M198,68 L198,60 L318,60 L318,68" fill="none" stroke="var(--wk)" stroke-width="2.2"/>`+text(190,66,'SD = √(npq)',{a:'end',s:14,w:700,mono:true,c:'var(--wk)'})+
+    text(258,226,'x = number of successes',{a:'middle',s:13,c:'var(--muted)'}),'The bars centre on mu = np; most of the count lies within one SD = square root of npq of the mean');
+  return {bern,cond,form,least,msd};
+})();
+
 Lesson.mount({
   week:7, clo:'CLO 2', title:'Bernoulli and Binomial Distributions', chapter:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)',
   intro:'One trial with two outcomes is Bernoulli. Repeat it n times and count the successes: that count is binomial.',
   topics:[
   { id:'bernoulli', title:'The Bernoulli distribution',
     def:'A <b>Bernoulli</b> trial has one trial and two outcomes: success (x = 1) with probability <b>p</b>, failure (x = 0) with <b>q = 1 − p</b>.',
+    defFig:{label:'One trial, two outcomes', html:G7.bern},
     life:{text:'A player takes one penalty kick and scores with p = 0.75. Data: illustrative.', fig:{label:'One kick', html:bern}},
-    formula:{f:`${T('e','E('+v('X')+')')} = ${T('p',v('p'))} &nbsp;&nbsp; ${T('v','Var('+v('X')+')')} = ${T('p',v('p'))} · ${T('q',v('q'))}`,
-      parts:[['e','<b>E(X)</b>: the expected value of one trial.'],['v','<b>Var(X)</b>: the variance of one trial.'],['p','<b>p</b>: probability of success.'],['q','<b>q = 1 − p</b>: probability of failure.']],
-      sub:'E(X) = 0.75 &nbsp;&nbsp; Var(X) = 0.75 × (1 − 0.75)', keys:'0 . 7 5 × ( 1 − 0 . 7 5 ) =',
-      ans:`<div class="m">E(X) = <b>0.75</b> &nbsp; Var(X) = <b>0.1875</b></div>`, ansRaw:true},
+    formula:[{name:'E(X)', f:`${T('e','E('+v('X')+')')} = ${T('p',v('p'))}`,
+      parts:[['e','<b>E(X)</b>: the expected value of one trial.'],['p','<b>p</b>: probability of success.']],
+      sub:'E(X) = 0.75', ans:`<div class="m">E(X) = <b>0.75</b></div>`, ansRaw:true},
+     {name:'Var(X)', f:`${T('v','Var('+v('X')+')')} = ${T('p',v('p'))} · ${T('q',v('q'))}`,
+      parts:[['v','<b>Var(X)</b>: the variance of one trial.'],['p','<b>p</b>: probability of success.'],['q','<b>q = 1 − p</b>: probability of failure.']],
+      sub:'Var(X) = 0.75 × (1 − 0.75)', keys:'0 . 7 5 × ( 1 − 0 . 7 5 ) =',
+      ans:`<div class="m">Var(X) = <b>0.1875</b></div>`, ansRaw:true}],
     meaning:{text:'Over many kicks, the average of X is 0.75: the player scores 75% of the time. A binomial count adds up n of these trials.'} },
 
   { id:'conditions', title:'Is it binomial? The four conditions',
     def:'X is <b>binomial</b> when: (1) the number of trials <b>n</b> is fixed; (2) each trial has two outcomes; (3) <b>p</b> is the same every trial; (4) the trials are <b>independent</b>.',
+    defFig:{label:'The four conditions', html:G7.cond},
     life:{text:'Decide for each situation.', fig:{label:'6 situations', build:el=>W.sort(el,{buckets:['Binomial','Not binomial'],items:[
       {t:'Heads in 8 coin tosses',a:0,why:'n = 8, head or tail, p = 0.5, independent tosses.'},
       {t:'Rolls of a die until the first 6',a:1,why:'The number of trials is not fixed.'},
@@ -92,6 +139,7 @@ Lesson.mount({
 
   { id:'binomial-formula', demo:'Your professor shows the nCr key and solves P(X = x) on the board.', title:'The binomial formula',
     def:'For a binomial X, the probability of <b>exactly x</b> successes in n trials uses the number of ways to place the successes, <b>nCx</b>.',
+    defFig:{label:'Counting the ways', html:G7.form},
     life:{text:'A basketball player makes 70% of her free throws. She takes 5 shots. What is P(exactly 3 made)? Data: illustrative.'},
     formula:{f:`${T('P','P('+v('X')+' = '+v('x')+')')} = ${T('C',v('n')+'C'+v('x'))} · ${T('px',v('p')+'<sup>'+v('x')+'</sup>')} · ${T('q',v('q')+'<sup>'+v('n')+' − '+v('x')+'</sup>')}`,
       parts:[['P','<b>P(X = x)</b>: probability of exactly x successes.'],['C','<b>nCx</b>: the number of ways to choose which x trials succeed (nCr key).'],['px','<b>p<sup>x</sup></b>: x successes, each with probability p.'],['q','<b>q<sup>n − x</sup></b>: the other n − x trials fail, q = 1 − p.']],
@@ -102,6 +150,7 @@ Lesson.mount({
 
   { id:'at-least', title:'At least one: the complement',
     def:'“At least one” = 1 − P(none). “At most” and “at least” add several P(X = x) values, or use the complement.',
+    defFig:{label:'Everything except none', html:G7.least},
     life:{text:'Each of 6 flights is delayed with p = 0.2, independently. What is P(at least one delayed)? Data: illustrative.'},
     formula:{f:`${T('al','P('+v('X')+' ≥ 1)')} = ${T('one','1')} − ${T('p0','P('+v('X')+' = 0)')} = 1 − ${T('qn',v('q')+'<sup>'+v('n')+'</sup>')}`,
       parts:[['al','<b>P(X ≥ 1)</b>: one or more successes.'],['one','<b>1</b>: all outcomes together.'],['p0','<b>P(X = 0)</b>: no success at all.'],['qn','<b>q<sup>n</sup></b>: all n trials fail (nC0 = 1, p<sup>0</sup> = 1).']],
@@ -110,11 +159,18 @@ Lesson.mount({
 
   { id:'mean-sd', demo:'Your professor compares np with the long table method from Week 6.', title:'Mean and standard deviation of a binomial',
     def:'For a binomial X: mean <b>μ = np</b>, variance <b>Var(X) = npq</b>, and <b>SD = √(npq)</b>.',
+    defFig:{label:'Centre and spread of the count', html:G7.msd},
     life:{text:'15% of customers at a shop pay in cash. Out of 40 customers, how many pay in cash on average? Data: illustrative.'},
-    formula:{f:`${T('mu','μ')} = ${T('n',v('n'))}${T('p',v('p'))} &nbsp;&nbsp; ${T('sd','SD')} = ${sq(T('n',v('n'))+T('p',v('p'))+T('q',v('q')))}`,
-      parts:[['mu','<b>μ = E(X)</b>: expected number of successes.'],['sd','<b>SD</b>: typical distance of X from μ.'],['n','<b>n</b>: number of trials.'],['p','<b>p</b>: probability of success.'],['q','<b>q = 1 − p</b>.']],
-      sub:`μ = 40 × 0.15 &nbsp;&nbsp; SD = ${sq('40 × 0.15 × 0.85')}`, keys:'√ ( 4 0 × 0 . 1 5 × 0 . 8 5 ) =',
-      ans:`<div class="m">μ = <b>6</b> &nbsp; Var(X) = <b>5.1</b> &nbsp; SD ≈ <b>2.26</b></div>`, ansRaw:true},
+    formula:[{name:'μ', f:`${T('mu','μ')} = ${T('n',v('n'))}${T('p',v('p'))}`,
+      parts:[['mu','<b>μ = E(X)</b>: expected number of successes.'],['n','<b>n</b>: number of trials.'],['p','<b>p</b>: probability of success.']],
+      sub:'μ = 40 × 0.15', keys:'4 0 × 0 . 1 5 =', ans:`<div class="m">μ = <b>6</b></div>`, ansRaw:true},
+     {name:'Var(X)', f:`${T('v','Var('+v('X')+')')} = ${T('n',v('n'))}${T('p',v('p'))}${T('q',v('q'))}`,
+      parts:[['v','<b>Var(X)</b>: variance of the count X.'],['n','<b>n</b>: number of trials.'],['p','<b>p</b>: probability of success.'],['q','<b>q = 1 − p</b>.']],
+      sub:'Var(X) = 40 × 0.15 × 0.85', keys:'4 0 × 0 . 1 5 × 0 . 8 5 =', ans:`<div class="m">Var(X) = <b>5.1</b></div>`, ansRaw:true},
+     {name:'SD', f:`${T('sd','SD')} = ${sq(T('n',v('n'))+T('p',v('p'))+T('q',v('q')))}`,
+      parts:[['sd','<b>SD</b>: typical distance of X from μ.'],['n','<b>n</b>: number of trials.'],['p','<b>p</b>: probability of success.'],['q','<b>q = 1 − p</b>.']],
+      sub:`SD = ${sq('40 × 0.15 × 0.85')}`, keys:'√ ( 4 0 × 0 . 1 5 × 0 . 8 5 ) =',
+      ans:`<div class="m">SD ≈ <b>2.26</b></div>`, ansRaw:true}],
     meaning:{text:'On average 6 of the 40 customers pay in cash, usually within about 2.26 of 6 (shaded band: 3.74 to 8.26).',
       fig:{label:'n = 40, p = 0.15 · x = 0 to 15', html:binomBars(40,.15,{max:15,mu:6,sd:2.26,xlabel:'x = customers paying in cash'})}} }
   ],
