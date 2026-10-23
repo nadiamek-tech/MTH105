@@ -43,5 +43,7 @@
   /* typed rows for the non-formula parts of a mixed answer (no method line) */
   const steps=a=>`<div class="mg">${a.map(([l,t])=>`<div${l==='Answer'?' class="fin"':''}><span>${l}</span><span>${t}</span></div>`).join('')}</div>`;
   const board=(groups,foot=HOW)=>B.make(groups,foot);
-  window.BA={XB,sq2,num,lcd,r1,r2,r4,sum,NM,HOW,mean,var:variance,sd,cv,e,varX,steps,board};
+  /* two graphs/formulas next to each other (never stacked): BA.side([['Caption',html],['Caption',html]]) */
+  const side=items=>`<div class="side2">${items.map(([c,h])=>`<div>${c?`<span class="s2-cap">${c}</span>`:''}${h}</div>`).join('')}</div><p class="side2-hint">Swipe to see the other one →</p>`;
+  window.BA={side,XB,sq2,num,lcd,r1,r2,r4,sum,NM,HOW,mean,var:variance,sd,cv,e,varX,steps,board};
 })();
