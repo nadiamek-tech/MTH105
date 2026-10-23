@@ -57,6 +57,13 @@
       <div class="lplan"><span class="eyebrow">In this lecture</span><ol>${secs.map(s=>`<li><a href="#${s.id}">${esc(s.t)}</a></li>`).join('')}</ol>
       <p class="lhow">Every topic: <b>Definition</b> → <b>Around us</b> → <b>Formula, step by step</b> → <b>What it means</b>.</p></div>`;
     main.appendChild(head);
+    /* key words before the lecture: one word per card, with a listen button */
+    const KW=(window.KEYWORDS||{})[cfg.week];
+    if(KW&&KW.length){ const k=el('section',{class:'lkw',id:'key-words'});
+      k.innerHTML=`<span class="eyebrow">Key words for this week</span><p class="lkw-lead">Read these first. You can use them in your written answers.</p><div class="lkw-grid">${KW.map(([w,m,x],i)=>`<div class="lkw-c"><div class="lkw-w"><b>${w}</b>${window.speechSynthesis?`<button type="button" class="lkw-say" data-i="${i}" aria-label="Listen: ${esc(w.replace(/<[^>]+>/g,''))}">🔊</button>`:''}</div><p>${m}</p><p class="lkw-x">${x}</p></div>`).join('')}</div>`;
+      k.querySelectorAll('.lkw-say').forEach(b=>b.onclick=()=>{ const [w,m]=KW[+b.dataset.i]; const say=t=>t.replace(/x̄/g,'x bar').replace(/Σ/g,'sigma').replace(/μ/g,'mu').replace(/σ/g,'sigma').replace(/s²/g,'s squared').replace(/A'/g,'A complement').replace(/−/g,' minus ').replace(/÷/g,' divided by ').replace(/×/g,' times ');
+        speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(say(w)+'. '+say(m)); u.lang='en-GB'; speechSynthesis.speak(u); });
+      main.appendChild(k); }
 
     cfg.topics.forEach((t,i)=>{
       const s=el('section',{class:'lsec',id:t.id}); s.appendChild(el('h2',{},`<span class="no">${i+1}</span>${esc(t.title)}`));
@@ -102,6 +109,15 @@
           <div class="nm"><span>Name:</span><span>Student ID:</span><span>Section:</span></div>
           ${ic.items.map((x,i)=>`<div class="ex"><b>Exercise ${i+1}</b><p>${x.q}</p><div class="box ${x.draw?'grid':'lines'}"></div></div>`).join('')}
           <script>setTimeout(()=>print(),300)<\/script></body></html>`); w.document.close(); });
+      /* missed this class: a calm way to catch up (its own box) */
+      const PR=window.PROF||{}, mc=el('div',{class:'lmissed'});
+      mc.innerHTML=`<span class="eyebrow">Missed this class?</span><p class="lm-lead">No problem. Catch up at your own pace, in this order:</p>
+        <ol><li><b>Read the key words</b> at the <a href="#key-words">top of this page</a>.</li>
+        <li><b>Go through the topics</b>, one at a time: ${cfg.topics.map(t=>`<a href="#${t.id}">${esc(t.title)}</a>`).join(' · ')}.</li>
+        <li><b>Try the exercises above</b> in the writing box, or print the handout.</li>
+        <li><b>Do the Practice</b> at the end. The model answers open after you try.</li>
+        <li><b>Bring your questions</b> to office hours${PR.officeHours?`: ${esc(PR.officeHours)}${PR.office?' · '+esc(PR.office):''}`:''}. Every question is welcome.${PR.email?` Or email <a href="mailto:${PR.email}">${esc(PR.email)}</a>.`:''}</li></ol>`;
+      sec.appendChild(mc);
       main.appendChild(sec);
     }
 

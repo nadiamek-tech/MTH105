@@ -70,6 +70,7 @@ body.full .lv-stage{border-radius:0;border:0}
   <div class="row"><button type="button" class="btn" id="copy">Copy link</button><button type="button" class="btn ghost" id="closeShare">Close</button></div>
 </dialog>
 <p class="support-note">This website is interactive course support. It does not replace classes, attendance or class activities.</p>
+<script src="assets/supports.js"></script>
 <script src="assets/vendor/mqtt.min.js"></script>
 <script src="assets/vendor/qrcode.js"></script>
 <script>
@@ -85,7 +86,8 @@ body.full .lv-stage{border-radius:0;border:0}
   const hash=location.hash.slice(1);
   const status=(t,on)=>{ st.textContent=t; st.classList.toggle('on',!!on); };
   const B64=b=>btoa(String.fromCharCode(...new Uint8Array(b))), U8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-  const BOARD='#fbfaf5', INKS=[['Blue','#1c3a9c'],['Red','#c62828'],['Green','#15803d'],['Black','#16202b']];
+  let soft=false; try{ soft=localStorage.getItem('live-soft')==='1'; }catch(e){}
+  let BOARD=soft?'#e9e6dd':'#fbfaf5'; const INKS=[['Blue','#1c3a9c'],['Red','#c62828'],['Green','#15803d'],['Black','#16202b']];
   /* connect to every relay; returns {clients, publish(topic,msg)} */
   function relays(onMsg,onUp,subs){
     const cs=RELAYS.map(r=>{ const c=mqtt.connect(r.url,{username:r.username,password:r.password,clientId:'mth105_'+Math.random().toString(16).slice(2,12),reconnectPeriod:3000,connectTimeout:8000,clean:true});
@@ -121,7 +123,7 @@ body.full .lv-stage{border-radius:0;border:0}
   /* ---------- viewer: projector and students ---------- */
   async function viewer(){
     const S=Surface(); const wait=document.createElement('div'); wait.className='lv-wait'; wait.innerHTML='<div><b>Waiting for your professor</b>The board appears here as soon as she starts writing.</div>'; S.stage.appendChild(wait);
-    ctl.innerHTML=''; ctl.appendChild(fullBtn()); const sv=document.createElement('button'); sv.type='button'; sv.textContent='Save image'; sv.onclick=()=>S.save(); ctl.appendChild(sv);
+    ctl.innerHTML=''; const sb=document.createElement('button'); sb.type='button'; sb.textContent='Softer board'; sb.setAttribute('aria-pressed',soft); sb.onclick=()=>{ soft=!soft; try{ localStorage.setItem('live-soft',soft?'1':'0'); }catch(e){} BOARD=soft?'#e9e6dd':'#fbfaf5'; S.stage.style.background=BOARD; sb.setAttribute('aria-pressed',soft); S.redraw(); }; ctl.appendChild(sb); S.stage.style.background=BOARD; ctl.appendChild(fullBtn()); const sv=document.createElement('button'); sv.type='button'; sv.textContent='Save image'; sv.onclick=()=>S.save(); ctl.appendChild(sv);
     const pk=await crypto.subtle.importKey('jwk',{...KEY.pub,ext:true},{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
     const me=Math.random().toString(36).slice(2,10), seen=new Set(); let chain=Promise.resolve(), last=0;
     const apply=m=>{ last=Date.now(); wait.hidden=true; status('Live',true);
