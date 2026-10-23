@@ -18,15 +18,20 @@
     ['calm','Calm colours, no scores','Muted colours; quiz scores hidden.'],
     ['motion','Reduce motion','No animations.'],
     ['focus','Focus mode','Hides the scene list and side buttons.'],
-    ['resume','Resume where I left off','Reopens the last scene you viewed.']
+    ['resume','Resume where I left off','Reopens the last scene you viewed.'],
+    ['words','Key words first','A short list of words to know at the top of each lecture.'],
+    ['catchup','Catch-up steps','After In class: how to catch up if you missed the class.']
   ];
+  /* one tap = one need; each card turns on a few settings */
   const PRESETS=[
-    ['Number support','Step-by-step solving',['guided','numbers','space']],
-    ['Focus support','One thing at a time',['single','focus','motion','resume']],
-    ['Eye comfort','Less glare, softer screen',['glare','motion']],
-    ['Calm mode','Maths anxiety',['calmstart','calm','motion']],
-    ['Reading support','Less reading load',['voice','font','space','large']],
-    ['Vision support','Bigger and clearer',['large','contrast','voice']]
+    ['Step by step','Guided solving',['guided','numbers']],
+    ['One thing at a time','Less on screen',['single','focus','motion']],
+    ['Calm mode','No scores, calm start',['calmstart','calm','motion']],
+    ['Read aloud','Listen to the text',['voice']],
+    ['Easier reading','Clearer and bigger',['font','space','large']],
+    ['Eye comfort','Tint, less glare',['glare']],
+    ['Key words first','Before each lecture',['words']],
+    ['Catch-up steps','If you missed a class',['catchup']]
   ];
   const load=()=>{ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } };
   const save=s=>{ try{ localStorage.setItem(KEY,JSON.stringify(s)); }catch(e){} };
@@ -41,6 +46,7 @@ html[data-sup-large] body{font-size:19.5px}
 html[data-sup-space] :is(p,li,td,th,dd,summary,.para,.narr,small,label){line-height:1.9!important;letter-spacing:.03em;word-spacing:.12em}
 html[data-sup-numbers] :is(.m,.frac,.keys kbd,.out b,.tbl td,.pt-cal td,code,.mono){font-size:1.15em;letter-spacing:.04em;font-variant-numeric:tabular-nums lining-nums}
 html[data-sup-numbers] .m{line-height:2.1!important}
+html:not([data-sup-words]) .lkw,html:not([data-sup-catchup]) .lmissed{display:none!important}
 html[data-sup-glare]{--bg:#e8e6df;--surface:#efede6;--sunk:#e1ded5;--ink:#2b333d;--line:#cdc8bd}
 @media (prefers-color-scheme:dark){html[data-sup-glare]:not([data-theme="light"]){--bg:#23272c;--surface:#2a2f35;--sunk:#30353c;--ink:#d3d0c8;--line:#454c55}}
 html[data-sup-glare][data-theme="dark"]{--bg:#23272c;--surface:#2a2f35;--sunk:#30353c;--ink:#d3d0c8;--line:#454c55}
@@ -71,7 +77,9 @@ html[data-sup-focus] .chips .chip:not(:first-child){display:none}
 .ls-head h2{margin:0;font-size:1.25rem}
 .ls-head p{margin:2px 0 0;color:var(--muted,#555);font-size:.88rem}
 .ls-x{margin-left:auto;flex:none;border:1px solid var(--line,#ccc);background:var(--bg,#fff);color:var(--ink,#111);border-radius:50%;width:34px;height:34px;cursor:pointer;font-size:1.1rem}
-.ls-pre{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.ls-pre{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ls-more{border-top:1px solid var(--line,#ddd);padding-top:10px}.ls-more summary{cursor:pointer;font-weight:700;font-size:.92rem;color:var(--muted,#555)}.ls-more[open]>div{display:grid;gap:12px;margin-top:10px}
+.ls-eye{display:grid;gap:10px;background:var(--bg,#f5f5f5);border-radius:14px;padding:10px 12px}
 .ls-pre button{border:1.5px solid var(--line,#ccc);background:var(--bg,#fff);color:var(--ink,#111);border-radius:14px;padding:10px 12px;text-align:left;cursor:pointer;font:inherit;display:grid;gap:2px}
 .ls-pre button b{font-size:.95rem}
 .ls-pre button small{color:var(--muted,#555);font-size:.78rem}
@@ -127,24 +135,21 @@ body.full .ls-btn{display:none}`;
   let methodChanged=false;
   function render(){
     const on=k=>!!st[k];
-    const row=([k,t,d,why])=>`<label><span>${t}<small>${d}</small>${why?`<em>${why}</em>`:''}</span><input type="checkbox" data-k="${k}" ${on(k)?'checked':''}></label>`;
-    dlg.innerHTML=`<div class="ls-in"><div class="ls-head"><div><h2>Learning supports</h2><p>Choose how you study. Saved on this device only; nothing is sent.</p></div><button type="button" class="ls-x" aria-label="Close">×</button></div>
-<p class="ls-h">Quick settings</p>
+    const row=([k,t,d])=>`<label><span>${t}<small>${d}</small></span><input type="checkbox" data-k="${k}" ${on(k)?'checked':''}></label>`;
+    dlg.innerHTML=`<div class="ls-in"><div class="ls-head"><div><h2>Learning supports</h2><p>Tap what helps you. Saved on this device only.</p></div><button type="button" class="ls-x" aria-label="Close">×</button></div>
 <div class="ls-pre">${PRESETS.map(([t,s,ks],i)=>`<button type="button" data-p="${i}" aria-pressed="${ks.every(on)}"><b>${t}</b><small>${s}</small></button>`).join('')}</div>
-<p class="ls-h">How you practise</p>
-<div class="ls-sw">${SW.filter(x=>x[4]).map(row).join('')}</div>
-<p class="ls-h">How the page looks</p>
-<div class="ls-sw">${SW.filter(x=>!x[4]).map(row).join('')}</div>
-<p class="ls-h">Screen tint</p>
-<div class="ls-tints" role="group" aria-label="Screen tint">${TINTS.map(([k,t,c])=>`<button type="button" data-t="${k}" title="${t}" aria-label="${t} tint" aria-pressed="${(st.tint||'none')===k}" style="background:${c}">${k==='none'?'None':''}</button>`).join('')}</div>
-<div class="ls-speed"><span class="ls-h" style="margin-right:6px">Brightness</span>${[[0,'Normal'],[0.15,'Dimmer'],[0.3,'Dimmest']].map(([d,t])=>`<button type="button" data-d="${d}" aria-pressed="${(+st.dim||0)===d}">${t}</button>`).join('')}</div>
-<p class="ls-h">How a lecture is shown</p>
-<div class="ls-speed" role="group" aria-label="Lecture view">${[['page','Whole lecture on one page'],['section','One topic at a time'],['part','One step at a time']].map(([v,t])=>`<button type="button" data-v="${v}" aria-pressed="${(st.view||'page')===v}">${t}</button>`).join('')}</div>
-<div class="ls-speed"><span class="ls-h" style="margin-right:6px">Voice speed</span>${[[0.8,'Slower'],[1,'Normal'],[1.2,'Faster']].map(([r,t])=>`<button type="button" data-r="${r}" aria-pressed="${rate()===r}">${t}</button>`).join('')}</div>
-<div class="ls-foot"><span>Practice changes apply when you close this panel.</span><button type="button" class="ls-reset">Reset all</button></div></div>`;
+${on('glare')?`<div class="ls-eye"><div class="ls-tints" role="group" aria-label="Screen tint">${TINTS.map(([k,t,c])=>`<button type="button" data-t="${k}" title="${t}" aria-label="${t} tint" aria-pressed="${(st.tint||'none')===k}" style="background:${c}">${k==='none'?'None':''}</button>`).join('')}</div>
+<div class="ls-speed" role="group" aria-label="Brightness">${[[0,'Normal'],[0.15,'Dimmer'],[0.3,'Dimmest']].map(([d,t])=>`<button type="button" data-d="${d}" aria-pressed="${(+st.dim||0)===d}">${t}</button>`).join('')}</div></div>`:''}
+<details class="ls-more"${st.more?' open':''}><summary>More options</summary><div>
+<div class="ls-sw">${SW.map(row).join('')}</div>
+<div class="ls-speed" role="group" aria-label="Lecture view">${[['page','Whole page'],['section','One topic'],['part','One step']].map(([v,t])=>`<button type="button" data-v="${v}" aria-pressed="${(st.view||'page')===v}">${t}</button>`).join('')}</div>
+<div class="ls-speed"><span class="ls-h" style="margin-right:6px">Voice</span>${[[0.8,'Slower'],[1,'Normal'],[1.2,'Faster']].map(([r,t])=>`<button type="button" data-r="${r}" aria-pressed="${rate()===r}">${t}</button>`).join('')}</div>
+<div class="ls-foot"><button type="button" class="ls-reset">Reset all</button></div></div></details></div>`;
+    dlg.querySelector('.ls-more').addEventListener('toggle',e=>{ st.more=e.target.open; save(st); });
     dlg.querySelector('.ls-x').onclick=()=>dlg.close();
     const isM=k=>SW.some(x=>x[0]===k&&x[4])||k==='focus';
-    dlg.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ const ks=PRESETS[b.dataset.p][2], all=ks.every(on); ks.forEach(k=>{ st[k]=!all; if(isM(k)) methodChanged=true; }); if(PRESETS[b.dataset.p][0]==='Focus support'){ st.view=all?'page':'section'; methodChanged=true; } commit(); });
+    dlg.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{ const n=+b.dataset.p, ks=PRESETS[n][2], all=ks.every(on); const keep=new Set(PRESETS.filter((P,i)=>i!==n&&P[2].every(on)).flatMap(P=>P[2]));
+      ks.forEach(k=>{ if(all&&keep.has(k)) return; st[k]=!all; if(isM(k)) methodChanged=true; }); if(PRESETS[n][0]==='One thing at a time'){ st.view=all?'page':'section'; methodChanged=true; } commit(); });
     dlg.querySelectorAll('[data-k]').forEach(c=>c.onchange=()=>{ st[c.dataset.k]=c.checked; if(isM(c.dataset.k)) methodChanged=true; commit(); });
     dlg.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ st.rate=+b.dataset.r; commit(); document.querySelectorAll('audio,video').forEach(m=>{ try{ m.playbackRate=rate(); }catch(e){} }); });
     dlg.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{ st.view=b.dataset.v; methodChanged=true; commit(); });
