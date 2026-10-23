@@ -349,3 +349,9 @@ textarea,input[type=text]{width:100%;border:1px solid var(--line);background:var
 @media (max-width:560px){.prac .hint .mg>div{grid-template-columns:minmax(0,1fr)}}
 .prac .hint .mg>div.how{grid-template-columns:minmax(0,1fr)}
 .prac .hint .mg>div.how>span:first-child{font-family:var(--f-mono);font-size:.7rem;color:#6b7280;letter-spacing:.02em}
+.prac .gtries{color:var(--muted);font-size:.84rem;margin-left:4px}
+.prac .gate.recap{border-color:var(--warn)}
+.prac .grecap{border-left:4px solid var(--warn);background:color-mix(in srgb,var(--warn) 9%,var(--surface));border-radius:0 8px 8px 0;padding:8px 12px;display:grid;gap:4px}
+.prac .grecap>b{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--warn)}
+.prac .grecap a{font-weight:700;justify-self:start}
+.prac .grecap p{margin:0;font-size:.86rem;color:var(--muted)}

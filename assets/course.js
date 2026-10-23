@@ -112,8 +112,8 @@
           const sv=box.querySelector('.wsave'); if(sv) sv.addEventListener('click',()=>{ let n=0; try{ n=JSON.parse(localStorage.getItem(pk(i))||'[]').length; }catch(e){}
             const msg=box.querySelector('.wsaved'); if(!n){ msg.textContent='Write your working in the pad first.'; return; } msg.textContent='Saved on this device.'; step2(pq); }); } }));
       const step2=pq=>{ const g=pq.querySelector('.gate'); if(!g) return; g.querySelector('.g1').classList.add('done'); g.querySelector('.g2').disabled=false; };
-      const unlock=(pq,i,fromStore)=>{ const g=pq.querySelector('.gate'); g.classList.add('open'); g.querySelector('.g1').classList.add('done'); g.querySelector('.g2').disabled=true;
-        g.querySelector('.gmsg').innerHTML=fromStore?'You solved this one before. The model answer is open.':'<b>Correct.</b> Now compare your working with the model answer.';
+      const unlock=(pq,i,fromStore,recap)=>{ const g=pq.querySelector('.gate'); g.classList.add('open'); if(recap) g.classList.add('recap'); g.querySelector('.g1').classList.add('done'); g.querySelector('.g2').disabled=true;
+        g.querySelector('.gmsg').innerHTML=fromStore?'The model answer is open.':'<b>Correct.</b> Now compare your working with the model answer.';
         const sb=pq.querySelector('.show'); if(sb){ sb.disabled=false; sb.removeAttribute('title'); sb.textContent=label; }
         const gd=pq.querySelector('.guide'); if(gd) gd.hidden=false; };
       el.querySelectorAll('.pq').forEach(pq=>{ const i=+pq.dataset.i, it=items[i], g=pq.querySelector('.gate'); if(!g) return;
@@ -122,7 +122,13 @@
         let tries=0;
         g.querySelector('.gchk').addEventListener('click',()=>{ let all=true;
           it.check.forEach((f,j)=>{ const inp=g.querySelector(`[data-j="${j}"]`), ok=okField(f,inp.value); inp.closest('.gf').classList.toggle('ok',ok); inp.closest('.gf').classList.toggle('bad',!ok); all=all&&ok; });
-          if(all){ store(gk(i),'open'); unlock(pq,i); } else { tries++; g.querySelector('.gmsg').innerHTML=`<b>Not yet.</b> Check the ${it.check.length>1?'results marked in red':'result'}: go back to your working, then try again.${tries>=3?' Tip: write the formula first, then put the numbers in, with brackets.':''}`; } }); });
+          if(all){ store(gk(i),'open'); unlock(pq,i); return; }
+          tries++;
+          if(tries<3){ g.querySelector('.gmsg').innerHTML=`<b>Not yet.</b> Check the ${it.check.length>1?'results marked in red':'result'}: go back to your working, then try again. <span class="gtries">Try ${tries} of 3.</span>`; return; }
+          /* third wrong try: short recap of what to revise, then the model answer opens */
+          store(gk(i),'open'); unlock(pq,i,false,true);
+          g.querySelector('.gmsg').innerHTML=`<div class="grecap"><b>Revise this first</b><div>${it.revise||'Go back to the formula for this question in the lecture: write it, decode each symbol, then put the numbers in with brackets.'}</div>${it.see?`<a href="${it.see.href}">${it.see.t} →</a>`:''}<p>Then compare your working with the model answer below, line by line.</p></div>`;
+          const sb=pq.querySelector('.show'), h=pq.querySelector('.hint'); if(sb&&h&&h.hidden){ h.hidden=false; sb.textContent='Hide'; } }); });
       el.querySelectorAll('.pq .spk').forEach(b=>b.addEventListener('click',()=>{ const pq=b.closest('.pq'); say(pq.querySelector('.qt').innerText); }));
       if(calm){ const c=el.querySelector('.calm-go'); c.addEventListener('click',()=>{ const d=el.querySelector('.calm-start'); d.querySelector('textarea').value=''; d.open=false; }); }
       if(guided) el.querySelectorAll('.pq').forEach(pq=>{
