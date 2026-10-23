@@ -12,12 +12,52 @@ const bern=`<svg viewBox="0 0 520 170" role="img" aria-label="Bernoulli distribu
   <text x="180" y="160" text-anchor="middle" ${MONO} font-size="12" fill="var(--ink)">x = 0 · failure</text><text x="340" y="160" text-anchor="middle" ${MONO} font-size="12" fill="var(--ink)">x = 1 · success</text>
   <text x="180" y="${130-0.96*110}" text-anchor="middle" ${MONO} font-size="12" fill="var(--ink)">q = 0.96</text><text x="340" y="${130-0.04*110}" text-anchor="middle" ${MONO} font-size="12" fill="var(--ink)">p = 0.04</text></svg>`;
 
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const G6=(()=>{ const {svg,card,text,tick,pill,brace}=CG;
+  /* valid distribution: every P(x) in [0, 1], all slices fill exactly 1, k is the missing slice */
+  const seg=[[0.1,'0.1'],[0.3,'0.3'],[0.4,'0.4']]; let x0=30;
+  const bars=seg.map(([p,l],i)=>{ const w=460*p, r=`<rect x="${x0+1}" y="74" width="${w-2}" height="50" rx="6" fill="var(--wk)" fill-opacity="${.35+i*.2}"/>`+text(x0+w/2,105,l,{a:'middle',s:14,w:700,mono:true})+text(x0+w/2,144,'x = '+i,{a:'middle',s:12,c:'var(--muted)'}); x0+=w; return r; }).join('')+
+    `<rect x="${x0+1}" y="74" width="${490-x0-2}" height="50" rx="6" fill="none" stroke="#C62828" stroke-width="2" stroke-dasharray="6 4"/>`+text((x0+490)/2,106,'k = ?',{a:'middle',s:15,w:800,mono:true,c:'#C62828'})+text((x0+490)/2,144,'x = 3',{a:'middle',s:12,c:'var(--muted)'});
+  const valid=svg(520,250,
+    text(260,34,'ΣP(x) = 1',{a:'middle',s:16,w:800,mono:true,c:'var(--wk)'})+brace(30,490,66,true)+bars+
+    card(30,166,220,64,'var(--c3)')+tick(56,198,13)+text(80,195,'0 ≤ P(x) ≤ 1',{s:15,w:700,mono:true})+text(80,215,'each value',{s:12,c:'var(--muted)'})+
+    card(270,166,220,64,'#C62828',{op:.06})+text(290,195,'k = 1 − Σ others',{s:15,w:700,mono:true})+text(290,215,'the missing slice',{s:12,c:'var(--muted)'}),
+    'The probabilities fill exactly 1; each is between 0 and 1; the missing slice k is 1 minus the others');
+  /* E(X): the balance point of the distribution */
+  const BX=v=>80+v*120, P=[.1,.3,.4,.2];
+  const ev=svg(520,250,
+    pill(20,12,200,32,'E(X) = Σ x · P(x)',undefined,{s:13})+
+    P.map((p,x)=>`<rect x="${BX(x)-28}" y="${170-p*300}" width="56" height="${p*300}" rx="4" fill="var(--wk)" fill-opacity=".8"/>`+text(BX(x),170-p*300+19,p,{a:'middle',s:12,w:700,mono:true,c:'var(--surface)'})+text(BX(x),196,x,{a:'middle',s:13,mono:true})).join('')+
+    `<rect x="40" y="170" width="440" height="6" rx="3" fill="var(--ink)"/>`+
+    `<line x1="${BX(1.7)}" x2="${BX(1.7)}" y1="44" y2="166" stroke="var(--ink)" stroke-dasharray="5 4" stroke-width="1.5"/>`+
+    text(BX(1.7),36,'balance point',{a:'middle',s:13,w:700,c:'var(--muted)'})+
+    `<path d="M${BX(1.7)},177 L${BX(1.7)-18},207 L${BX(1.7)+18},207 Z" fill="var(--c3)"/>`+
+    text(BX(1.7),232,'E(X) = 1.7',{a:'middle',s:15,w:800,mono:true,c:'var(--c3)'}),
+    'The bars for x = 0, 1, 2, 3 balance on a beam at E(X) = 1.7, the long-run average');
+  /* Var(X): squared distances from μ, weighted by P(x) */
+  const SX=v=>60+v*100, mu=1.7, base=190;
+  const sqr=(x,col,op)=>{ const d=Math.abs(x-mu)*100, l=Math.min(SX(x),SX(mu)); return `<rect x="${l}" y="${base-d}" width="${d}" height="${d}" fill="${col}" fill-opacity="${op}" stroke="${col}" stroke-width="1.5"/>`; };
+  const vx=svg(520,250,
+    sqr(0,'var(--wk)',.08)+sqr(1,'var(--wk)',.22)+sqr(3,'var(--c2)',.08)+sqr(2,'var(--c2)',.22)+
+    text(SX(0)+8,base-150,'(0 − 1.7)²',{s:12,mono:true,c:'var(--wk)'})+text(SX(3)-8,base-110,'(3 − 1.7)²',{a:'end',s:12,mono:true,c:'var(--c2)'})+
+    `<line x1="40" x2="380" y1="${base}" y2="${base}" stroke="var(--ink)" stroke-width="1.5"/>`+
+    [0,1,2,3].map(x=>text(SX(x),base+18,x,{a:'middle',s:13,mono:true})).join('')+
+    `<line x1="${SX(mu)}" x2="${SX(mu)}" y1="14" y2="${base+4}" stroke="var(--ink)" stroke-dasharray="5 4" stroke-width="1.5"/>`+
+    text(SX(mu),base+44,'μ = 1.7',{a:'middle',s:15,w:800,mono:true})+
+    text(400,64,'(x − μ)²',{s:16,w:800,mono:true,c:'var(--wk)'})+text(400,84,'squared distance',{s:12,c:'var(--muted)'})+
+    text(400,124,'× P(x)',{s:16,w:800,mono:true,c:'var(--wk)'})+text(400,144,'weight it',{s:12,c:'var(--muted)'})+
+    text(400,184,'add ⟶ Var(X)',{s:14,w:800}),
+    'Each value x is a squared distance from mu = 1.7, drawn as a square; weight each by P(x) and add to get Var(X)');
+  return {valid,ev,vx};
+})();
+
 Lesson.mount({
   week:6, clo:'CLO 2', title:'Discrete Probability Distributions', chapter:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)',
   intro:'A random variable turns outcomes into numbers. Its distribution lists every value with its probability.',
   topics:[
   { id:'random-variable', title:'Discrete random variables and valid distributions',
     def:'A <b>random variable X</b> gives a number to each outcome. <b>Discrete</b>: countable values (0, 1, 2 …). A distribution is <b>valid</b> when every P(x) is between 0 and 1 and all P(x) add to 1.',
+    defFig:{label:'All P(x) fill exactly 1', html:G6.valid},
     life:{text:'X = number of buses arriving at a stop in one hour. Data: illustrative.',
       fig:{label:'Buses per hour', html:`<table class="tbl"><tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td></tr><tr><th>P(x)</th><td>0.1</td><td>0.3</td><td>0.4</td><td>k</td></tr></table>`}},
     formula:{f:`${T('k',v('k'))} = ${T('one','1')} − ${T('S',SG)}${T('o','(other P(x))')}`,
@@ -27,6 +67,7 @@ Lesson.mount({
 
   { id:'expected-value', title:'Expected value E(X)',
     def:'The <b>expected value</b> E(X), or μ, is the long-run average of X: multiply each value by its probability and add.',
+    defFig:{label:'The balance point', html:G6.ev},
     life:{text:'Same bus stop: 0, 1, 2 or 3 buses with probabilities 0.1, 0.3, 0.4, 0.2.'},
     formula:{f:`${T('e',v('E')+'('+v('X')+')')} = ${T('S',SG)} ${T('x',v('x'))} · ${T('p',v('P')+'('+v('x')+')')}`,
       parts:[['e','<b>E(X)</b>: the expected value, also μ.'],['S','<b>Σ</b>: add over every value of x.'],['x','<b>x</b>: each possible value.'],['p','<b>P(x)</b>: its probability.']],
@@ -35,10 +76,11 @@ Lesson.mount({
 
   { id:'variance-x', demo:'Your professor completes the E(X) and Var(X) table on the board.', title:'Variance and standard deviation of X',
     def:'<b>Var(X)</b> measures how far X typically lands from E(X). <b>SD = √Var(X)</b>, in the units of X.',
+    defFig:{label:'Squared distances from the mean', html:G6.vx},
     life:{text:'Same bus stop, with μ = 1.7.'},
     formula:[{name:'Var(X)', f:`${T('v','Var('+v('X')+')')} = ${T('S',SG)} ${T('d','('+v('x')+' − μ)<sup>2</sup>')} · ${T('p',v('P')+'('+v('x')+')')}`,
       parts:[['v','<b>Var(X)</b>: variance of X.'],['S','<b>Σ</b>: add over every x.'],['d','<b>(x − μ)²</b>: squared distance from E(X) = μ.'],['p','<b>P(x)</b>: weight each squared distance by its probability.']],
-      sub:'(0 − 1.7)²(0.1) + (1 − 1.7)²(0.3) + (2 − 1.7)²(0.4) + (3 − 1.7)²(0.2)', keys:'( 0 − 1 . 7 ) x² × 0 . 1 + ( 1 − 1 . 7 ) x² × 0 . 3 + …', keyNote:'Always bracket the negative before squaring.',
+      sub:'(0 − 1.7)²(0.1) + (1 − 1.7)²(0.3) + (2 − 1.7)²(0.4) + (3 − 1.7)²(0.2)', keys:'( 0 − 1 . 7 ) x² × 0 . 1 + ( 1 − 1 . 7 ) x² × 0 . 3 + ( 2 − 1 . 7 ) x² × 0 . 4 + ( 3 − 1 . 7 ) x² × 0 . 2 =', keyNote:'Always bracket the negative before squaring.',
       ans:`<div class="m">0.289 + 0.147 + 0.036 + 0.338 = <b>0.81</b></div>`, ansRaw:true},
      {name:'SD', f:`${T('sd','SD')} = ${sq(T('v','Var('+v('X')+')'))}`,
       parts:[['sd','<b>SD</b>: standard deviation of X, in buses.'],['v','<b>Var(X)</b>: from box 1.']],

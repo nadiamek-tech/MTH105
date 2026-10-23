@@ -362,3 +362,6 @@ textarea,input[type=text]{width:100%;border:1px solid var(--line);background:var
 .side2 .s2-cap{display:block;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
 .side2-hint{display:none;font-family:var(--f-mono);font-size:.72rem;color:var(--muted);text-align:center;margin-top:4px}
 @media (max-width:640px){.side2{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding-bottom:6px}.side2>*{flex:0 0 88%;scroll-snap-align:start}.side2+.side2-hint{display:block}}
+.prac .gfs{min-width:0}
+.prac .gf{flex-wrap:wrap;max-width:100%;min-width:0}
+.prac .gf select{max-width:100%;white-space:normal}

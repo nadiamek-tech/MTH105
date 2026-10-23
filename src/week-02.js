@@ -15,12 +15,54 @@ function barPie(el){
 }
 const H_AGE = ST.hist([4,9,8,5,3,1],['9.5','19.5','29.5','39.5','49.5','59.5','69.5'],{xlabel:'Age (years)',aria:'Histogram of visitor ages',ymax:10});
 
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const G2=(()=>{ const {svg,card,text,arrow,curveArrow,pill,brace}=CG;
+  const tally=(x,y)=>[0,1,2].map(g=>[0,1,2,3].map(i=>`<line x1="${x+g*48+i*8}" x2="${x+g*48+i*8}" y1="${y}" y2="${y+40}" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>`).join('')+`<line x1="${x+g*48-4}" x2="${x+g*48+28}" y1="${y+32}" y2="${y+8}" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>`).join('')+`<line x1="${x+150}" x2="${x+150}" y1="${y}" y2="${y+40}" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>`;
+  const segs=[[16,'var(--wk)',1],[12,'var(--muted)',.35],[8,'var(--muted)',.25],[4,'var(--muted)',.15]]; let sx=296;
+  const strip=segs.map(([f,c,o])=>{ const w=190*f/40, r=`<rect x="${sx}" y="88" width="${w}" height="36" fill="${c}" fill-opacity="${o}" stroke="var(--surface)" stroke-width="2"/>`; sx+=w; return r; }).join('');
+  const freq=svg(520,250,
+    card(14,20,236,170)+text(32,50,'Frequency f',{s:17,w:700})+tally(40,70)+text(32,148,'Car: f = 16',{s:16,w:700,mono:true})+text(32,174,'how many times',{s:12.5,c:'var(--muted)'})+
+    card(270,20,236,170,'var(--c3)')+text(288,50,'Relative frequency rf',{s:17,w:700})+text(334,80,'0.40',{a:'middle',s:13,w:700,mono:true,c:'var(--wk)'})+strip+
+    brace(296,486,132,false,'var(--c3)')+text(391,164,'all rf add up to 1',{a:'middle',s:13,c:'var(--muted)'})+
+    pill(160,204,200,36,'rf = f ÷ n'),'Frequency counts how many; relative frequency is the share of the total, f divided by n');
+  const X=v=>30+(v-37)*28.75;
+  const cls=svg(520,240,
+    text(40,28,'limits',{s:13,w:700})+text(150,28,'boundaries ± 0.5',{s:13,w:700,c:'var(--c4)'})+text(330,28,'midpoint',{s:13,w:700,c:'var(--c3)'})+
+    text((X(39.5)+X(49.5))/2,62,'width = 10',{a:'middle',s:14,w:700,c:'var(--wk)'})+brace(X(39.5),X(49.5),84,true,'var(--wk)')+
+    `<rect x="${X(39.5)}" y="96" width="${X(49.5)-X(39.5)}" height="54" fill="var(--wk)" fill-opacity=".14" stroke="var(--wk)" stroke-width="1.5"/>`+text((X(39.5)+X(49.5))/2,129,'class 40–49',{a:'middle',s:16,w:700})+
+    `<line x1="30" x2="490" y1="150" y2="150" stroke="var(--ink)" stroke-width="1.5"/>`+
+    [39.5,49.5].map(b=>`<line x1="${X(b)}" x2="${X(b)}" y1="90" y2="180" stroke="var(--c4)" stroke-width="2" stroke-dasharray="5 4"/>`+text(X(b),198,b,{a:'middle',s:13,mono:true,w:700,c:'var(--c4)'})).join('')+
+    [40,49].map(l=>`<line x1="${X(l)}" x2="${X(l)}" y1="143" y2="157" stroke="var(--ink)" stroke-width="2.4"/>`+text(l===40?X(l)+6:X(l)-6,174,l,{a:l===40?'start':'end',s:13,mono:true,w:700})).join('')+
+    `<circle cx="${X(44.5)}" cy="150" r="6" fill="var(--c3)"/>`+text(X(44.5),174,'44.5',{a:'middle',s:13,mono:true,w:700,c:'var(--c3)'}),
+    'One class: limits 40 and 49, boundaries 39.5 and 49.5, midpoint 44.5, width 10');
+  const F=[4,9,8,5], C=['10–19','20–29','30–39','40–49'];
+  const hist=svg(520,250,
+    card(14,40,170,176)+text(36,70,'Class',{s:13,w:700,c:'var(--muted)'})+text(150,70,'f',{a:'middle',s:13,w:700,c:'var(--muted)',it:true})+
+    C.map((c,i)=>text(36,100+i*28,c,{s:14,mono:true})+text(150,100+i*28,F[i],{a:'middle',s:14,mono:true,w:700})).join('')+
+    arrow(192,128,228,128)+
+    F.map((f,i)=>`<rect x="${244+i*60}" y="${206-f*16}" width="60" height="${f*16}" fill="var(--wk)" fill-opacity="${.45+i%2*.25}" stroke="var(--surface)" stroke-width="1"/>`+text(274+i*60,226,C[i],{a:'middle',s:11,mono:true,c:'var(--muted)'})).join('')+
+    `<line x1="236" x2="492" y1="206" y2="206" stroke="var(--ink)" stroke-width="1.5"/>`+
+    text(364,30,'bars touch: no gaps',{a:'middle',s:14,w:700,c:'var(--wk)'})+arrow(364,38,364,70,'var(--wk)'),
+    'A frequency table becomes a histogram: one touching bar per class, height = frequency');
+  const poly=svg(520,240,
+    `<rect x="170" y="130" width="170" height="70" fill="var(--wk)" fill-opacity=".2" stroke="var(--wk)" stroke-width="1.5"/>`+text(255,172,'40–49',{a:'middle',s:14,w:700})+
+    `<line x1="40" x2="490" y1="200" y2="200" stroke="var(--ink)" stroke-width="1.5"/>`+
+    `<circle cx="255" cy="130" r="7" fill="var(--c3)"/>`+
+    `<line x1="340" x2="340" y1="200" y2="54" stroke="var(--c4)" stroke-width="2" stroke-dasharray="5 4"/><circle cx="340" cy="54" r="7" fill="var(--c4)"/>`+
+    text(30,96,'Polygon',{s:16,w:700,c:'var(--c3)'})+text(30,116,'midpoint, height f',{s:12.5})+curveArrow(120,124,200,150,246,134,'var(--c3)')+
+    text(356,50,'Ogive',{s:16,w:700,c:'var(--c4)'})+text(356,70,'upper boundary,',{s:12.5})+text(356,88,'height cum f',{s:12.5})+
+    text(170,220,'39.5',{a:'middle',s:12,mono:true,c:'var(--muted)'})+text(255,220,'44.5',{a:'middle',s:12,mono:true,w:700,c:'var(--c3)'})+text(340,220,'49.5',{a:'middle',s:12,mono:true,w:700,c:'var(--c4)'}),
+    'Polygon points sit at the class midpoint with height f; ogive points sit at the upper boundary with height cumulative f');
+  return {freq,cls,hist,poly};
+})();
+
 Lesson.mount({
   week:2, clo:'CLO 1', title:'Describing and Organizing Data', chapter:'Ch.2: Picturing Variation with Graphs · Gould, Ryan & Wong (2020)',
   intro:'Raw data are hard to read. Tables and graphs show the pattern.',
   topics:[
   { id:'frequency', title:'Frequency and relative frequency',
     def:'The <b>frequency</b> f is how many times a category occurs. The <b>relative frequency</b> rf is its share of the total: f ÷ n.',
+    defFig:{label:'Count and share', html:G2.freq},
     life:{text:'40 students record how they get to campus: car 16, Metro 12, bus 8, walk 4. Data: illustrative.'},
     formula:{f:`${T('rf',v('rf'))} = ${fr(T('f',v('f')),T('n',v('n')))}`,
       parts:[['rf','<b>rf</b>: relative frequency, the share of the total (0 to 1).'],['f','<b>f</b>: frequency, how many in this category.'],['n','<b>n</b>: total number of observations.']],
@@ -30,6 +72,7 @@ Lesson.mount({
 
   { id:'classes', demo:'Your professor builds a frequency table on the board from raw data.', title:'Grouping numbers into classes',
     def:'Many numbers are grouped into <b>classes</b> of equal width. Each class has limits, boundaries (± 0.5) and a midpoint.',
+    defFig:{label:'One class, up close', html:G2.cls},
     life:{text:'25 test scores range from 42 to 98. Listing all 25 shows little; six classes show the pattern.'},
     formula:{f:`${T('w','Width')} = ${fr(T('r','Max − Min'),T('k','k'))}`,
       parts:[['w','<b>Width</b>: the size of each class.'],['r','<b>Max − Min</b>: the range of the data.'],['k','<b>k</b>: the number of classes you choose (usually 5 to 10).']],
@@ -39,11 +82,13 @@ Lesson.mount({
 
   { id:'histogram', demo:'Your professor draws a histogram on the board, bar by bar.', title:'Histograms and shape',
     def:'A <b>histogram</b> draws a frequency table as touching bars, one per class. Its <b>shape</b> is symmetric, right-skewed or left-skewed.',
+    defFig:{label:'Table to touching bars', html:G2.hist},
     life:{text:'Ages of 30 visitors to a science museum: most are 10–39, a few are older. Data: illustrative.', fig:{label:'Visitor ages', html:H_AGE}},
     meaning:{text:'Follow the tail. Tail to the right: <b>positively skewed</b>. Tail to the left: <b>negatively skewed</b>. No long tail: <b>symmetric</b>.', fig:{label:'Switch the shape', build:ST.shapeTool}} },
 
   { id:'polygon', demo:'Your professor draws the polygon and the ogive on the board.', title:'Frequency polygon and ogive',
     def:'A <b>frequency polygon</b> joins the class midpoints. An <b>ogive</b> plots cumulative frequency at each upper boundary.',
+    defFig:{label:'Where the points go', html:G2.poly},
     life:{text:'From the museum data: how many visitors were younger than 49.5? The ogive answers directly: 26 of 30.'},
     formula:{f:`${T('m','Midpoint')} = ${fr(`${T('l','lower')} + ${T('u','upper')}`,'2')}`,
       parts:[['m','<b>Midpoint</b>: the centre of a class, used for the polygon.'],['l','<b>lower</b>: the lower class limit.'],['u','<b>upper</b>: the upper class limit.']],

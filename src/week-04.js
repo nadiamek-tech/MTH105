@@ -4,30 +4,81 @@ const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains M
 const BB=Board, KC=e=>[e,BA.lcd(Function('return '+e.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-').replace(/√\(/g,'Math.sqrt(').replace(/²/g,'**2'))())];
 const W2='<a href="https://nadiamek-tech.github.io/MindTheGap/workshop-02.html" target="_blank" rel="noopener">Every symbol, step by step: Mind the Gap Workshop 2 ↗</a>';
 
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const G4=(()=>{ const {svg,card,text,arrow,pill,axis,brace}=CG;
+  const dot=(x,y,col='var(--wk)',r=7)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${col}" fill-opacity=".85"/>`;
+  const dash=(x,y1,y2,col='var(--ink)')=>`<line x1="${x}" x2="${x}" y1="${y1}" y2="${y2}" stroke="${col}" stroke-dasharray="5 4" stroke-width="1.5"/>`;
+  /* range and IQR on one number line */
+  const RX=v=>40+(v-10)*440/24, D=[12,15,17,18,20,22,25,28,31];
+  const range=svg(520,240,
+    text((RX(12)+RX(31))/2,34,'Range = max − min',{a:'middle',s:15,w:800,c:'var(--wk)'})+brace(RX(12),RX(31),70,true)+
+    axis(30,490,100)+D.map(x=>dot(RX(x),100)).join('')+
+    text(RX(12),124,'min',{a:'middle',s:12,c:'var(--muted)'})+text(RX(31),124,'max',{a:'middle',s:12,c:'var(--muted)'})+
+    dash(RX(16),108,136,'var(--c2)')+dash(RX(26.5),108,136,'var(--c2)')+
+    `<rect x="${RX(16)}" y="136" width="${RX(26.5)-RX(16)}" height="38" rx="8" fill="var(--c2)" fill-opacity=".15" stroke="var(--c2)" stroke-width="1.5"/>`+
+    text((RX(16)+RX(26.5))/2,160,'middle 50%',{a:'middle',s:14,w:700})+
+    text(RX(16)-10,160,'Q1',{a:'end',s:14,w:700,mono:true,c:'var(--c2)'})+text(RX(26.5)+10,160,'Q3',{s:14,w:700,mono:true,c:'var(--c2)'})+
+    pill(150,194,220,36,'IQR = Q3 − Q1'),'Range spans from min to max; the IQR box spans Q1 to Q3, the middle 50% of the data');
+  /* deviations from the mean, one row per value */
+  const VX=v=>40+(v-2)*440/14, VD=[4,6,7,9,14];
+  const dev=svg(520,250,
+    dash(VX(8),36,180)+text(VX(8),26,'x̄ = 8',{a:'middle',s:15,w:800,mono:true})+
+    VD.map((x,j)=>{ const y=52+j*30, d=x-8, R=d>0;
+      return arrow(VX(8),y,VX(x)+(R?-9:9),y,R?'var(--c3)':'var(--c2)',2.2)+dot(VX(x),y,'var(--ink)',6)+
+        text(VX(x)+(R?12:-12),y+5,(R?'+':'−')+Math.abs(d),{a:R?'start':'end',s:14,w:700,mono:true,c:R?'var(--c3)':'var(--c2)'}); }).join('')+
+    pill(100,200,320,36,'Var = Σ(x − x̄)² ÷ (n − 1)'),'Each value sits a distance from the mean x-bar = 8; the variance squares these distances, adds them and divides by n − 1');
+  /* SD: typical distance from the mean, small vs large */
+  const row=(y0,offs,hw,col,title)=>text(30,y0,title,{s:14,w:700})+
+    `<rect x="${260-hw}" y="${y0+6}" width="${2*hw}" height="42" rx="6" fill="${col}" fill-opacity=".14"/>`+
+    arrow(260,y0+25,260+hw-2,y0+25,col,2)+text(260+hw/2,y0+19,'SD',{a:'middle',s:12,w:800,mono:true,c:col})+
+    axis(50,470,y0+48)+dash(260,y0+8,y0+48)+offs.map(o=>dot(260+o,y0+38,col,6)).join('');
+  const sd=svg(520,250,
+    row(24,[-56,-36,-18,0,18,36,56],40,'var(--c3)','Small SD · values close to x̄')+
+    row(120,[-150,-90,-45,4,50,100,150],100,'var(--wk)','Large SD · values far from x̄')+
+    pill(110,204,300,36,'SD = typical distance from x̄'),'A small SD means values sit close to the mean; a large SD means they are spread far from it');
+  /* CV: SD as a share of the mean */
+  const bar=(y,pc,col,name,sub)=>text(20,y+18,name,{s:14,w:700})+text(20,y+36,sub,{s:12,c:'var(--muted)',mono:true})+
+    `<rect x="170" y="${y}" width="270" height="40" rx="8" fill="var(--muted)" fill-opacity=".1" stroke="var(--muted)" stroke-opacity=".5"/>`+
+    `<rect x="170" y="${y}" width="${270*pc/100}" height="40" rx="8" fill="${col}" fill-opacity=".75"/>`+
+    text(175+270*pc/100,y+26,'SD',{s:12,w:800,mono:true,c:'var(--ink)'})+text(452,y+28,pc+'%',{s:19,w:800,c:col});
+  const cv=svg(520,240,
+    text(440,30,'whole bar = x̄',{a:'end',s:12,c:'var(--muted)'})+
+    bar(42,40,'var(--wk)','Temperature','x̄ 15 · SD 6')+bar(112,30,'var(--c2)','Rainfall','x̄ 100 · SD 30')+
+    pill(110,190,300,36,'CV = SD ÷ x̄ × 100%'),'CV shows the SD as a percentage of the mean: 6 of 15 is 40%, 30 of 100 is 30%');
+  return {range,dev,sd,cv};
+})();
+
 Lesson.mount({
   week:4, clo:'CLO 1', title:'Measures of Dispersion', chapter:'Ch.3: Numerical Summaries of Center and Variation · Gould, Ryan & Wong (2020)',
   intro:'The same mean can hide very different spreads. This week: one number for the spread.',
   topics:[
   { id:'range-iqr', demo:'Your professor draws a boxplot on the board, with fences and outliers.', title:'Range, IQR and the boxplot',
     def:'The <b>range</b> is max − min. The <b>IQR</b> (interquartile range) is Q3 − Q1: the spread of the middle 50%.',
+    defFig:{label:'Whole spread vs middle half', html:G4.range},
     life:{text:'Two bus routes both average 30 minutes. On one, trips take 28–32 min; on the other, 15–60 min. Same mean, very different reliability. Data: illustrative.'},
-    formula:{f:`${T('iqr','IQR')} = ${T('q3','Q3')} − ${T('q1','Q1')}`,
+    formula:[{name:'Range', f:`${T('r','Range')} = ${T('mx','max')} − ${T('mn','min')}`,
+      parts:[['r','<b>Range</b>: the spread of all the data.'],['mx','<b>max</b>: the largest value.'],['mn','<b>min</b>: the smallest value.']],
+      sub:'Range = 31 − 12', subNote:'Data: 12, 15, 17, 18, 20, 22, 25, 28, 31.', keys:'3 1 − 1 2 =',
+      ans:`<div class="m">Range = <b>19</b></div>`, ansRaw:true},
+     {name:'IQR', f:`${T('iqr','IQR')} = ${T('q3','Q3')} − ${T('q1','Q1')}`,
       parts:[['iqr','<b>IQR</b>: spread of the middle half of the data.'],['q3','<b>Q3</b>: the 75th percentile (median of the upper half).'],['q1','<b>Q1</b>: the 25th percentile (median of the lower half).']],
       sub:'IQR = 26.5 − 16', subNote:'Data: 12, 15, 17, 18, 20, 22, 25, 28, 31. Q1 = (15 + 17) ÷ 2 = 16, Q3 = (25 + 28) ÷ 2 = 26.5.', keys:'2 6 . 5 − 1 6 =',
-      ans:`<div class="m">IQR = <b>10.5</b></div><p class="calcnote">Range = 31 − 12 = 19.</p>`, ansRaw:true, ansNote:'Outliers: below Q1 − 1.5·IQR or above Q3 + 1.5·IQR.'},
+      ans:`<div class="m">IQR = <b>10.5</b></div>`, ansRaw:true, ansNote:'Outliers: below Q1 − 1.5·IQR or above Q3 + 1.5·IQR.'}],
     meaning:{text:'The boxplot draws the five-number summary: min, Q1, median, Q3, max. A long whisker or a dot beyond the fences shows skew or outliers.', fig:{label:'Type data, see the boxplot', build:ST.boxTool}} },
 
   { id:'variance', demo:'Your professor builds a deviation table on the board.', title:'Sample variance',
     def:'The <b>variance</b> s² is the average squared distance from the mean. For a sample, divide by n − 1.',
+    defFig:{label:'Distances from the mean', html:G4.dev},
     life:{text:'Five students’ quiz scores: 4, 6, 7, 9, 14. Mean = 8. How far are they from 8, on average?'},
     formula:{f:`${T('s2',v('s')+'<sup>2</sup>')} = ${fr(`${T('S',SG)}${T('d','('+v('x')+' − '+XB+')<sup>2</sup>')}`,T('n1',v('n')+' − 1'))}`,
       parts:[['s2','<b>s²</b>: the sample variance (squared units).'],['S','<b>Σ</b>: add up.'],['d','<b>(x − x̄)²</b>: distance from the mean, squared. Subtract first, then square.'],['n1','<b>n − 1</b>: one less than the sample size.']],
-      sub:`${v('s')}<sup>2</sup> = ${fr('(−4)² + (−2)² + (−1)² + 1² + 6²','5 − 1')}`, subNote:'Data: 4, 6, 7, 9, 14. Mean = 8.',
+      sub:`${v('s')}<sup>2</sup> = ${fr(['4','6','7','9','14'].map(x=>`<span style="white-space:nowrap">(${x} − 8)²</span>`).join(' + '),'5 − 1')}`, subNote:'Data: 4, 6, 7, 9, 14. Mean = 8.',
       keys:'( ( 4 − 8 ) x² + ( 6 − 8 ) x² + ( 7 − 8 ) x² + ( 9 − 8 ) x² + ( 1 4 − 8 ) x² ) ÷ ( 5 − 1 ) =', ans:`<div class="m">s² = 58 ÷ 4 = <b>14.5</b></div>`, ansRaw:true, ansNote:'Population variance σ² divides by N instead of n − 1.'},
     meaning:{text:'Variance is in squared units (points²), so it is hard to read. That is why we take its square root next.'} },
 
   { id:'sd', title:'Standard deviation',
     def:'The <b>standard deviation</b> s is the square root of the variance: the typical distance from the mean, in the original units.',
+    defFig:{label:'Typical distance from the mean', html:G4.sd},
     life:{text:'Same quiz scores: s² = 14.5 points².'},
     formula:{f:`${T('s',v('s'))} = ${sq(T('s2',v('s')+'<sup>2</sup>'))}`,
       parts:[['s','<b>s</b>: the sample standard deviation.'],['s2','<b>s²</b>: the variance you just found.']],
@@ -36,11 +87,16 @@ Lesson.mount({
 
   { id:'cv', title:'Coefficient of variation',
     def:'The <b>coefficient of variation</b> (CV) is the standard deviation as a percentage of the mean.',
+    defFig:{label:'SD as a share of the mean', html:G4.cv},
     life:{text:'City A temperature: mean 15 °C, s 6 °C. City B rainfall: mean 100 mm, s 30 mm. Different units: which varies more? Data: illustrative.'},
-    formula:{f:`${T('cv','CV')} = ${fr(T('s',v('s')),T('xb',XB))} × 100%`,
+    formula:[{name:'CV · temperature', f:`${T('cv','CV')} = ${fr(T('s',v('s')),T('xb',XB))} × 100%`,
       parts:[['cv','<b>CV</b>: relative spread, in %.'],['s','<b>s</b>: standard deviation.'],['xb','<b>x̄</b>: mean.']],
-      sub:`CV<sub>temp</sub> = ${fr('6','15')} × 100%<br>CV<sub>rain</sub> = ${fr('30','100')} × 100%`, keys:'6 ÷ 1 5 × 1 0 0 =',
-      ans:`<div class="m">40% vs 30%</div>`, ansRaw:true},
+      sub:`CV<sub>temp</sub> = ${fr('6','15')} × 100%`, keys:'6 ÷ 1 5 × 1 0 0 =',
+      ans:`<div class="m">CV<sub>temp</sub> = <b>40%</b></div>`, ansRaw:true},
+     {name:'CV · rainfall', f:`${T('cv','CV')} = ${fr(T('s',v('s')),T('xb',XB))} × 100%`,
+      parts:[['cv','<b>CV</b>: relative spread, in %.'],['s','<b>s</b>: standard deviation.'],['xb','<b>x̄</b>: mean.']],
+      sub:`CV<sub>rain</sub> = ${fr('30','100')} × 100%`, keys:'3 0 ÷ 1 0 0 × 1 0 0 =',
+      ans:`<div class="m">CV<sub>rain</sub> = <b>30%</b></div>`, ansRaw:true, ansNote:'40% vs 30%.'}],
     meaning:{text:'CV has no units, so it compares spread across different means or units. Smaller CV = more consistent. Here temperature varies more, relative to its mean.'} }
   ],
   inClass:{intro:'Your professor draws the boxplot on the board. Draw it with them, then compute the spread.', items:[

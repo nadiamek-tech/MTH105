@@ -12,17 +12,75 @@ function dieTool(el){
   el.querySelectorAll('.seg2 button').forEach(b=>b.addEventListener('click',()=>{ el.querySelectorAll('.seg2 button').forEach(x=>x.setAttribute('aria-pressed',x===b)); draw(b.textContent); })); draw('Even number');
 }
 
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G5=(()=>{ const {svg,card,text,arrow,curveArrow,tick,cross,pill}=CG;
+  /* sample space: all outcomes, an event is some of them */
+  const space=svg(520,250,
+    card(20,14,480,170,'var(--muted)',{op:.05,sop:.5})+text(40,44,'S = all outcomes',{s:15,w:800})+
+    [1,2,3,4,5,6].map((d,i)=>{ const on=d%2===0, x=48+i*74;
+      return `<rect x="${x}" y="68" width="56" height="56" rx="12" fill="${on?'var(--wk)':'var(--surface)'}" fill-opacity="${on?.85:1}" stroke="var(--ink)" stroke-width="1.5"/>`+text(x+28,104,d,{a:'middle',s:22,w:800,mono:true,c:on?'var(--surface)':'var(--ink)'}); }).join('')+
+    text(40,160,'event E = even = {2, 4, 6}',{s:15,w:700,c:'var(--wk)'})+
+    pill(110,200,300,36,'event = some of the outcomes'),'The sample space S lists every outcome of a die; the event even is the set 2, 4, 6');
+  /* basic rule: favourable over total */
+  const basic=svg(520,240,
+    [0,1].map(r=>[0,1,2,3,4].map(c=>`<circle cx="${50+c*46}" cy="${70+r*50}" r="18" fill="${r===0?'var(--wk)':'var(--surface)'}" fill-opacity="${r===0?.85:1}" stroke="${r===0?'var(--wk)':'var(--muted)'}" stroke-width="1.5"/>`).join('')).join('')+
+    text(142,160,'10 equally likely outcomes',{a:'middle',s:12,c:'var(--muted)'})+
+    arrow(268,95,312,95,'var(--muted)')+
+    text(350,82,'5',{a:'middle',s:32,w:800,mono:true,c:'var(--wk)'})+`<line x1="324" x2="376" y1="96" y2="96" stroke="var(--ink)" stroke-width="2.5"/>`+text(350,130,'10',{a:'middle',s:32,w:800,mono:true})+
+    text(392,78,'favourable',{s:13,c:'var(--wk)',w:700})+text(392,126,'total',{s:13,c:'var(--muted)',w:700})+
+    pill(100,188,320,36,'P(E) = favourable ÷ total'),'Five of ten equally likely outcomes are favourable, so P(E) = 5 out of 10');
+  /* complement: A and not A fill the whole */
+  const comp=svg(520,240,
+    text(260,34,'all outcomes = 1',{a:'middle',s:15,w:800})+CG.brace(30,490,66,true,'var(--ink)')+
+    `<rect x="30" y="72" width="110" height="64" rx="10" fill="var(--wk)" fill-opacity=".8"/><rect x="144" y="72" width="346" height="64" rx="10" fill="var(--c3)" fill-opacity=".22" stroke="var(--c3)"/>`+
+    text(85,111,'A',{a:'middle',s:20,w:800,c:'var(--surface)'})+text(317,111,'not A',{a:'middle',s:20,w:800,c:'var(--c3)'})+
+    text(85,160,'P(A)',{a:'middle',s:14,mono:true})+text(317,160,'P(not A)',{a:'middle',s:14,mono:true})+
+    pill(110,188,300,36,'P(not A) = 1 − P(A)'),'A and not A together cover all outcomes, so P(not A) = 1 − P(A)');
+  /* addition: two overlapping sets, the overlap is counted twice */
+  const lens=`<clipPath id="g5-clip"><circle cx="190" cy="108" r="78"/></clipPath>`;
+  const add=svg(520,250,
+    `<defs>${lens}</defs>`+
+    `<circle cx="190" cy="108" r="78" fill="var(--wk)" fill-opacity=".14" stroke="var(--wk)" stroke-width="2"/><circle cx="300" cy="108" r="78" fill="var(--c2)" fill-opacity=".14" stroke="var(--c2)" stroke-width="2"/>`+
+    `<circle cx="300" cy="108" r="78" fill="var(--c4)" fill-opacity=".45" clip-path="url(#g5-clip)"/>`+
+    text(150,114,'A',{a:'middle',s:24,w:800,c:'var(--wk)'})+text(340,114,'B',{a:'middle',s:24,w:800,c:'var(--c2)'})+
+    text(400,40,'overlap',{s:14,w:800})+text(400,58,'counted twice',{s:12,c:'var(--muted)'})+text(400,74,'subtract once',{s:12,c:'var(--muted)'})+
+    curveArrow(396,52,320,26,252,84,'var(--ink)',1.8)+
+    pill(50,200,420,36,'P(A or B) = P(A) + P(B) − P(A and B)',undefined,{s:13}),'Two overlapping sets A and B: the overlap is inside both, so it is subtracted once');
+  /* multiplication: multiply along one path of the tree */
+  const ln=(x1,y1,x2,y2,on)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${on?'var(--wk)':'var(--muted)'}" stroke-width="${on?3.5:1.5}"${on?'':' stroke-dasharray="5 5" stroke-opacity=".7"'}/>`;
+  const node=(x,y,s,on)=>`<rect x="${x-30}" y="${y-17}" width="60" height="34" rx="17" fill="${on?'var(--wk)':'var(--surface)'}" stroke="${on?'var(--wk)':'var(--muted)'}" stroke-width="1.5"/>`+text(x,y+5,s,{a:'middle',s:14,w:700,c:on?'var(--surface)':'var(--muted)'});
+  const tree=svg(520,250,
+    ln(40,124,180,66,1)+ln(40,124,180,176,0)+ln(180,66,320,40,1)+ln(180,66,320,106,0)+
+    `<circle cx="40" cy="124" r="8" fill="var(--ink)"/>`+node(180,66,'A',1)+node(180,176,'not A',0)+node(320,40,'B',1)+node(320,106,'not B',0)+
+    text(100,80,'P(A)',{a:'end',s:14,w:700,mono:true,c:'var(--wk)'})+text(244,40,'P(B)',{a:'end',s:14,w:700,mono:true,c:'var(--wk)'})+
+    text(362,46,'P(A) × P(B)',{s:15,w:800,mono:true,c:'var(--wk)'})+text(362,66,'multiply along the path',{s:12,c:'var(--muted)'})+
+    pill(110,204,300,36,'P(A and B) = P(A) × P(B)'),'In a tree, follow one path: A then B, and multiply the probabilities along it');
+  /* types of events: four tiles */
+  const tile=(x,y,n,title,icon,sub)=>card(x,y,240,112,'var(--wk)',{op:.06,sop:.35})+text(x+16,y+28,`${n} · ${title}`,{s:15,w:700})+icon+text(x+16,y+100,sub,{s:12.5,c:'var(--muted)'});
+  const ring=(cx,cy,col)=>`<circle cx="${cx}" cy="${cy}" r="17" fill="${col}" fill-opacity=".25" stroke="${col}"/>`;
+  const types=svg(520,250,
+    tile(12,10,1,'Mutually exclusive',ring(12+70,10+60,'var(--wk)')+ring(12+170,10+60,'var(--c2)')+text(12+120,10+65,'no overlap',{a:'middle',s:11,c:'var(--muted)'}),'cannot happen together')+
+    tile(268,10,2,'Independent',ring(268+60,10+60,'var(--c4)')+ring(268+178,10+60,'var(--c4)')+`<line x1="${268+84}" x2="${268+154}" y1="${10+60}" y2="${10+60}" stroke="var(--muted)" stroke-dasharray="4 5"/>`+cross(268+119,10+60,9,'var(--muted)'),'one does not change the other')+
+    tile(12,128,3,'Dependent',ring(12+60,128+60,'var(--c3)')+ring(12+178,128+60,'var(--c3)')+arrow(12+82,128+60,12+152,128+60,'var(--c3)',2.2),'one changes the other')+
+    tile(268,128,4,'Complementary',`<rect x="${268+20}" y="${128+46}" width="70" height="28" rx="6" fill="var(--wk)" fill-opacity=".8"/><rect x="${268+92}" y="${128+46}" width="128" height="28" rx="6" fill="var(--c3)" fill-opacity=".25" stroke="var(--c3)"/>`+text(268+55,128+65,'A',{a:'middle',s:13,w:800,c:'var(--surface)'})+text(268+156,128+65,'not A',{a:'middle',s:13,w:700}),'opposites that add to 1'),
+    'Four types of events: mutually exclusive, independent, dependent and complementary');
+  return {space,basic,comp,add,tree,types};
+})();
+
 Lesson.mount({
   week:5, clo:'CLO 2', title:'Probability Theory', chapter:'Ch 5: Modeling Variation with Probability · Gould, Ryan & Wong (2020)',
   intro:'Probability measures how likely something is before it happens: a number from 0 (impossible) to 1 (certain).',
   topics:[
   { id:'sample-space', title:'Sample space and events',
     def:'An <b>experiment</b> has uncertain results; each result is an <b>outcome</b>. All outcomes form the <b>sample space S</b>. An <b>event</b> is a set of outcomes.',
+    defFig:{label:'All outcomes, and an event', html:G5.space},
     life:{text:'Roll one die: S = {1, 2, 3, 4, 5, 6}. “Even number” is the event {2, 4, 6}.', fig:{label:'Roll one fair die', build:dieTool}},
     meaning:{text:'Before calculating any probability, list S and the outcomes in the event.'} },
 
   { id:'basic-rule', title:'The basic rule',
     def:'When outcomes are equally likely, P(E) = favourable outcomes ÷ total outcomes. Every probability is between 0 and 1.',
+    defFig:{label:'Favourable over total', html:G5.basic},
     life:{text:'A bag holds 5 red, 3 blue and 2 green balls. Pick one without looking. Data: illustrative.'},
     formula:{f:`${T('p','P('+v('E')+')')} = ${fr(T('f','favourable outcomes'),T('t','total outcomes'))}`,
       parts:[['p','<b>P(E)</b>: probability of event E.'],['f','Outcomes where E happens.'],['t','All possible outcomes (the size of S).']],
@@ -32,22 +90,25 @@ Lesson.mount({
 
   { id:'complement', title:'The complement rule',
     def:'“Not A” is everything outside A. P(A) and P(not A) always add to 1.',
+    defFig:{label:'A and not A make the whole', html:G5.comp},
     life:{text:'20% of deliveries arrive late. What share arrives on time? Data: illustrative.'},
     formula:{f:`${T('n','P(not '+v('A')+')')} = ${T('one','1')} − ${T('a','P('+v('A')+')')}`,
       parts:[['n','<b>P(not A)</b>: A does not happen.'],['one','<b>1</b>: the whole sample space.'],['a','<b>P(A)</b>: A happens.']],
       sub:'P(on time) = 1 − 0.20', keys:'1 − 0 . 2 =', ans:`<div class="m">P(on time) = <b>0.80</b></div>`, ansRaw:true},
     meaning:{text:'Use the complement when “not A” or “at least one” is easier to count the other way round.'} },
 
-  { id:'addition', demo:'Your professor draws the Venn diagram on the board.', title:'The addition rule (OR)',
+  { id:'addition', demo:'Your professor draws the diagram on the board.', title:'The addition rule (OR)',
     def:'“A or B” means at least one happens. Add, then subtract the overlap so it is not counted twice. If A and B are <b>mutually exclusive</b> (no overlap), just add.',
+    defFig:{label:'The overlap is counted twice', html:G5.add},
     life:{text:'Of 60 students, 35 take Arabic, 25 take French and 10 take both. Data: illustrative.'},
     formula:{f:`${T('or','P('+v('A')+' or '+v('B')+')')} = ${T('a','P('+v('A')+')')} + ${T('b','P('+v('B')+')')} − ${T('ab','P('+v('A')+' and '+v('B')+')')}`,
       parts:[['or','<b>P(A or B)</b>: at least one happens.'],['a','<b>P(A)</b>: probability of A.'],['b','<b>P(B)</b>: probability of B.'],['ab','<b>P(A and B)</b>: the overlap, counted twice otherwise.']],
       sub:`P(Arabic or French) = ${fr('35','60')} + ${fr('25','60')} − ${fr('10','60')}`, keys:'( 3 5 + 2 5 − 1 0 ) ÷ 6 0 =', ans:`<div class="m">= 50/60 ≈ <b>0.833</b></div>`, ansRaw:true},
-    meaning:{text:'In a Venn diagram, the overlap sits inside both circles. Change the counts and watch the rule.', fig:{label:'Change the counts', build:ST.vennTool, caption:'P(A or B) = P(A) + P(B) − P(A and B).'}} },
+    meaning:{text:'In the diagram, the overlap sits inside both circles. Change the counts and watch the rule.', fig:{label:'Change the counts', build:ST.vennTool, caption:'P(A or B) = P(A) + P(B) − P(A and B).'}} },
 
   { id:'multiplication', demo:'Your professor draws the tree diagram on the board.', title:'The multiplication rule (AND) and tree diagrams',
     def:'For <b>independent</b> events, P(A and B) = P(A) × P(B). In a tree, multiply along a path; add paths for “or”.',
+    defFig:{label:'Multiply along a path', html:G5.tree},
     life:{text:'A student is assigned a group (Male or Female) and a lab session (Morning or Evening) at random. Each split is 1/2.'},
     formula:{f:`${T('and','P('+v('A')+' and '+v('B')+')')} = ${T('a','P('+v('A')+')')} × ${T('b','P('+v('B')+')')}`,
       parts:[['and','<b>P(A and B)</b>: both happen.'],['a','<b>P(A)</b>'],['b','<b>P(B)</b>: unchanged by A when the events are independent.']],
@@ -57,6 +118,7 @@ Lesson.mount({
 
   { id:'event-types', title:'Types of events',
     def:'<b>Mutually exclusive</b>: cannot happen together. <b>Independent</b>: one does not change the other. <b>Dependent</b>: one changes the other. <b>Complementary</b>: opposites that add to 1.',
+    defFig:{label:'Four relationships', html:G5.types},
     life:{text:'Name the relationship for each pair.', fig:{label:'6 pairs', build:el=>W.sort(el,{buckets:['Mutually exclusive','Independent','Dependent','Complementary'],items:[
       {t:'Rain tomorrow / no rain tomorrow',a:3,why:'One is the opposite of the other; they add to 1.'},
       {t:'Toss a coin / roll a die',a:1,why:'One does not affect the other.'},
@@ -66,9 +128,9 @@ Lesson.mount({
       {t:'Pass the exam / fail the same exam',a:3,why:'Opposites of each other.'}]})}},
     meaning:{text:'The relationship decides the rule: OR → add (minus the overlap); AND → multiply; NOT → 1 minus.'} }
   ],
-  inClass:{intro:'We draw the tree and the Venn diagram together on the board.', items:[
+  inClass:{intro:'We draw the tree and the diagram together on the board.', items:[
     {q:'A café gives each customer a random drink size (small or large) and a random topping (yes or no), each with probability 1/2. Draw the tree, list the sample space, and find P(large and topping) and P(large or topping).', draw:true, tips:['Two steps, two branches each: 4 paths.','AND: multiply along one path.','OR: add the paths where at least one happens.']},
-    {q:'In a class of 40 students, 22 play football, 15 play basketball and 8 play both. Draw the Venn diagram. Find P(football or basketball) and P(neither).', draw:true, tips:['Start with the overlap: 8.','Football only = 22 − 8.','Neither = 40 − everyone inside the circles.']}]},
+    {q:'In a class of 40 students, 22 play football, 15 play basketball and 8 play both. Fill the data in the diagram. Find P(football or basketball) and P(neither).', draw:true, tips:['Start with the overlap: 8.','Football only = 22 − 8.','Neither = 40 − everyone inside the circles.']}]},
   takeaways:{label:'Week 5 on one page', mindmap:{center:'Probability', branches:[
     {t:'Words',items:['Experiment, outcome','Sample space S','Event E']},
     {t:'Basic rule',items:['P(E) = favourable ÷ total','0 ≤ P ≤ 1']},

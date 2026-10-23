@@ -42,6 +42,64 @@ const typesSVG=`<svg viewBox="0 0 520 210" role="img" aria-label="Types of data"
   ${[[130,'Qualitative','categories','var(--wk)',[[60,'Nominal','no order'],[200,'Ordinal','ordered']]],[390,'Quantitative','numbers','var(--c2)',[[320,'Discrete','counted'],[460,'Continuous','measured']]]].map(([x,t,s,c,kids])=>`<line x1="260" y1="44" x2="${x}" y2="76" stroke="var(--line)" stroke-width="2"/><rect x="${x-70}" y="76" width="140" height="40" rx="8" fill="var(--surface)" stroke="${c}" stroke-width="2"/><text x="${x}" y="94" text-anchor="middle" ${FT} font-weight="700" font-size="14" fill="${c}">${t}</text><text x="${x}" y="109" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${s}</text>
     ${kids.map(([kx,kt,ks])=>`<line x1="${x}" y1="116" x2="${kx}" y2="150" stroke="var(--line)" stroke-width="2"/><rect x="${kx-55}" y="150" width="110" height="44" rx="8" fill="var(--bg)" stroke="var(--line)"/><text x="${kx}" y="170" text-anchor="middle" ${FT} font-weight="700" font-size="13" fill="var(--ink)">${kt}</text><text x="${kx}" y="186" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${ks}</text>`).join('')}`).join('')}</svg>`;
 
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G1=(()=>{ const {svg,card,text,arrow,tick,cross,pill}=CG;
+  const stat=svg(520,230,
+    card(14,30,146,170)+text(87,58,'DATA',{a:'middle',s:12,w:700,mono:true,c:'var(--wk)'})+
+    [['12  7  30',96],['18  4  25',122],['9  21  16',148]].map(([s,y])=>text(87,y,s,{a:'middle',s:14,mono:true,c:'var(--muted)'})).join('')+text(87,182,'raw numbers',{a:'middle',s:12.5,c:'var(--muted)'})+
+    arrow(166,115,200,115)+
+    card(206,30,146,170,'var(--c2)')+text(279,58,'STATISTICS',{a:'middle',s:12,w:700,mono:true,c:'var(--c2)'})+
+    [40,64,28,52].map((h,i)=>`<rect x="${234+i*24}" y="${160-h}" width="18" height="${h}" rx="3" fill="var(--c2)" fill-opacity=".6"/>`).join('')+`<line x1="226" x2="332" y1="160" y2="160" stroke="var(--ink)" stroke-width="1.5"/>`+text(279,182,'a clear pattern',{a:'middle',s:12.5,c:'var(--muted)'})+
+    arrow(358,115,392,115)+
+    card(398,30,108,170,'var(--c3)')+text(452,58,'DECISION',{a:'middle',s:12,w:700,mono:true,c:'var(--c3)'})+tick(452,112,24)+text(452,182,'act on it',{a:'middle',s:12.5,c:'var(--muted)'}),
+    'Statistics turns raw data into a clear pattern and then into a decision');
+  const dots=(x,y,c,r=6)=>[...Array(12)].map((_,i)=>`<circle cx="${x+(i%4)*20}" cy="${y+Math.floor(i/4)*20}" r="${r}" fill="${c}" fill-opacity=".75"/>`).join('');
+  const desc=svg(520,240,
+    card(14,14,238,212)+text(133,44,'Descriptive',{a:'middle',s:18,w:700})+
+    `<rect x="93" y="62" width="80" height="62" rx="8" fill="none" stroke="var(--wk)" stroke-dasharray="4 4"/>`+dots(103,73,'var(--wk)')+
+    pill(78,142,110,32,'x̄ = 7.2','var(--wk)',{mono:true})+text(133,206,'only the data we have',{a:'middle',s:12.5,c:'var(--muted)'})+
+    card(268,14,238,212,'var(--c2)')+text(387,44,'Inferential',{a:'middle',s:18,w:700})+
+    `<rect x="282" y="94" width="80" height="62" rx="8" fill="none" stroke="var(--c2)" stroke-dasharray="4 4"/>`+dots(292,105,'var(--c2)')+
+    arrow(368,125,398,125,'var(--c2)')+`<ellipse cx="448" cy="125" rx="46" ry="52" fill="var(--c2)" fill-opacity=".12" stroke="var(--c2)" stroke-width="1.5"/>`+text(448,136,'?',{a:'middle',s:32,w:800,c:'var(--c2)'})+
+    text(322,84,'sample',{a:'middle',s:12,c:'var(--muted)'})+text(448,64,'population',{a:'middle',s:12,c:'var(--muted)'})+
+    text(387,206,'goes beyond the data',{a:'middle',s:12.5,c:'var(--muted)'}),
+    'Descriptive statistics stay with the data we have; inferential statistics use a sample to say something about the population');
+  const P=(c,w)=>`<tspan fill="${c}" font-weight="800">${w[0]}</tspan>${w.slice(1)}`;
+  const pop=svg(520,250,
+    card(14,20,206,84)+text(32,54,P('var(--wk)','Population'),{s:19,w:700})+text(32,82,'the whole group · N',{s:13,c:'var(--muted)'})+
+    arrow(226,62,292,62,'var(--wk)')+
+    card(300,20,206,84)+text(318,54,P('var(--wk)','Parameter'),{s:19,w:700})+text(318,84,'μ   σ   p',{s:15,mono:true})+
+    card(14,122,206,84,'var(--c2)')+text(32,156,P('var(--c2)','Sample'),{s:19,w:700})+text(32,184,'the part measured · n',{s:13,c:'var(--muted)'})+
+    arrow(226,164,292,164,'var(--c2)')+
+    card(300,122,206,84,'var(--c2)')+text(318,156,P('var(--c2)','Statistic'),{s:19,w:700})+text(318,186,'x̄   s   p̂',{s:15,mono:true})+
+    text(260,236,'P goes with P · S goes with S',{a:'middle',s:13,w:700,c:'var(--muted)'}),
+    'A population is described by parameters; a sample is described by statistics');
+  const tile=(x,y,title,col,icon,sub)=>card(x,y,240,112,col,{op:.06,sop:.35})+text(x+16,y+28,title,{s:16,w:700,c:col})+icon+text(x+16,y+100,sub,{s:12.5,c:'var(--muted)'});
+  const types=svg(520,250,
+    tile(12,10,'Nominal','var(--wk)',[['A','var(--wk)'],['B','var(--c2)'],['O','var(--c4)']].map(([t,c],i)=>`<circle cx="${12+40+i*52}" cy="62" r="16" fill="${c}" fill-opacity=".2" stroke="${c}"/>`+text(12+40+i*52,67,t,{a:'middle',s:14,w:700,c})).join(''),'names, no order')+
+    tile(268,10,'Ordinal','var(--wk)',['★','★★','★★★'].map((s,i)=>text(268+30+i*62,68,s,{s:17,c:'var(--wk)'})).join('')+arrow(268+30,80,268+214,80,'var(--muted)',1.5),'categories in order')+
+    tile(12,128,'Discrete','var(--c2)',`<line x1="${12+24}" x2="${12+216}" y1="${128+70}" y2="${128+70}" stroke="var(--ink)" stroke-width="1.5"/>`+[0,1,2,3,4].map(i=>`<line x1="${12+36+i*44}" x2="${12+36+i*44}" y1="${128+66}" y2="${128+74}" stroke="var(--ink)"/>`+`<circle cx="${12+36+i*44}" cy="${128+56}" r="6" fill="var(--c2)"/>`+text(12+36+i*44,128+46,i,{a:'middle',s:11,mono:true,c:'var(--muted)'})).join(''),'counted: 0, 1, 2 …')+
+    tile(268,128,'Continuous','var(--c2)',`<rect x="${268+24}" y="${128+52}" width="192" height="14" rx="7" fill="var(--c2)" fill-opacity=".35"/>`+`<line x1="${268+138}" x2="${268+138}" y1="${128+44}" y2="${128+74}" stroke="var(--c2)" stroke-width="2.5"/>`+text(268+146,128+44,'165.3',{s:12,mono:true,w:700,c:'var(--c2)'}),'measured: any value'),
+    'Nominal: names with no order. Ordinal: ordered categories. Discrete: counted. Continuous: measured');
+  const grid=(x,y,pick,col)=>[...Array(40)].map((_,i)=>{ const on=pick.includes(i); return `<circle cx="${x+(i%8)*24}" cy="${y+Math.floor(i/8)*22}" r="7" fill="${on?col:'var(--muted)'}" fill-opacity="${on?1:.25}"/>`; }).join('');
+  const samples=svg(520,240,
+    card(14,14,238,212,RED,{op:.06,sop:.4})+cross(42,46,13)+text(64,52,'Convenience',{s:17,w:700})+grid(49,80,[0,1,2,8,9,10],RED)+text(133,206,'one corner only',{a:'middle',s:12.5,c:'var(--muted)'})+
+    card(268,14,238,212,'var(--c3)',{op:.06,sop:.4})+tick(296,46,13)+text(318,52,'Random',{s:17,w:700})+grid(303,80,[2,13,15,20,30,37],'var(--c3)')+text(387,206,'spread across everyone',{a:'middle',s:12.5,c:'var(--muted)'}),
+    'A convenience sample takes people from one corner; a random sample is spread across the whole population');
+  const Y=v=>200-v*3.5;
+  const outl=svg(520,250,
+    [12,14,13,15].map((v,i)=>`<rect x="${50+i*70}" y="${Y(v)}" width="48" height="${v*3.5}" rx="4" fill="var(--c2)" fill-opacity=".55"/>`+text(74+i*70,220,v,{a:'middle',s:13,mono:true})).join('')+
+    `<rect x="400" y="${Y(46)}" width="48" height="${46*3.5}" rx="4" fill="var(--wk)"/>`+text(424,220,'46',{a:'middle',s:13,mono:true,w:700,c:'var(--wk)'})+
+    `<line x1="40" x2="470" y1="200" y2="200" stroke="var(--ink)" stroke-width="1.5"/><line x1="40" x2="330" y1="${Y(15)}" y2="${Y(15)}" stroke="var(--muted)" stroke-dasharray="5 4"/>`+
+    text(179,134,'the rest: 12 to 15',{a:'middle',s:13,c:'var(--muted)'})+
+    text(424,30,'outlier',{a:'middle',s:15,w:800,c:'var(--wk)'})+
+    arrow(365,Y(15)-6,365,48,'var(--wk)')+text(356,96,'far from',{a:'end',s:13,w:700,c:'var(--wk)'})+text(356,114,'the rest',{a:'end',s:13,w:700,c:'var(--wk)'})+
+    text(260,244,'delivery time (min)',{a:'middle',s:12,c:'var(--muted)'}),
+    'Four deliveries take 12 to 15 minutes; one takes 46 minutes, far from the rest: an outlier');
+  return {stat,desc,pop,types,samples,outl};
+})();
+
 const P1=T('ph',PH);
 Lesson.mount({
   week:1, clo:'CLO 1', title:'Introduction to Statistics', chapter:'Ch.1: Introduction to Data · Gould, Ryan & Wong (2020)',
@@ -49,12 +107,14 @@ Lesson.mount({
   topics:[
   { id:'statistics', title:'What is statistics?',
     def:'<b>Statistics</b> is the science of collecting, organizing, analyzing, interpreting and communicating data to support decisions.',
+    defFig:{label:'Data to decision', html:G1.stat},
     life:{text:'A transport authority wants to know whether a new Metro feeder bus is worth running. It counts riders (collect), puts them in a table (organize), draws a chart (analyze), reads it (interpret) and reports a decision (communicate). Data: illustrative.'},
     meaning:{text:'Every statistics question follows the same five steps. This course teaches each one.',
       fig:{label:'The statistical workflow', flow:[{t:'Collect',s:'get data',d:'Survey, experiment or records.'},{t:'Organize',s:'tables',d:'Frequency tables and lists.'},{t:'Analyze',s:'graphs, numbers',d:'Charts, mean, spread.'},{t:'Interpret',s:'what it means',d:'In the context of the question.'},{t:'Communicate',s:'decide',d:'Report the finding and its uncertainty.'}]}} },
 
   { id:'descriptive', title:'Descriptive and inferential statistics',
     def:'<b>Descriptive</b> statistics describe the data we have: tables, graphs, averages. <b>Inferential</b> statistics use a sample to say something about the whole population.',
+    defFig:{label:'Stay or go beyond', html:G1.desc},
     life:{text:'Sort each statement. Ask: does it stay with the data we have, or go beyond it?',
       fig:{label:'Sort each statement', build:el=>W.sort(el,{buckets:['Descriptive','Inferential'],items:[
         {t:'The mean of our 25 quiz scores was 7.2.',a:0,why:'It only describes the 25 scores we have.'},
@@ -65,6 +125,7 @@ Lesson.mount({
 
   { id:'population', title:'Population and sample',
     def:'The <b>population</b> is the whole group we study (size N). A <b>sample</b> is the part we measure (size n). A number describing the population is a <b>parameter</b>; a number from a sample is a <b>statistic</b>.',
+    defFig:{label:'P with P, S with S', html:G1.pop},
     life:{text:'A survey of 250 Dubai residents finds that 85 use the Metro. The 250 are the sample; all Dubai residents are the population. Data: illustrative.'},
     formula:{f:`${P1} = ${fr(T('x',v('x')),T('n',v('n')))}`,
       parts:[['ph','<b>p̂</b> (“p-hat”): the sample proportion, a statistic.'],['x','<b>x</b>: how many in the sample have the feature.'],['n','<b>n</b>: the sample size.']],
@@ -74,6 +135,7 @@ Lesson.mount({
 
   { id:'types', title:'Types of data',
     def:'<b>Qualitative</b> data are categories: <b>nominal</b> (no order) or <b>ordinal</b> (ordered). <b>Quantitative</b> data are numbers: <b>discrete</b> (counted) or <b>continuous</b> (measured).',
+    defFig:{label:'Four types of data', html:G1.types},
     life:{text:'Classify these everyday variables.',
       fig:{label:'8 variables', build:el=>W.sort(el,{buckets:['Nominal','Ordinal','Discrete','Continuous'],items:[
         {t:'Emirate of residence',a:0,why:'Names, no order.'},{t:'Hotel star rating (1★ to 5★)',a:1,why:'Ordered categories; gaps between stars are not equal.'},
@@ -84,11 +146,13 @@ Lesson.mount({
 
   { id:'samples', title:'Representative samples and sample size',
     def:'A <b>representative</b> sample looks like the population. Choose it <b>at random</b>, not by convenience. Larger random samples give estimates closer to the truth.',
+    defFig:{label:'Random, not convenient', html:G1.samples},
     life:{text:'A newsletter asks 30 students in the library at 9 PM; 21 say they prefer studying at night. Headline: “70% of students prefer night study.” The sample is biased: students in the library at night already study at night.'},
     meaning:{text:'Drag the sample size. With small n, sample results swing widely; with large n, they cluster near the true value.', fig:{label:'Drag the sample size', build:sampleTool}} },
 
   { id:'outliers', title:'The impact of outliers',
     def:'An <b>outlier</b> is a value far from the rest of the data.',
+    defFig:{label:'Far from the rest', html:G1.outl},
     life:{text:'Pizza delivery times (min): 12, 14, 13, 15, 46. One late delivery (46) is far from the others.'},
     formula:{f:`${T('xb',XB)} = ${fr(`${T('S',SG)}${T('x',v('x'))}`,T('n',v('n')))}`,
       parts:[['xb','<b>x̄</b>: the mean.'],['S','<b>Σ</b>: add up.'],['x','<b>x</b>: each value.'],['n','<b>n</b>: how many values.']],
