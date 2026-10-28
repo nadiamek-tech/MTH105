@@ -19,7 +19,7 @@ window.MTH105_KB=[
 {q:'How do I turn on the Analysis ToolPak?',k:'analysis toolpak data analysis add-in excel regression descriptive',a:'Windows: File → Options → Add-ins → Manage Excel Add-ins → Go → Analysis ToolPak. Mac: Tools → Excel Add-ins.',l:'lab.html#lab-04'},
 {q:'Which Excel function gives the sample SD?',k:'excel stdev.s standard deviation function var.s',a:'=STDEV.S(range). Sample variance: =VAR.S(range).',l:'lab.html#lab-04'},
 {q:'Which Excel function gives normal probabilities?',k:'excel norm.dist norm.s.dist normal function',a:'=NORM.DIST(x, mean, sd, TRUE) for P(X < x). =NORM.S.DIST(z, TRUE) for z.',l:'lab.html#lab-08'},
-{q:'Which Excel function gives binomial probabilities?',k:'excel binom.dist binomial function',a:'=BINOM.DIST(x, n, p, FALSE) for P(X = x); TRUE for P(X ≤ x).',l:'lab.html#lab-06'},
+{q:'Which Excel function gives binomial probabilities?',k:'excel binom.dist binomial function',a:'=BINOM.DIST(x, n, p, FALSE) for P(X = x); TRUE for P(X ≤ x).',l:'lab.html#lab-07'},
 {q:'Which Excel function runs a chi-square test?',k:'excel chisq.test chi square function p value',a:'=CHISQ.TEST(observed, expected) gives the p-value.',l:'lab.html#lab-12'},
 {q:'Is there an online calculator?',k:'calculator scientific online tool nCr factorial',a:'Yes: Lectures → Calculator and tools. In exams you use your own standard calculator.',l:'tools.html'},
 {q:'What is the difference between descriptive and inferential statistics?',k:'descriptive inferential difference describe generalize',a:'Descriptive statistics describe the data we have. Inferential statistics use a sample to say something about the population.',l:'week-01.html#descriptive',r:'Ch.1'},
