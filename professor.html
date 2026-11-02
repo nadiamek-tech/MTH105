@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>MTH 105 · Professor resources</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202611021159">
+<style>
+:root{--wk:#1F3864;--wk-soft:rgba(31,56,100,.08);--ok:#1E7F4F;--bad:#C62828}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-display)}
+a{color:var(--wk)}
+.pf-top{display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:5}
+.pf-top b{font-size:1.05rem}.pf-top span{color:var(--muted);font-size:.85rem}.pf-sp{flex:1}
+.pf-top button,.pf-btn{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:9px;padding:7px 12px;font:600 .88rem var(--f-display);cursor:pointer;text-decoration:none;display:inline-block}
+.pf-btn.main{background:var(--wk);border-color:var(--wk);color:#fff}
+.pf-wrap{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:calc(100vh - 54px)}
+.pf-nav{border-right:1px solid var(--line);padding:14px 10px;background:var(--surface);position:sticky;top:54px;align-self:start;height:calc(100vh - 54px);overflow:auto}
+.pf-nav button{display:block;width:100%;text-align:left;border:0;background:none;color:var(--ink);padding:9px 12px;border-radius:9px;font:600 .92rem var(--f-display);cursor:pointer}
+.pf-nav button[aria-current="true"]{background:var(--wk-soft);color:var(--wk)}
+.pf-nav small{display:block;color:var(--muted);font:400 .75rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;margin:14px 12px 4px}
+.pf-main{padding:24px 28px 80px;max-width:1080px}
+.pf-main h1{font-size:1.6rem;margin:0 0 4px}.pf-main h2{font-size:1.2rem;margin:26px 0 8px}
+.lead{color:var(--muted);margin:0 0 16px;font-family:var(--f-body)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.card h3{margin:0 0 4px;font-size:1rem}.card p{margin:0;color:var(--muted);font-size:.9rem}
+button.card{text-align:left;cursor:pointer;font:inherit;color:inherit}
+.tw{overflow-x:auto;margin:8px 0 14px}
+table.t{border-collapse:collapse;width:100%;font-size:.9rem;background:var(--surface)}
+table.t th,table.t td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+table.t th{background:var(--wk-soft);font-weight:700}
+table.t td.c{text-align:center}
+.tag{display:inline-block;font:600 .72rem var(--f-mono);padding:2px 7px;border-radius:999px;background:var(--wk-soft);color:var(--wk)}
+.warn{background:#fff4e5;border:1px solid #f0c27b;color:#7a4b00;border-radius:10px;padding:10px 12px;font-size:.9rem;margin:10px 0}
+@media (prefers-color-scheme:dark){.warn{background:#3a2a10;color:#f3d7a6;border-color:#7a5a20}}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}
+textarea,input[type=text],input[type=date],select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:8px 10px;box-sizing:border-box}
+textarea{width:100%;min-height:64px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.steps{margin:0;padding-left:1.2em;display:grid;gap:6px}
+.pdfbox{display:grid;gap:10px;justify-items:center;background:#e9eaee;padding:10px;border-radius:12px}
+.pdfbox canvas{width:100%;max-width:900px;height:auto;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.guide{font-family:var(--f-body);line-height:1.6}.guide h2{font-family:var(--f-display);font-size:1.5rem}.guide h3{font-family:var(--f-display);margin-top:28px}.guide h4{font-family:var(--f-display)}
+.guide img{max-width:100%;border:1px solid var(--line);border-radius:10px}.guide figure{margin:10px 0}
+.guide table{border-collapse:collapse;font-size:.9rem;background:var(--surface)}.guide th,.guide td{border:1px solid var(--line);padding:6px 8px;vertical-align:top}.guide th{background:var(--wk-soft)}
+.guide ul.check{list-style:none;padding-left:.4em}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}.kpi b{display:block;font-size:1.5rem}.kpi span{color:var(--muted);font-size:.82rem}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.chart svg{width:100%;height:auto;display:block}
+.lock{max-width:400px;margin:60px auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px}
+.lock h1{margin:0 0 6px;font-size:1.4rem}.lock p{color:var(--muted);margin:0 0 14px;font-family:var(--f-body)}
+.lock input{width:100%;margin:6px 0;padding:10px 12px;font-size:1rem}
+.lock .err{color:var(--bad);min-height:1.2em;font-size:.9rem}
+.soon{border-style:dashed}
+@media (max-width:820px){.pf-wrap{grid-template-columns:1fr}.pf-nav{position:static;height:auto;display:flex;flex-wrap:wrap;gap:4px;border-right:0;border-bottom:1px solid var(--line)}.pf-nav button{width:auto}.pf-nav small{display:none}.pf-main{padding:18px 16px 60px}.grid2{grid-template-columns:1fr}}
+@media print{.pf-top,.pf-nav{display:none}.pf-wrap{display:block}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="assets/vendor/pdfjs/pdf.min.js"></script>
+<script>
+/* MTH 105 · Professor resources. Everything shown here lives in assets/prof/bundle.json, encrypted (AES-256-GCM).
+   Only the right username + password can decrypt it; nothing private is in this file. Notes you type stay in this browser. */
+(function(){
+const $=(s,r=document)=>r.querySelector(s), app=$('#app');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const U8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)), B64=b=>btoa(String.fromCharCode(...new Uint8Array(b)));
+const LS={get:(k,d)=>{ try{ return JSON.parse(localStorage.getItem(k))??d; }catch(e){ return d; } },set:(k,v)=>{ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }};
+let B=null;
+
+/* ---------- login ---------- */
+async function open(raw){ const enc=await (await fetch('assets/prof/bundle.json',{cache:'no-store'})).json();
+  const key=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:U8(enc.iv)},key,U8(enc.ct)); return JSON.parse(new TextDecoder().decode(pt)); }
+async function derive(user,pass){ const enc=await (await fetch('assets/prof/bundle.json',{cache:'no-store'})).json();
+  const base=await crypto.subtle.importKey('raw',new TextEncoder().encode(user.trim().toLowerCase()+'\n'+pass),'PBKDF2',false,['deriveBits']);
+  return crypto.subtle.deriveBits({name:'PBKDF2',salt:U8(enc.salt),iterations:enc.iter,hash:'SHA-256'},base,256); }
+function login(){
+  app.innerHTML=`<div class="lock"><h1>Professor resources</h1><p>MTH 105 · for the course instructor.</p>
+    <form id="f"><input id="u" type="text" autocomplete="username" placeholder="Username" aria-label="Username"><input id="p" type="password" autocomplete="current-password" placeholder="Password" aria-label="Password">
+    <div class="err" id="e" aria-live="polite"></div><button class="pf-btn main" style="width:100%;padding:10px">Sign in</button></form>
+    <p style="margin:14px 0 0;font-size:.85rem"><a href="index.html">← Back to the course</a></p></div>`;
+  $('#u').focus();
+  $('#f').onsubmit=async e=>{ e.preventDefault(); $('#e').textContent='Checking…';
+    try{ const raw=await derive($('#u').value,$('#p').value); B=await open(raw);
+      try{ sessionStorage.setItem('prof-key',B64(raw)); localStorage.setItem('mth105-prof','1'); }catch(x){} start(); }
+    catch(x){ $('#e').textContent='Wrong username or password.'; } };
+}
+(async()=>{ let k=null; try{ k=sessionStorage.getItem('prof-key'); }catch(e){}
+  if(k){ try{ B=await open(U8(k)); start(); return; }catch(e){} } login(); })();
+
+/* ---------- shell ---------- */
+const SECTIONS=[
+  ['home','Overview'],['syllabus','Syllabus review'],['plans','Teaching plans'],
+  ['sol-practice','Practice answers','Solutions'],['sol-class','In-class answers','Solutions'],['sol-labs','Lab answer keys','Solutions'],
+  ['reflect','Reflections after class','Improve'],['guide','Teacher guide','Improve'],['trainer','Train the trainer','Improve'],
+  ['grades','Grades dashboard','Assessment'],['video','Methodology video','Coming soon']];
+function start(){
+  app.innerHTML=`<header class="pf-top"><b>MTH 105 · Professor resources</b><span>Eng. Nadia Mek · built ${esc(B.built)}</span><span class="pf-sp"></span><a class="pf-btn" href="index.html" target="_blank" rel="noopener">Student site ↗</a><button id="lock">Lock</button></header>
+    <div class="pf-wrap"><nav class="pf-nav" id="nav"></nav><main class="pf-main" id="main"></main></div>`;
+  let grp=''; $('#nav').innerHTML=SECTIONS.map(([id,t,g])=>{ const h=g&&g!==grp?`<small>${esc(g)}</small>`:''; if(g) grp=g; return h+`<button data-s="${id}">${esc(t)}</button>`; }).join('');
+  $('#nav').onclick=e=>{ const b=e.target.closest('[data-s]'); if(b) go(b.dataset.s); };
+  $('#lock').onclick=()=>{ try{ sessionStorage.removeItem('prof-key'); localStorage.removeItem('mth105-prof'); }catch(e){} location.hash=''; location.reload(); };
+  addEventListener('hashchange',()=>go(location.hash.slice(1)||'home',true));
+  go(location.hash.slice(1)||'home',true);
+}
+function go(id,fromHash){ if(!VIEWS[id]) id='home'; if(!fromHash) history.replaceState(null,'','#'+id);
+  document.querySelectorAll('#nav [data-s]').forEach(b=>b.setAttribute('aria-current',b.dataset.s===id));
+  const m=$('#main'); m.innerHTML=''; VIEWS[id](m); scrollTo(0,0); }
+
+/* ---------- helpers ---------- */
+const cloNums=s=>{ s=String(s||''); const r=s.match(/(\d)\s*[–-]\s*(\d)/); if(r){ const a=[]; for(let i=+r[1];i<=+r[2];i++) a.push(i); return a; } return (s.match(/\d/g)||[]).map(Number); };
+const weekNo=w=>parseInt(w,10);
+const lessonFor=w=>B.lessons[w];
+
+/* ---------- views ---------- */
+const VIEWS={
+home(m){ m.innerHTML=`<h1>Professor resources</h1><p class="lead">Everything for teaching MTH 105 in one place. This page is private: its content is encrypted and opens only with your login.</p>
+  <div class="cards">${SECTIONS.filter(s=>s[0]!=='home').map(([id,t,g])=>`<button class="card${g==='Coming soon'?' soon':''}" data-go="${id}"><h3>${esc(t)}</h3><p>${esc({syllabus:'CLOs, assessments and alignment, with your review notes.',plans:'Methodology and steps for each class, what to watch for.','sol-practice':'Every practice question with its model answer open.','sol-class':'Board-style answers to the in-class exercises.','sol-labs':'Answer keys for the Excel lab workbooks.',reflect:'A short reflection after each class, and the change you recommend.',guide:'The teacher guide: method, reasons and research.',trainer:'A course for maths lecturers, with lessons from past semesters.',grades:'Class results from your gradebook file, analysed on this computer.',video:'The method explained in your voice.'}[id]||'')}</p></button>`).join('')}</div>`;
+  m.onclick=e=>{ const b=e.target.closest('[data-go]'); if(b) go(b.dataset.go); }; },
+
+syllabus(m){ const C=B.course, notes=LS.get('prof-syl-notes',{});
+  const weights=C.assess.map(a=>parseFloat(a.weight)||0), total=weights.reduce((s,x)=>s+x,0);
+  const weeksBy={}; Object.entries(B.lessons).forEach(([w,l])=>{ if(!l) return; cloNums(l.clo).forEach(c=>(weeksBy[c]=weeksBy[c]||[]).push(+w)); });
+  const wByClo={}; C.assess.forEach(a=>{ const cs=cloNums(a.clos); cs.forEach(c=>wByClo[c]=(wByClo[c]||0)+(parseFloat(a.weight)||0)/cs.length); });
+  m.innerHTML=`<h1>Syllabus review</h1><p class="lead">Constructive alignment: each CLO should be taught, practised and assessed. Your notes are saved on this computer.</p>
+  <h2>Assessments</h2><div class="tw"><table class="t"><tr><th>Assessment</th><th>Type</th><th>Weight</th><th>CLOs</th><th>When</th></tr>
+  ${C.assess.map(a=>`<tr><td>${esc(a.name)}</td><td>${esc(a.type)}</td><td class="c">${esc(a.weight)}</td><td class="c">${esc(a.clos)}</td><td>${esc(a.when)}</td></tr>`).join('')}
+  <tr><th>Total</th><td></td><th class="c ${total===100?'ok':'bad'}">${total}%</th><td></td><td></td></tr></table></div>
+  <h2>CLO coverage</h2><div class="tw"><table class="t"><tr><th>CLO</th><th>Outcome</th><th>Taught in weeks</th><th>Assessment weight</th><th>Your review note</th></tr>
+  ${C.clos.map(([k,t],i)=>{ const n=i+1, wk=weeksBy[n]||[]; return `<tr><td><span class="tag">${esc(k)}</span></td><td>${esc(t)}</td><td>${wk.join(', ')||'<span class="bad">none</span>'} <small>(${wk.length})</small></td><td class="c">${(wByClo[n]||0).toFixed(1)}%</td><td><textarea data-n="${esc(k)}" placeholder="Strengths, gaps, change to propose">${esc(notes[k]||'')}</textarea></td></tr>`; }).join('')}</table></div>
+  <div class="warn" id="flags"></div>
+  <h2>Week by week</h2><div class="tw"><table class="t"><tr><th>Week</th><th>Lecture</th><th>Chapter</th><th>CLO</th><th>Lab</th></tr>
+  ${C.weeks.map(w=>{ const l=lessonFor(weekNo(w.w)); return `<tr><td class="c">${esc(w.w)}</td><td>${esc(l?l.title:(Array.isArray(w.lec)?w.lec[0]:w.lec))}</td><td>${esc(l?l.chapter.split(' · ')[0]:'')}</td><td class="c">${esc(l?l.clo:'')}</td><td>${esc(w.lab?w.lab[0]:'')}</td></tr>`; }).join('')}</table></div>`;
+  const flags=[]; C.clos.forEach(([k],i)=>{ const n=i+1, wk=(weeksBy[n]||[]).length, wt=wByClo[n]||0; if(wk<=1&&wt>=10) flags.push(`${k} is taught in ${wk} week but carries ${wt.toFixed(1)}% of the assessment weight: consider more practice time.`); });
+  if(total!==100) flags.push(`Weights add to ${total}%, not 100%.`);
+  $('#flags',m).innerHTML=flags.length?'<b>To review:</b><ul style="margin:6px 0 0">'+flags.map(f=>`<li>${esc(f)}</li>`).join('')+'</ul>':'No alignment gaps found.';
+  m.querySelectorAll('textarea[data-n]').forEach(t=>t.oninput=()=>{ notes[t.dataset.n]=t.value; LS.set('prof-syl-notes',notes); }); },
+
+plans(m){ const weeks=Object.keys(B.lessons).filter(w=>B.lessons[w]);
+  m.innerHTML=`<h1>Teaching plans</h1><p class="lead">The method, step by step, for each class.</p><label>Week <select id="wk">${weeks.map(w=>`<option value="${w}">Week ${w} · ${esc(B.lessons[w].title)}</option>`).join('')}</select></label><div id="plan"></div>`;
+  const show=w=>{ const L=B.lessons[w], N=B.notes[w]||{watch:[],board:[]}, k=String(w).padStart(2,'0'), released=B.inclassWeeks.includes(+w)||+w<=8;
+    $('#plan',m).innerHTML=`<h2>Week ${w} · ${esc(L.title)}</h2><p class="lead">${esc(L.chapter)} · ${esc(L.clo)} · <a href="week-${k}.html" target="_blank" rel="noopener">Open the lecture page ↗</a>${released?'':' <span class="tag">not released to students</span>'}</p>
+    <h2>Before class</h2><ol class="steps"><li>Print the in-class handout (button on the lecture page) for students without devices.</li><li>Open the live board on your tablet and the class link on the projector.</li><li>Check that students have paper, a pen and a calculator.</li></ol>
+    <h2>In class</h2><ol class="steps"><li><b>Open (5 min):</b> one recall question from last week, solved on paper.</li>
+    ${L.topics.map(t=>`<li><b>${esc(t.t)}:</b> definition with its graphic → an example around us → ${t.f?'the formula on the board: decoded, numbers in, calculator → ':''}what it means.${t.demo?` <i>On the board:</i> ${esc(t.demo)}`:''}</li>`).join('')}
+    ${L.inClass?`<li><b>We do:</b> ${esc(L.inClass.intro)}<ol>${L.inClass.items.map(q=>`<li>${esc(q)}</li>`).join('')}</ol>Students try on paper first; show the model answers from the side button when most have an answer.</li>`:''}
+    <li><b>Close (5 min):</b> the takeaways mind map; point to the ${L.practice} practice questions on the lecture page.</li></ol>
+    <div class="grid2"><div class="card"><h3>Watch for</h3><ul>${N.watch.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div class="card"><h3>On the board</h3><ul>${N.board.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div>
+    <p style="margin-top:16px"><button class="pf-btn main" id="refl">Write the reflection for this class</button></p>`;
+    $('#refl',m).onclick=()=>{ sessionStorage.setItem('prof-refl-week',w); go('reflect'); }; };
+  $('#wk',m).onchange=e=>show(e.target.value); show(weeks[0]); },
+
+'sol-practice'(m){ m.innerHTML=`<h1>Practice answers</h1><p class="lead">While you are signed in on this computer, every practice question on the lecture pages opens with its model answer, so you can walk through them in class.</p>
+  <div class="cards">${Object.entries(B.lessons).filter(([,l])=>l).map(([w,l])=>`<a class="card" style="text-decoration:none" href="week-${String(w).padStart(2,'0')}.html#practice" target="_blank" rel="noopener"><h3>Week ${w}</h3><p>${esc(l.title)} · ${l.practice} questions</p></a>`).join('')}
+  <a class="card" style="text-decoration:none" href="midterm-practice.html" target="_blank" rel="noopener"><h3>Midterm revision</h3><p>All parts, answers open</p></a></div>
+  <div class="warn">Weeks above 8 are not released to students yet; their pages still open for you.</div>`; },
+
+'sol-class'(m){ m.innerHTML=`<h1>In-class answers</h1><p class="lead">The model answers to the exercises solved on the board, in your handwriting style with the calculator entries. Students see these only when you open them from the side button in class.</p>
+  <label>Week <select id="wk">${B.inclassWeeks.map(w=>`<option>${w}</option>`).join('')}</select></label> <a class="pf-btn" id="dl" download>Download PDF</a><div class="pdfbox" id="pdf" style="margin-top:12px"></div>
+  <p class="lead" style="margin-top:12px">Answers for Weeks 9–15 are added when each week is released.</p>`;
+  const show=async w=>{ const f=`solutions/week-${String(w).padStart(2,'0')}.pdf`; $('#dl',m).href=f; const box=$('#pdf',m); box.innerHTML='Opening…';
+    try{ pdfjsLib.GlobalWorkerOptions.workerSrc='assets/vendor/pdfjs/pdf.worker.min.js'; const doc=await pdfjsLib.getDocument({url:f,password:B.inclassPin}).promise; box.innerHTML='';
+      for(let i=1;i<=doc.numPages;i++){ const pg=await doc.getPage(i), v0=pg.getViewport({scale:1}), vp=pg.getViewport({scale:1600/v0.width}); const c=document.createElement('canvas'); c.width=vp.width; c.height=vp.height; box.appendChild(c); await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise; } }
+    catch(e){ box.textContent='Could not open the file.'; } };
+  $('#wk',m).onchange=e=>show(e.target.value); if(B.inclassWeeks.length) show(B.inclassWeeks[0]); },
+
+'sol-labs'(m){ const ids=Object.keys(B.keys);
+  m.innerHTML=`<h1>Lab answer keys</h1><p class="lead">Computed from the same data as the student workbooks. Open questions are marked "Open".</p><label>Lab <select id="lb">${ids.map(id=>{ const l=B.labs.find(x=>x.id===id); return `<option value="${id}">${esc(id)} · Week ${esc(l?l.week:'')} · ${esc(l?l.subs.replace(/^Part \d · /,''):'')}</option>`; }).join('')}</select></label> <a class="pf-btn" id="wb" download>Student workbook</a><div id="key"></div>`;
+  const show=id=>{ $('#wb',m).href=`lab/${id}.xlsx`; $('#key',m).innerHTML=`<div class="tw"><table class="t"><tr><th>Task</th><th>Answer</th><th>Excel / method</th></tr>${B.keys[id].map(([t,a,f])=>`<tr><td>${esc(t)}</td><td><b>${esc(a)}</b></td><td><code>${esc(f)}</code></td></tr>`).join('')}</table></div>`; };
+  $('#lb',m).onchange=e=>show(e.target.value); show(ids[0]); },
+
+reflect(m){ const all=LS.get('prof-reflections',[]), pre=sessionStorage.getItem('prof-refl-week')||'';
+  sessionStorage.removeItem('prof-refl-week');
+  m.innerHTML=`<h1>Reflections after class</h1><p class="lead">Two minutes after each class: what worked, where students struggled, and the change you would make. Saved on this computer; export them to keep them with the course.</p>
+  <form id="rf" class="card"><div class="grid2"><label>Week <select name="week">${Array.from({length:16},(_,i)=>i+1).map(w=>`<option${String(w)===pre?' selected':''}>${w}</option>`).join('')}</select></label><label>Date <input type="date" name="date" value="${new Date().toISOString().slice(0,10)}"></label>
+  <label>Section <input type="text" name="section" placeholder="e.g. 101"></label><label>Topic <input type="text" name="topic" placeholder="optional"></label></div>
+  <p><label>What worked<textarea name="worked"></textarea></label></p><p><label>Where students struggled<textarea name="struggled"></textarea></label></p>
+  <p><label>What I will change next time<textarea name="change"></textarea></label></p><p><label>Recommendation for whoever teaches this next<textarea name="recommend"></textarea></label></p>
+  <button class="pf-btn main">Save reflection</button></form>
+  <p style="margin:14px 0"><button class="pf-btn" id="ej">Export (JSON)</button> <button class="pf-btn" id="ec">Export (CSV)</button> <label class="pf-btn">Import JSON<input type="file" id="ij" accept=".json" hidden></label></p><div id="list"></div>`;
+  const draw=()=>{ const by={}; all.forEach((r,i)=>(by[r.week]=by[r.week]||[]).push([r,i]));
+    $('#list',m).innerHTML=all.length?Object.keys(by).sort((a,b)=>a-b).map(w=>`<h2>Week ${w}</h2>`+by[w].map(([r,i])=>`<div class="card" style="margin:8px 0"><b>${esc(r.date)}${r.section?' · Section '+esc(r.section):''}${r.topic?' · '+esc(r.topic):''}</b>
+      ${[['Worked','worked'],['Struggled','struggled'],['Change','change'],['Recommendation','recommend']].filter(([,k])=>r[k]).map(([t,k])=>`<p style="margin:6px 0 0"><span class="tag">${t}</span> ${esc(r[k])}</p>`).join('')}
+      <p style="margin:8px 0 0"><button class="pf-btn" data-del="${i}">Delete</button></p></div>`).join('')).join(''):'<p class="lead">No reflections yet.</p>'; };
+  draw();
+  $('#rf',m).onsubmit=e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); if(!d.worked&&!d.struggled&&!d.change&&!d.recommend) return; all.push(d); LS.set('prof-reflections',all); e.target.reset(); draw(); };
+  $('#list',m).onclick=e=>{ const b=e.target.closest('[data-del]'); if(b&&confirm('Delete this reflection?')){ all.splice(+b.dataset.del,1); LS.set('prof-reflections',all); draw(); } };
+  const save=(name,text,type)=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); };
+  $('#ej',m).onclick=()=>save('mth105-reflections.json',JSON.stringify(all,null,1),'application/json');
+  $('#ec',m).onclick=()=>{ const k=['week','date','section','topic','worked','struggled','change','recommend']; save('mth105-reflections.csv',[k.join(',')].concat(all.map(r=>k.map(x=>'"'+String(r[x]||'').replace(/"/g,'""')+'"').join(','))).join('\n'),'text/csv'); };
+  $('#ij',m).onchange=async e=>{ try{ const d=JSON.parse(await e.target.files[0].text()); if(Array.isArray(d)){ d.forEach(r=>all.push(r)); LS.set('prof-reflections',all); draw(); } }catch(x){ alert('That file is not a reflections export.'); } }; },
+
+guide(m){ m.innerHTML=`<div class="guide">${B.guide}</div>`; },
+
+trainer(m){ const own=LS.get('prof-stamps',[]);
+  m.innerHTML=`<h1>Train the trainer</h1><p class="lead">A course for maths lecturers on teaching with this method. Each module ends with something the trainee produces from their own course.</p>
+  <div class="tw"><table class="t"><tr><th>#</th><th>Module</th><th>Goal</th><th>Trainee produces</th><th>Read</th></tr>${B.trainer.map(([t,g,a,r],i)=>`<tr><td class="c">${i+1}</td><td><b>${esc(t)}</b></td><td>${esc(g)}</td><td>${esc(a)}</td><td>${esc(r)}</td></tr>`).join('')}</table></div>
+  <h2>Stamps of experience</h2><p class="lead">Lessons from past semesters and other lecturers. Every new semester adds its own.</p>
+  <div class="tw"><table class="t"><tr><th>Semester</th><th>What happened</th><th>Lesson kept</th></tr>${B.stamps.concat(own).map(([s,w,l])=>`<tr><td>${esc(s)}</td><td>${esc(w)}</td><td>${esc(l)}</td></tr>`).join('')}</table></div>
+  <form id="sf" class="card"><h3>Add a stamp</h3><div class="grid2"><input type="text" name="s" placeholder="Semester, e.g. Spring 2027"><input type="text" name="by" placeholder="Lecturer (optional)"></div><p><textarea name="w" placeholder="What happened"></textarea></p><p><textarea name="l" placeholder="Lesson kept"></textarea></p><button class="pf-btn main">Add</button></form>`;
+  $('#sf',m).onsubmit=e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); if(!d.w) return; own.push([d.s+(d.by?' · '+d.by:''),d.w,d.l]); LS.set('prof-stamps',own); VIEWS.trainer(m); }; },
+
+grades(m){ m.innerHTML=`<h1>Grades dashboard</h1><p class="lead">Open a gradebook CSV to see how the class did, question by question and CLO by CLO. The file is read on this computer only; nothing is uploaded or saved.</p>
+  <div class="card"><b>CSV format</b><p>Header: <code>StudentID,Section,Q1,Q2,…</code>. Optional rows after the header: <code>MAX,,10,5,…</code> (marks per question) and <code>CLO,,1,2,…</code>.</p>
+  <p style="margin-top:10px"><label class="pf-btn main">Open a CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label> <button class="pf-btn" id="demo">Show with fictional demo data</button></p></div><div id="out"></div>`;
+  $('#csv',m).onchange=async e=>{ const f=e.target.files[0]; if(f) render(parseCSV(await f.text()),false); };
+  $('#demo',m).onclick=()=>render(demoData(),true);
+  function parseCSV(t){ const rows=t.trim().split(/\r?\n/).map(l=>l.split(',').map(x=>x.trim().replace(/^"|"$/g,''))); const h=rows.shift(); const qs=h.slice(2);
+    let max=qs.map(()=>null), clo=qs.map(()=>null); const data=[];
+    rows.forEach(r=>{ const k=(r[0]||'').toUpperCase(); if(k==='MAX') max=r.slice(2).map(Number); else if(k==='CLO') clo=r.slice(2).map(x=>x||null); else if(r[0]) data.push({id:r[0],sec:r[1]||'—',m:r.slice(2).map(x=>x===''?null:Number(x))}); });
+    max=max.map((x,i)=>x||Math.max(...data.map(d=>d.m[i]||0))||1); return {qs,max,clo,data}; }
+  function demoData(){ let s=7; const rnd=()=>(s=(s*16807)%2147483647)/2147483647; const qs=['Q1','Q2','Q3','Q4','Q5','Q6'], max=[4,4,6,6,5,5], clo=['1','1','2','2','2','1'], data=[];
+    ['101','102','301'].forEach((sec,k)=>{ for(let i=0;i<22;i++){ const ab=Math.min(1,Math.max(0.1,0.62+(rnd()-0.5)*0.7-(k===2?0.08:0))); data.push({id:'DEMO-'+sec+'-'+String(i+1).padStart(2,'0'),sec,m:max.map((mx,q)=>Math.round(Math.min(mx,Math.max(0,mx*(ab-(q===3?0.22:0)+(rnd()-0.5)*0.35)))*2)/2)}); } });
+    return {qs,max,clo,data}; }
+  const letter=p=>p>=90?'A+':p>=80?'A':p>=75?'B+':p>=70?'B':p>=65?'C+':p>=60?'C':p>=55?'D+':p>=50?'D':'F';
+  function bars(labels,vals,{max=100,fmt=v=>v.toFixed(0)+'%',flag=()=>false,h=220}={}){ const W=760,L=50,bw=(W-L-20)/labels.length; let s=`<svg viewBox="0 0 ${W} ${h+40}" role="img">`;
+    for(let t=0;t<=4;t++){ const y=h-t/4*(h-20); s+=`<line x1="${L}" x2="${W-10}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${L-6}" y="${y+4}" text-anchor="end" font-size="12" fill="var(--muted)">${fmt(max*t/4)}</text>`; }
+    labels.forEach((lb,i)=>{ const v=vals[i], hh=v/max*(h-20), x=L+i*bw+bw*0.15; s+=`<rect x="${x}" y="${h-hh}" width="${bw*0.7}" height="${hh}" rx="3" fill="${flag(v,i)?'var(--bad)':'var(--wk)'}" opacity=".85"/><text x="${x+bw*0.35}" y="${h-hh-5}" text-anchor="middle" font-size="12" fill="var(--ink)">${fmt(v)}</text><text x="${x+bw*0.35}" y="${h+18}" text-anchor="middle" font-size="12" fill="var(--muted)">${esc(lb)}</text>`; });
+    return s+'</svg>'; }
+  function render(D,demo){ const T=D.max.reduce((a,b)=>a+b,0), N=D.data.length; if(!N){ $('#out',m).innerHTML='<p class="bad">No student rows found.</p>'; return; }
+    const tot=D.data.map(d=>d.m.reduce((a,b)=>a+(b||0),0)/T*100), sorted=[...tot].sort((a,b)=>a-b), med=sorted[Math.floor(N/2)], mean=tot.reduce((a,b)=>a+b,0)/N, pass=tot.filter(p=>p>=50).length;
+    const qAvg=D.qs.map((q,i)=>D.data.reduce((a,d)=>a+(d.m[i]||0),0)/N/D.max[i]*100);
+    const L=['A+','A','B+','B','C+','C','D+','D','F'], lc=L.map(l=>tot.filter(p=>letter(p)===l).length);
+    const hb=[0,10,20,30,40,50,60,70,80,90], hc=hb.map(b=>tot.filter(p=>p>=b&&(b===90?p<=100:p<b+10)).length);
+    const secs=[...new Set(D.data.map(d=>d.sec))], sm=secs.map(s=>{ const t=D.data.map((d,i)=>[d,tot[i]]).filter(([d])=>d.sec===s).map(x=>x[1]); return t.reduce((a,b)=>a+b,0)/t.length; });
+    const cl=[...new Set(D.clo.filter(Boolean))].sort(), ca=cl.map(c=>{ let g=0,mx=0; D.qs.forEach((q,i)=>{ if(D.clo[i]===c){ g+=D.data.reduce((a,d)=>a+(d.m[i]||0),0); mx+=D.max[i]*N; } }); return g/mx*100; });
+    const weak=D.qs.map((q,i)=>[q,qAvg[i]]).sort((a,b)=>a[1]-b[1]).slice(0,2), risk=D.data.map((d,i)=>[d,tot[i]]).filter(x=>x[1]<50).sort((a,b)=>a[1]-b[1]);
+    $('#out',m).innerHTML=(demo?'<div class="warn"><b>Fictional demo data.</b> No real student appears here.</div>':'')+
+    `<div class="kpis"><div class="kpi"><b>${N}</b><span>students</span></div><div class="kpi"><b>${mean.toFixed(1)}%</b><span>mean</span></div><div class="kpi"><b>${med.toFixed(1)}%</b><span>median</span></div><div class="kpi"><b>${(pass/N*100).toFixed(0)}%</b><span>passed (≥ 50%)</span></div><div class="kpi"><b>${lc[0]+lc[1]}</b><span>A+ or A</span></div></div>
+    <h2>Score distribution</h2><div class="chart">${bars(hb.map(b=>b+'–'+(b+9)),hc,{max:Math.max(...hc,1),fmt:v=>Math.round(v)})}</div>
+    <h2>Letter grades (CUD scale)</h2><div class="chart">${bars(L,lc,{max:Math.max(...lc,1),fmt:v=>Math.round(v),flag:(v,i)=>i===8})}</div>
+    <h2>Question by question (average % of the marks)</h2><div class="chart">${bars(D.qs,qAvg,{flag:v=>v<50})}</div>
+    ${cl.length?`<h2>CLO attainment</h2><div class="chart">${bars(cl.map(c=>'CLO '+c),ca,{flag:v=>v<60})}</div>`:''}
+    <h2>By section</h2><div class="chart">${bars(secs,sm)}</div>
+    <h2>What to do next</h2><div class="card"><ul>${weak.map(([q,v])=>`<li><b>${esc(q)}</b> averaged ${v.toFixed(0)}%: revisit its topic in class and add practice before the next assessment.</li>`).join('')}
+    ${cl.length?ca.map((v,i)=>v<60?`<li>CLO ${esc(cl[i])} attainment is ${v.toFixed(0)}%, below 60%: note it in the course review.</li>`:'').join(''):''}
+    <li>${risk.length} students below 50%: invite them to office hours (IDs below).</li></ul></div>
+    ${risk.length?`<h2>Students below 50%</h2><div class="tw"><table class="t"><tr><th>Student ID</th><th>Section</th><th>Score</th></tr>${risk.map(([d,p])=>`<tr><td>${esc(d.id)}</td><td>${esc(d.sec)}</td><td>${p.toFixed(1)}%</td></tr>`).join('')}</table></div>`:''}`; } },
+
+video(m){ m.innerHTML=`<h1>Methodology video</h1><p class="lead">Coming soon: a short video of the teaching method, narrated in my own voice, for new lecturers and reviewers.</p>
+  <div class="card soon"><h3>Planned</h3><ul><li>One scene per part of the teacher guide.</li><li>Recorded on the real course pages and the live board.</li><li>Your own voice, recorded or cloned with your consent.</li></ul></div>`; }
+};
+})();
+</script>
+</body>
+</html>

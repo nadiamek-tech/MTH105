@@ -117,7 +117,8 @@
         const sb=pq.querySelector('.show'); if(sb){ sb.disabled=false; sb.removeAttribute('title'); sb.textContent=label; }
         const gd=pq.querySelector('.guide'); if(gd) gd.hidden=false; };
       el.querySelectorAll('.pq').forEach(pq=>{ const i=+pq.dataset.i, it=items[i], g=pq.querySelector('.gate'); if(!g) return;
-        if(store(gk(i))==='open'){ unlock(pq,i,true); return; }
+        let prof=false; try{ prof=localStorage.getItem('mth105-prof')==='1'; }catch(e){}
+        if(prof||store(gk(i))==='open'){ unlock(pq,i,true); return; }
         g.querySelector('.paper input').addEventListener('change',e=>{ if(e.target.checked) step2(pq); });
         let tries=0;
         g.querySelector('.gchk').addEventListener('click',()=>{ let all=true;
