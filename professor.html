@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=202611021159">
+<link rel="stylesheet" href="assets/course.css?v=202611021219">
 <style>
 :root{--wk:#1F3864;--wk-soft:rgba(31,56,100,.08);--ok:#1E7F4F;--bad:#C62828}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-display)}
@@ -207,7 +207,12 @@ trainer(m){ const own=LS.get('prof-stamps',[]);
   <form id="sf" class="card"><h3>Add a stamp</h3><div class="grid2"><input type="text" name="s" placeholder="Semester, e.g. Spring 2027"><input type="text" name="by" placeholder="Lecturer (optional)"></div><p><textarea name="w" placeholder="What happened"></textarea></p><p><textarea name="l" placeholder="Lesson kept"></textarea></p><button class="pf-btn main">Add</button></form>`;
   $('#sf',m).onsubmit=e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); if(!d.w) return; own.push([d.s+(d.by?' · '+d.by:''),d.w,d.l]); LS.set('prof-stamps',own); VIEWS.trainer(m); }; },
 
-grades(m){ m.innerHTML=`<h1>Grades dashboard</h1><p class="lead">Open a gradebook CSV to see how the class did, question by question and CLO by CLO. The file is read on this computer only; nothing is uploaded or saved.</p>
+grades(m){ m.innerHTML=`<h1>Grades dashboard</h1><div class="pf-tabs" role="tablist"><button class="pf-btn main" data-t="book">Fall 2026 grade book</button> <button class="pf-btn" data-t="csv">Analyse a new CSV</button></div><div id="gt"></div>`;
+  const tabs=t=>{ m.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('main',b.dataset.t===t)); const g=$('#gt',m);
+    if(t==='book'){ g.innerHTML=B.gradebook?`<p class="lead">Your grade book, with every student's name and ID replaced by a code. The codes cannot be traced back to students.</p><iframe title="Grade book" style="width:100%;height:82vh;border:1px solid var(--line);border-radius:12px;background:#fff"></iframe>`:'<p class="lead">No grade book added yet.</p>'; if(B.gradebook) g.querySelector('iframe').srcdoc=B.gradebook; }
+    else VIEWS.csvView(g); };
+  m.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>tabs(b.dataset.t)); tabs(B.gradebook?'book':'csv'); },
+csvView(m){ m.innerHTML=`<p class="lead">Open a gradebook CSV to see how the class did, question by question and CLO by CLO. The file is read on this computer only; nothing is uploaded or saved.</p>
   <div class="card"><b>CSV format</b><p>Header: <code>StudentID,Section,Q1,Q2,…</code>. Optional rows after the header: <code>MAX,,10,5,…</code> (marks per question) and <code>CLO,,1,2,…</code>.</p>
   <p style="margin-top:10px"><label class="pf-btn main">Open a CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label> <button class="pf-btn" id="demo">Show with fictional demo data</button></p></div><div id="out"></div>`;
   $('#csv',m).onchange=async e=>{ const f=e.target.files[0]; if(f) render(parseCSV(await f.text()),false); };
