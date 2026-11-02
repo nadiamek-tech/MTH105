@@ -110,3 +110,10 @@ body.lesson{font-family:var(--f-body)}
 .lmissed .lm-lead{margin:6px 0 8px}
 .lmissed ol{margin:0;padding-left:1.3em;display:grid;gap:6px;line-height:1.5}
 @media print{.lkw-say{display:none}.lmissed{display:none}}
+
+/* in class: writing box with the calculator beside it */
+.lc-ws{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:12px;align-items:start}
+.lc-ws .lc-pad{min-width:0}
+.lc-ws .lc-calc{position:sticky;top:80px}
+@media (max-width:760px){.lc-ws{grid-template-columns:minmax(0,1fr)}.lc-ws .lc-calc{position:static;justify-self:center;width:100%;max-width:300px}}
+@media print{.lc-calc{display:none}}

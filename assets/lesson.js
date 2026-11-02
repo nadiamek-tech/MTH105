@@ -94,9 +94,9 @@
         <ol class="lc-how"><li><b>Watch</b> your professor demonstrate the method on the board.</li><li><b>Try</b> it yourself on the handout or in the writing box.</li><li><b>Check</b> the answer together in class. It is not posted online.</li></ol>
         <div class="lc-btns"><a class="lc-live" href="live.html" target="_blank" rel="noopener"><span class="lc-dot"></span>Live board</a><button type="button" class="lc-print">Print handout</button></div>`));
       ic.items.forEach((x,i)=>{ const card=el('div',{class:'lc-ex'});
-        card.innerHTML=`<div class="lc-exh"><b>Exercise ${i+1}</b>${x.draw?'<span class="lc-tag">Draw</span>':''}</div><p class="lc-q say">${x.q}</p>${x.tips?`<details class="lc-tips"><summary>Before you start</summary><ol>${x.tips.map(t=>`<li>${t}</li>`).join('')}</ol></details>`:''}<div class="lc-pad"></div><p class="lc-ans">Answer: solved together in class.</p>`;
+        card.innerHTML=`<div class="lc-exh"><b>Exercise ${i+1}</b>${x.draw?'<span class="lc-tag">Draw</span>':''}</div><p class="lc-q say">${x.q}</p>${x.tips?`<details class="lc-tips"><summary>Before you start</summary><ol>${x.tips.map(t=>`<li>${t}</li>`).join('')}</ol></details>`:''}<div class="lc-ws"><div class="lc-pad"></div><div class="lc-calc"></div></div><p class="lc-ans">Answer: solved together in class.</p>`;
         sec.querySelector('.lc-paper').appendChild(card);
-        builds.push(()=>{ if(window.Pad) Pad.create(card.querySelector('.lc-pad'),{key:'inclass-'+i,bg:x.draw?'grid':'lines',height:x.draw?360:240,name:`week${cfg.week}-exercise${i+1}`}); }); });
+        builds.push(()=>{ if(window.CASIO&&window.CALC) CASIO.mount(card.querySelector('.lc-calc')); if(window.Pad) Pad.create(card.querySelector('.lc-pad'),{key:'inclass-'+i,bg:x.draw?'grid':'lines',height:x.draw?360:240,name:`week${cfg.week}-exercise${i+1}`}); }); });
       sec.querySelector('.lc-print').addEventListener('click',()=>{
         const w=window.open('','_blank'); if(!w) return;
         w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>MTH 105 · Week ${cfg.week} · In-class handout</title><style>
