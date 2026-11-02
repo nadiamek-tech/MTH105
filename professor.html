@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=1793612448">
+<link rel="stylesheet" href="assets/course.css?v=1793618559">
 <style>
 :root{--wk:#1F3864;--wk-soft:rgba(31,56,100,.08);--ok:#1E7F4F;--bad:#C62828}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-display)}
@@ -92,6 +92,51 @@ textarea{width:100%;min-height:64px}
 .anim>*{animation:up .45s cubic-bezier(.2,.7,.2,1) both}
 .anim>*:nth-child(2){animation-delay:.05s}.anim>*:nth-child(3){animation-delay:.1s}.anim>*:nth-child(4){animation-delay:.15s}.anim>*:nth-child(5){animation-delay:.2s}.anim>*:nth-child(6){animation-delay:.25s}.anim>*:nth-child(7){animation-delay:.3s}.anim>*:nth-child(n+8){animation-delay:.35s}
 @media (prefers-reduced-motion:reduce){.anim>*,.tl>li,.bi-tile{animation:none!important}}
+/* dashboard v2 */
+.dh{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px;padding:22px 24px;border-radius:18px;color:#fff;background:linear-gradient(135deg,#1F3864 0%,#2F5597 65%,#3d6fb8 100%);box-shadow:0 10px 30px rgba(31,56,100,.22);animation:up .4s both}
+.dh h1{margin:4px 0 8px;font-size:1.7rem;color:#fff}.dh-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:.92rem;opacity:.95}.dh-meta .cd{background:rgba(255,255,255,.16);border-radius:99px;padding:2px 12px}
+.dh-today{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:12px 14px}.dh-today small{display:block;font:600 .7rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;opacity:.8}.dh-today b{display:block;font-size:1.05rem;margin:3px 0}.dh-today span{font-size:.82rem;opacity:.85}.dh-today p{margin:10px 0 0}
+.dh-today .pf-btn{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.35);color:#fff}.dh-today .pf-btn.main{background:#fff;color:#1F3864}
+.slicer{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:14px 0 0}.slicer span{font:700 .72rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-right:4px}.slicer em{font-style:normal;color:var(--muted);font-size:.78rem;margin-left:6px}
+.act{list-style:none;margin:0;padding:0;display:grid;gap:8px;counter-reset:a}.act li{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);animation:up .4s both;counter-increment:a}
+.act li:before{content:counter(a);flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--wk);color:#fff;font:700 .75rem var(--f-mono);display:flex;align-items:center;justify-content:center}
+.act li span{flex:1;font-size:.9rem}.act .pf-btn{padding:5px 10px;font-size:.78rem;white-space:nowrap}
+table.hm{border-collapse:separate;border-spacing:3px;width:100%;font-size:.86rem}.hm th{font:600 .72rem var(--f-mono);color:var(--muted);text-align:center}.hm td{padding:6px 8px;border-radius:7px}.hm td.c{text-align:center;min-width:52px}
+.hm tr[data-topic]{cursor:pointer}.hm tr[data-topic]:hover td:first-child{color:var(--wk);text-decoration:underline}.hm td small{display:block;color:var(--muted);font-size:.7rem}
+.ia{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}.ia-i{border:1px solid var(--line);border-radius:10px;padding:6px 4px;text-align:center;background:var(--bg);font-size:.72rem;position:relative}
+.ia-i.f{border-color:#e8a200;box-shadow:inset 0 0 0 1px #e8a200}.ia-i b{display:block;font-size:.72rem}.ia-b{height:56px;display:flex;align-items:flex-end;justify-content:center;margin:4px 0}.ia-b i{width:16px;border-radius:4px 4px 0 0}.ia-i em{display:block;font-style:normal;font:700 .6rem var(--f-mono);color:#b35c00;text-transform:uppercase}
+.lg{display:grid;grid-template-columns:repeat(8,1fr);gap:6px}.lg button{border:1px dashed var(--line);background:var(--bg);border-radius:10px;padding:8px 0;font:700 .85rem var(--f-display);color:var(--muted);cursor:pointer}.lg button i{display:block;font-style:normal;font-size:.75rem}
+.lg button.d{border:1px solid var(--ok);background:rgba(30,127,79,.1);color:var(--ok)}.db-wk u{position:absolute;right:6px;bottom:4px;text-decoration:none;color:var(--ok);font-size:.8rem}
+@media (max-width:980px){.dh{grid-template-columns:1fr}}
+/* plan editor */
+.pv{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;position:relative;z-index:1}.pv .pf-btn{background:rgba(255,255,255,.15);border-color:rgba(255,255,255,.35);color:#fff}.pv-at{font-size:.75rem;opacity:.8}
+.seg{display:inline-flex;background:rgba(255,255,255,.15);border-radius:10px;padding:3px}.seg button{border:0;background:none;color:#fff;padding:6px 12px;border-radius:8px;font:600 .82rem var(--f-display);cursor:pointer}.seg button[aria-pressed="true"]{background:#fff;color:var(--c,#1F3864)}
+.edbar{position:sticky;top:58px;z-index:4;display:flex;gap:4px;flex-wrap:wrap;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px;margin:14px 0 10px;box-shadow:0 6px 18px rgba(0,0,0,.08)}
+.edbar>span:first-child{font:700 .75rem var(--f-mono);color:var(--wk);text-transform:uppercase;margin-right:6px}.edbar [data-c]{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:5px 9px;cursor:pointer;font:600 .82rem var(--f-display);color:var(--ink)}.edbar .sp{flex:1}
+.edit{outline:2px dashed var(--wk);outline-offset:6px;border-radius:12px;padding:6px;min-height:200px}.edit *{animation:none!important}
+.mine-tag{display:inline-block;margin:14px 0 0;font:700 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.06em;background:#fff3bf;color:#7a5c00;border-radius:99px;padding:3px 10px}
+/* reflection wizard */
+.rf-start{display:grid;grid-template-columns:minmax(0,1fr) 190px;gap:14px;align-items:stretch}.rf-start>div:first-child{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.rf-streak{border-radius:14px;padding:16px;background:linear-gradient(160deg,#1E7F4F,#2b8a3e);color:#fff;display:flex;flex-direction:column;justify-content:center;text-align:center}.rf-streak b{font-size:2.6rem;line-height:1}.rf-streak em{font-style:normal;font-size:.78rem;opacity:.85;margin-top:6px}
+.rf-card{margin:8px 0}
+.rz{max-width:760px;margin:0 auto}.rz-top{display:flex;align-items:center;gap:12px}.rz-prog{flex:1;height:10px;background:var(--line);border-radius:99px;overflow:hidden}.rz-prog i{display:block;height:100%;background:linear-gradient(90deg,#3b5bdb,#1E7F4F);transition:width .4s}
+.rz-top span{font:700 .8rem var(--f-mono);color:var(--muted)}.rz-secs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.rz-secs span{font:600 .72rem var(--f-mono);padding:3px 10px;border-radius:99px;background:var(--line);color:var(--muted)}.rz-secs span.on{background:var(--wk);color:#fff}.rz-secs span.dn{background:rgba(30,127,79,.15);color:var(--ok)}
+.rz-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.06)}.rz-card small{font:600 .72rem var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.rz-card h2{margin:6px 0 16px;font-size:1.35rem}
+.rz-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}.rz-opts button{border:2px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:12px 14px;text-align:left;font:600 .92rem var(--f-display);cursor:pointer;transition:border-color .15s,transform .1s}
+.rz-opts button:hover{border-color:var(--wk)}.rz-opts button[aria-pressed="true"]{border-color:var(--wk);background:var(--wk-soft);color:var(--wk)}.rz-opts button:active{transform:scale(.98)}
+.rz-opts.sc{grid-template-columns:repeat(5,1fr)}.rz-opts.sc button{text-align:center;font-size:1.6rem;padding:14px 0}
+.rz-hint{color:var(--muted);font-size:.82rem;margin:12px 0 0}.rz-nav{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.rz-done{text-align:center}.rz-done ul{text-align:left;max-width:520px;margin:10px auto 0}.rz-tick{width:64px;height:64px;border-radius:50%;background:var(--ok);color:#fff;font-size:2rem;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+@media (max-width:820px){.rf-start{grid-template-columns:1fr}.rz-opts.sc{grid-template-columns:repeat(5,1fr)}}
+/* certificate */
+.cert-hero{display:flex;justify-content:space-between;gap:16px;align-items:center;border-radius:18px;padding:22px 24px;color:#fff;background:linear-gradient(135deg,#1F3864,#3b5bdb 60%,#a67c1b 140%);animation:up .4s both}
+.cert-hero p{margin:0;font:600 .72rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;opacity:.85}.cert-hero h2{margin:6px 0;font-size:1.55rem;color:#fff}.cert-hero span{opacity:.9;font-size:.92rem}
+.lsn{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin:12px 0;animation:up .4s both}.lsn h3{display:flex;gap:10px;align-items:center;margin:0 0 6px}.lsn h3 span{width:26px;height:26px;border-radius:50%;background:var(--wk);color:#fff;display:inline-flex;align-items:center;justify-content:center;font:700 .8rem var(--f-mono)}
+.obj{border-left:5px solid var(--ok)}.obj ul{margin:4px 0 0}
+.qz{background:var(--surface);border:2px solid var(--wk);border-radius:16px;padding:16px 20px;margin:18px 0}.qz-h{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px}.qz-h h2{margin:0}.qz-h span{color:var(--muted);font-size:.85rem}
+.qq{border:1px solid var(--line);border-radius:12px;margin:12px 0;padding:10px 14px}.qq legend{padding:0 6px;font-family:var(--f-body)}.qq label{display:flex;gap:10px;align-items:flex-start;padding:7px 8px;border-radius:8px;cursor:pointer;font-family:var(--f-body);font-size:.93rem}.qq label:hover{background:var(--wk-soft)}
+.qq.r{border-color:var(--ok);background:rgba(30,127,79,.05)}.qq.w{border-color:var(--bad);background:rgba(198,40,40,.04)}.qq .why{margin:6px 8px 2px;font-size:.88rem}
+.fbg{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}.fbc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg);display:grid;gap:6px}.fbc>div{display:flex;justify-content:space-between;align-items:center}.fbc small{color:var(--muted);font-size:.75rem}.fbc b{font-size:1.4rem}.fbc span{font-size:.8rem;color:var(--muted);min-height:2.2em}
 /* BI quick access */
 .bi{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.04);margin-bottom:14px}
 .bi-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
@@ -196,7 +241,6 @@ textarea{width:100%;min-height:64px}
 <body>
 <div id="app"></div>
 <script src="assets/vendor/pdfjs/pdf.min.js"></script>
-<script src="assets/vendor/three.min.js"></script>
 <link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
 <script src="assets/vendor/katex/katex.min.js"></script>
 <script src="assets/vendor/katex/auto-render.min.js"></script>
@@ -272,36 +316,13 @@ const weekNo=w=>parseInt(w,10);
 const lessonFor=w=>B.lessons[w];
 
 
-/* ---------- 3D: midterm score bands by section (three.js) ---------- */
-function draw3d(box,leg,G){ if(!window.THREE){ box.innerHTML='<p class="lead" style="padding:20px">3D view unavailable.</p>'; return; }
-  const secs=[...new Set(G.scores.map(s=>s.sec))].sort(), bands=[0,4,8,12,16], lab=['0–4','4–8','8–12','12–16','16–20'], cols=[0x2F5597,0x1E7F4F,0xB4562F,0x8e24aa];
-  const cnt=secs.map(sc=>bands.map((b,i)=>G.scores.filter(s=>s.sec===sc&&s.t>=b&&(i===4?s.t<=G.max:s.t<b+4)).length)), mx=Math.max(1,...cnt.flat());
-  const W=box.clientWidth, H=box.clientHeight, R=new THREE.WebGLRenderer({antialias:true,alpha:true}); R.setPixelRatio(Math.min(2,devicePixelRatio||1)); R.setSize(W,H); box.appendChild(R.domElement);
-  const S=new THREE.Scene(), C=new THREE.PerspectiveCamera(40,W/H,0.1,100); S.add(new THREE.AmbientLight(0xffffff,.65)); const D=new THREE.DirectionalLight(0xffffff,.75); D.position.set(5,10,7); S.add(D);
-  const grp=new THREE.Group(); S.add(grp); const gx=bands.length, gz=secs.length;
-  const floor=new THREE.Mesh(new THREE.BoxGeometry(gx*1.3+.6,.08,gz*1.3+.6),new THREE.MeshLambertMaterial({color:0xdfe5ef})); floor.position.y=-.04; grp.add(floor);
-  const label=(t,x,y,z,size=40,color='#33415c')=>{ const c=document.createElement('canvas'); c.width=256; c.height=64; const g=c.getContext('2d'); g.font=`600 ${size}px Arial`; g.fillStyle=color; g.textAlign='center'; g.textBaseline='middle'; g.fillText(t,128,32);
-    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c),transparent:true})); sp.scale.set(1.8,.45,1); sp.position.set(x,y,z); grp.add(sp); };
-  cnt.forEach((row,zi)=>row.forEach((v,xi)=>{ const h=Math.max(.04,v/mx*4), x=(xi-(gx-1)/2)*1.3, z=(zi-(gz-1)/2)*1.3;
-    const bar=new THREE.Mesh(new THREE.BoxGeometry(.9,h,.9),new THREE.MeshLambertMaterial({color:cols[zi%cols.length]})); bar.position.set(x,h/2,z); grp.add(bar);
-    if(v) label(String(v),x,h+.35,z,44,'#1d2633'); }));
-  lab.forEach((t,xi)=>label(t,(xi-(gx-1)/2)*1.3,.1,(gz-1)/2*1.3+1.1,34));
-  C.position.set(5.2,5,7.2); C.lookAt(0,1.4,0);
-  let rx=-.35, ry=.5, drag=null; const apply=()=>{ grp.rotation.y=ry; grp.rotation.x=rx*.3; };
-  box.addEventListener('pointerdown',e=>{ drag=[e.clientX,e.clientY,ry,rx]; box.setPointerCapture(e.pointerId); box.style.cursor='grabbing'; });
-  box.addEventListener('pointermove',e=>{ if(!drag) return; ry=drag[2]+(e.clientX-drag[0])/120; rx=Math.max(-1,Math.min(1,drag[3]+(e.clientY-drag[1])/200)); });
-  const up=()=>{ drag=null; box.style.cursor='grab'; }; box.addEventListener('pointerup',up); box.addEventListener('pointercancel',up);
-  let alive=true, t0=performance.now(); const loop=t=>{ if(!alive||!box.isConnected){ R.dispose(); return; } if(!drag&&t-t0<4000) ry+=.003; apply(); R.render(S,C); requestAnimationFrame(loop); }; requestAnimationFrame(loop);
-  leg.innerHTML=secs.map((s,i)=>`<span><i style="background:#${cols[i%cols.length].toString(16).padStart(6,'0')}"></i>Section ${esc(s)}</span>`).join('')+'<span>height = number of students</span>';
-}
-
 /* ---------- BI quick access: tiles with live metrics, slicers, search, sortable table, drill-through drawer ---------- */
 function spark(vals,{labels=[],color='var(--wk)',hi=-1}={}){ const n=vals.length, mx=Math.max(1,...vals), w=200/n;
   return `<svg class="sp" viewBox="0 0 200 34" preserveAspectRatio="none">${vals.map((v,i)=>{ const h=Math.max(1.5,v/mx*30); return `<rect data-tip="${esc((labels[i]||'')+': '+(Math.round(v*10)/10))}" x="${i*w+w*.12}" y="${34-h}" width="${w*.76}" height="${h}" rx="1.5" fill="${i===hi?'var(--bad)':color}" opacity="${i===hi?1:.8}"/>`; }).join('')}</svg>`; }
 function meter(p,color='var(--ok)'){ return `<svg class="sp" viewBox="0 0 200 34" preserveAspectRatio="none"><rect x="0" y="13" width="200" height="8" rx="4" fill="var(--line)"/><rect data-tip="${Math.round(p)}%" x="0" y="13" width="${Math.max(2,p*2)}" height="8" rx="4" fill="${color}"/></svg>`; }
 function biPanel(box,{wk,refl,G,missingRefl,ico}){
   const L=B.lessons, W=Object.keys(L).map(Number).sort((a,b)=>a-b), R=B.rubrics||{}, D=B.rubricsD||{inclass:{},labs:{}};
-  const gDone=LS.get('prof-guide-done',[]), tDone=LS.get('prof-trainer-done',[]), nCh=(B.guide.match(/<h3/g)||[]).length+1, nMod=(B.trainer||[]).length+(B.trainerMath||[]).length;
+  const gDone=LS.get('prof-guide-done2',[]), CP=(LS.get('prof-cert',{})||{}).passed||{}, tDone=Object.values(CP).filter(v=>v>=80), nCh=8, nMod=(B.cert||[]).reduce((a,u)=>a+u.modules.length,0)+(B.trainerMath||[]).length;
   const rbBy=W.map(w=>Object.keys(R).filter(k=>k.startsWith('week-'+String(w).padStart(2,'0')+'#')).length);
   const labIds=Object.keys(B.keys), labN=labIds.map(id=>B.keys[id].length), icW=[...new Set(Object.keys(D.inclass).map(k=>+k.split('#')[0]))];
   const rw=W.map(w=>refl.filter(r=>+r.week===w).length), clW={}; B.course.assess.forEach(a=>{ const cs=cloNums(a.clos); cs.forEach(c=>clW[c]=(clW[c]||0)+(parseFloat(a.weight)||0)/cs.length); });
@@ -311,18 +332,18 @@ function biPanel(box,{wk,refl,G,missingRefl,ico}){
      peek:()=>`<p class="lead">Assessment weight carried by each CLO.</p>${Object.entries(clW).map(([c,v])=>`<p style="margin:6px 0"><b>CLO ${c}</b> · ${v.toFixed(1)}%${meter(v*2.5)}</p>`).join('')}<p>${B.sylStudio?'The review studio is ready: current text on the left, your suggestion on the right.':''}</p>`},
     {id:'plans',g:'Teaching',t:'Teaching plans',v:W.length,u:' weeks',s:L[Math.min(wk,15)]?'Now: '+L[Math.min(wk,15)].title:'',st:'ok',stt:'ready',sp:spark(W.map(w=>L[w].topics.length),{labels:W.map(w=>'Week '+w+' topics'),hi:Math.min(wk,15)-1}),
      peek:()=>`<ol class="steps">${W.map(w=>`<li${w===wk?' style="font-weight:700"':''}>Week ${w} · ${esc(L[w].title)} <small>(${L[w].topics.length} topics)</small></li>`).join('')}</ol>`},
-    {id:'sol-practice',g:'Solutions',t:'Practice answers',v:Object.keys(R).length,u:' rubrics',s:'16 sets · PDF + Word',st:'ok',stt:'ready',sp:spark(rbBy,{labels:W.map(w=>'Week '+w+' rubrics')}),
-     peek:()=>`<p class="lead">Every practice question with its answer, marking rubric, typical wrong answers and guiding questions.</p>${booksHTML([['practice-answers','Practice answer book','171 answers with rubrics']])}`},
+    {id:'sol-practice',g:'Solutions',t:'Practice answers',v:Object.keys(R).length,u:' rubrics',s:'one file per week · PDF + Word',st:'ok',stt:'ready',sp:spark(rbBy,{labels:W.map(w=>'Week '+w+' rubrics')}),
+     peek:()=>`<p class="lead">Every practice question with its answer, marking rubric, typical wrong answers and guiding questions.</p><p>One PDF and one Word file per week, each answer with its rubric.</p>`},
     {id:'sol-class',g:'Solutions',t:'In-class answers',v:icW.length,u:' weeks',s:`${Object.keys(D.inclass).length} board exercises with rubrics`,st:'ok',stt:'ready',sp:spark(W.map(w=>Object.keys(D.inclass).filter(k=>+k.split('#')[0]===w).length),{labels:W.map(w=>'Week '+w+' exercises')}),
-     peek:()=>`${booksHTML([['inclass-answers','In-class answer book','Board exercises with rubrics']])}<p class="lead">Handwritten PDFs: weeks ${B.inclassWeeks.join(', ')}.</p>`},
+     peek:()=>`<p>One PDF and one Word file per week, each answer with its rubric.</p><p class="lead">Handwritten PDFs: weeks ${B.inclassWeeks.join(', ')}.</p>`},
     {id:'sol-labs',g:'Solutions',t:'Lab answer keys',v:labN.reduce((a,b)=>a+b,0),u:' keys',s:`${labIds.length} labs · Excel formulas`,st:'ok',stt:'ready',sp:spark(labN,{labels:labIds.map(x=>x+' tasks')}),
-     peek:()=>`${booksHTML([['lab-answers','Lab answer book','All Excel labs with rubrics']])}${labIds.map((id,i)=>`<p style="margin:4px 0">${esc(id)} · ${labN[i]} tasks</p>`).join('')}`},
+     peek:()=>`<p>One PDF and one Word file per lab, with Excel screenshots.</p>${labIds.map((id,i)=>`<p style="margin:4px 0">${esc(id)} · ${labN[i]} tasks</p>`).join('')}`},
     {id:'reflect',g:'Improve',t:'Reflections',v:refl.length,u:'',s:missingRefl.length?missingRefl.length+' weeks missing':'all weeks covered',st:missingRefl.length?'due':'ok',stt:missingRefl.length?'due':'done',sp:spark(rw,{labels:W.map(w=>'Week '+w+' reflections')}),
      peek:()=>refl.length?refl.slice(-5).reverse().map(r=>`<div class="card" style="margin:6px 0"><b>Week ${esc(r.week)} · ${esc(r.date)}</b><p>${esc(r.change||r.struggled||r.worked)}</p></div>`).join(''):'<p class="lead">No reflections yet. Write one after your next class.</p>'},
     {id:'guide',g:'Improve',t:'Teacher guide',v:Math.round(gDone.length/nCh*100),u:'%',s:`${gDone.length} of ${nCh} chapters read`,st:gDone.length>=nCh?'ok':'soon',stt:gDone.length>=nCh?'done':'course',sp:meter(gDone.length/nCh*100),
-     peek:()=>`<p class="lead">The method as a short course in ${nCh} chapters, with progress saved on this computer.</p>`},
-    {id:'trainer',g:'Improve',t:'Train the trainer',v:Math.round(tDone.length/nMod*100),u:'%',s:`${tDone.length} of ${nMod} modules · 2 tracks`,st:'soon',stt:'course',sp:meter(tDone.length/nMod*100,'var(--wk)'),
-     peek:()=>`<p class="lead">Track A: the method (${(B.trainer||[]).length} modules). Track B: the mathematics, formula by formula, with derivations, beyond the course, how to simplify and how to stretch (${(B.trainerMath||[]).length} modules).</p>`},
+     peek:()=>`<p class="lead">The course materials in ${nCh} short chapters: what each one is and how to use it in class.</p>`},
+    {id:'trainer',g:'Improve',t:'Train the trainer',v:Math.round(tDone.length/nMod*100),u:'%',s:`${tDone.length} of ${nMod} module tests passed`,st:'soon',stt:'course',sp:meter(tDone.length/nMod*100,'var(--wk)'),
+     peek:()=>`<p class="lead">A certificate programme in four units: pedagogy, the mathematics of the course, assessment, and a practicum. Each module ends with a graded test.</p>`},
     {id:'grades',g:'Assessment',t:'Grades',v:G?+G.mean.toFixed(1):0,u:G?'/'+G.max:'',s:G?`${G.n} papers · ${Math.round(G.pass/G.n*100)}% passed`:'no grade book',st:G&&G.pass/G.n<.7?'due':'ok',stt:G&&G.pass/G.n<.7?'follow up':'ok',sp:spark(hb,{labels:['0–4','4–8','8–12','12–16','16–20'].map(x=>x+' marks')}),
      peek:()=>G?`<p class="lead">${esc(G.name)}: mean ${G.mean.toFixed(2)}, median ${G.median}, ${G.missing} absent.</p>${G.parts.map(p=>`<p style="margin:6px 0"><b>${esc(p.k)}</b> · ${p.mean.toFixed(2)} / ${p.max}${meter(p.mean/p.max*100,p.mean/p.max<.6?'var(--bad)':'var(--ok)')}</p>`).join('')}`:''},
     {id:'video',g:'Assessment',t:'Methodology video',v:0,u:'',s:'planned',st:'soon',stt:'soon',sp:meter(0),peek:()=>'<p class="lead">Planned: a short narrated video of the method.</p>'}];
@@ -351,6 +372,26 @@ function drawer(title,sub,html,goId){ let d=$('#drawer'), s=$('#scrim'); if(!d){
   const close=()=>{ d.classList.remove('on'); s.classList.remove('on'); }; requestAnimationFrame(()=>{ d.classList.add('on'); s.classList.add('on'); });
   $('#dx').onclick=close; s.onclick=close; $('#dgo').onclick=()=>{ close(); go(goId); }; wireBooks(d); }
 
+/* ---------- teaching plan: my own edited version ---------- */
+function planVersion(m,w){ const MINE=LS.get('prof-plan-mine',{}), VIEW=LS.get('prof-plan-view',{}), pv=$('#pv',m), pb=$('#pb',m), orig=pb.innerHTML;
+  const mine=MINE[w], view=mine&&VIEW[w]!=='orig'?'mine':'orig';
+  pv.innerHTML=`${mine?`<div class="seg" role="group" aria-label="Plan version"><button data-v="orig" aria-pressed="${view==='orig'}">Original plan</button><button data-v="mine" aria-pressed="${view==='mine'}">My version</button></div>`:''}
+    <button class="pf-btn" id="ed">✎ ${mine?'Edit my version':'Make my own version'}</button>${mine?`<span class="pv-at">saved ${esc(new Date(mine.at).toLocaleString())}</span>`:''}`;
+  if(view==='mine') pb.innerHTML=`<div class="mine-tag">My version · Week ${w}</div>`+mine.html;
+  pv.onclick=e=>{ const v=e.target.closest('[data-v]'); if(v){ VIEW[w]=v.dataset.v; LS.set('prof-plan-view',VIEW); VIEWS.plans.reshow(w); return; }
+    if(e.target.closest('#ed')) edit(); };
+  function edit(){ const start=mine?mine.html:orig;
+    pb.innerHTML=`<div class="edbar" id="edbar"><span>Editing your version of Week ${w}</span>
+      <button data-c="bold" title="Bold"><b>B</b></button><button data-c="italic" title="Italic"><i>I</i></button><button data-c="formatBlock:H3" title="Heading">H</button><button data-c="insertUnorderedList" title="Bullet list">• List</button><button data-c="insertOrderedList" title="Numbered list">1. List</button><button data-c="hiliteColor:#fff3bf" title="Highlight">Highlight</button><button data-c="removeFormat" title="Clear formatting">Clear</button><button data-c="undo" title="Undo">↶</button>
+      <span class="sp"></span><button class="pf-btn" id="ec">Cancel</button>${mine?'<button class="pf-btn" id="er">Delete my version</button>':''}<button class="pf-btn main" id="es">Save my version</button></div>
+      <div class="edit" id="ea" contenteditable="true" spellcheck="true">${start}</div>`;
+    pb.querySelectorAll('#ea input').forEach(x=>x.disabled=true); $('#ea',pb).focus();
+    $('#edbar',pb).onmousedown=e=>{ if(e.target.closest('[data-c]')) e.preventDefault(); };
+    $('#edbar',pb).onclick=e=>{ const c=e.target.closest('[data-c]'); if(c){ const [cmd,arg]=c.dataset.c.split(':'); document.execCommand(cmd,false,arg||null); return; }
+      if(e.target.id==='ec') VIEWS.plans.reshow(w);
+      if(e.target.id==='er'&&confirm('Delete your version of this plan?')){ delete MINE[w]; LS.set('prof-plan-mine',MINE); VIEWS.plans.reshow(w); }
+      if(e.target.id==='es'){ const ea=$('#ea',pb); ea.querySelectorAll('input').forEach(x=>x.disabled=false); MINE[w]={html:ea.innerHTML,at:Date.now()}; LS.set('prof-plan-mine',MINE); VIEW[w]='mine'; LS.set('prof-plan-view',VIEW); VIEWS.plans.reshow(w); } }; } }
+
 /* ---------- run a class: full-screen phase timer ---------- */
 function runClass(w,S,c,PC){ const L=B.lessons[w]; let i=0, left=S[0].min*60, on=false, last=0;
   const el=document.createElement('div'); el.className='run'; el.style.setProperty('--c',c); el.setAttribute('role','dialog'); el.setAttribute('aria-label','Run this class'); document.body.appendChild(el);
@@ -367,57 +408,95 @@ function runClass(w,S,c,PC){ const L=B.lessons[w]; let i=0, left=S[0].min*60, on
   function close(){ removeEventListener('keydown',key); el.remove(); }
   addEventListener('keydown',key); paint(); requestAnimationFrame(tick); }
 
+/* ---------- guide chapters (shared by the guide and the certificate) ---------- */
+function guideChapters(){ const tmp=document.createElement('div'); tmp.innerHTML=B.guide; const ch=[{t:'Welcome',num:0,n:[]}];
+  [...tmp.childNodes].forEach(n=>{ if(n.nodeType===1&&n.tagName==='H2') return; if(n.nodeType===1&&n.tagName==='H3') ch.push({t:n.textContent.replace(/^\d+\.\s*/,''),num:parseInt(n.textContent,10)||99,n:[]}); else ch[ch.length-1].n.push(n); });
+  ch.forEach(c=>{ const d=document.createElement('div'); c.n.forEach(n=>d.appendChild(n)); c.html=d.innerHTML; c.min=Math.max(1,Math.round(d.textContent.split(/\s+/).length/200)); }); return ch; }
+function certificate(name,ALL,U){ const w=window.open('','_blank'); if(!w){ alert('Allow pop-ups to open the certificate.'); return; }
+  const d=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>Certificate · ${esc(name)}</title><style>@page{size:A4 landscape;margin:0}body{margin:0;font-family:Georgia,serif;background:#f4f1ea}
+  .c{width:297mm;height:209mm;box-sizing:border-box;padding:16mm 22mm;background:#fffdf8;border:10px double #1F3864;text-align:center;position:relative}
+  small{font:600 9pt Arial;letter-spacing:.25em;text-transform:uppercase;color:#5a6b80}h1{font-size:30pt;margin:8mm 0 4mm;color:#1F3864}.n{font-size:28pt;font-style:italic;border-bottom:1px solid #b9a77a;display:inline-block;padding:0 12mm 2mm;margin:4mm 0}
+  p{font-size:12pt;color:#333;max-width:220mm;margin:3mm auto}.u{display:flex;justify-content:center;gap:8mm;margin-top:6mm;font:10pt Arial;color:#444}.s{position:absolute;bottom:18mm;left:22mm;right:22mm;display:flex;justify-content:space-between;font:10pt Arial;color:#333}.s div{border-top:1px solid #999;padding-top:2mm;min-width:70mm}
+  .seal{position:absolute;right:26mm;top:22mm;width:30mm;height:30mm;border-radius:50%;background:radial-gradient(#d4b25b,#a67c1b);color:#fff;display:flex;align-items:center;justify-content:center;font:700 9pt Arial;text-align:center;box-shadow:0 0 0 3px #fffdf8,0 0 0 5px #a67c1b}</style>
+  <div class="c"><div class="seal">MTH 105<br>CERTIFIED</div><small>Canadian University Dubai · MTH 105 Introduction to Statistics</small><h1>Certificate in Teaching Introductory Statistics</h1><p>This certifies that</p><div class="n">${esc(name)}</div>
+  <p>has completed the programme and passed all ${ALL.length} module tests at 80% or more, covering:</p><div class="u">${U.map((u,i)=>`<span>Unit ${i+1}: ${esc(u.title)}</span>`).join(' · ')}</div>
+  <div class="s"><div>Eng. Nadia Mek<br>Course designer</div><div>${d}</div></div></div><script>setTimeout(()=>print(),300)<\/script>`); w.document.close(); }
+
 /* ---------- views ---------- */
 const VIEWS={
 home(m){ const now=new Date(), START=new Date('2026-08-31T00:00:00+04:00'), wk=Math.max(1,Math.min(16,Math.floor((now-START)/6048e5)+1));
-  const released=Object.keys(B.lessons).filter(w=>+w<=8).length, refl=LS.get('prof-reflections',[]), G=B.gbStats;
-  const reflWeeks=new Set(refl.map(r=>+r.week)), missingRefl=Array.from({length:Math.min(wk,released)},(_,i)=>i+1).filter(w=>!reflWeeks.has(w));
+  const G=B.gbStats, refl=LS.get('prof-reflections',[]), L=B.lessons, cw=Math.min(wk,15);
   const hour=now.getHours(), hello=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
   const evs=[]; B.course.weeks.forEach(w=>(w.ev||[]).forEach(id=>{ const a=B.course.assess.find(x=>x.id===id); if(a) evs.push({w:+w.w,a}); }));
-  const next=evs.find(e=>e.w>=wk);
-  const IC={syllabus:'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5',plans:'M4 5h16M4 12h16M4 19h10',
-    'sol-practice':'M9 12l2 2 4-4M4 4h16v16H4z','sol-class':'M3 5h18v12H3zM8 21h8M12 17v4','sol-labs':'M4 4h16v16H4zM4 10h16M10 4v16',
-    reflect:'M4 20l4-1 11-11-3-3L5 16zM14 6l3 3',guide:'M5 4h10l4 4v12H5zM15 4v4h4',trainer:'M12 3l9 5-9 5-9-5zM7 11v5c3 2 7 2 10 0v-5',
-    grades:'M4 20V10M10 20V4M16 20v-7M22 20H2',video:'M4 6h12v12H4zM16 10l5-3v10l-5-3'};
-  const ico=k=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[k]||IC.guide}"/></svg>`;
-  const pct=x=>Math.round(x)+'%';
-  m.innerHTML=`<section class="db-hero"><div><p class="db-eyebrow">MTH 105 · Introduction to Statistics · Fall 2026</p><h1>${hello}, Eng. Nadia</h1>
-    <p class="db-sub">Week <b>${wk}</b> of 16${next?` · next: <b>${esc(next.a.name)}</b> in Week ${next.w}`:''}</p></div>
-    <div class="db-prog" aria-label="Semester progress"><div class="db-prog-bar"><i style="width:${(wk-1)/15*100}%"></i></div><span>${Math.round((wk-1)/15*100)}% of the semester</span></div></section>
-  <section class="db-kpis">
-    <div class="db-kpi"><span>Lectures released</span><b>${released}<small>/15</small></b><div class="db-mini"><i style="width:${released/15*100}%"></i></div></div>
-    ${G?`<div class="db-kpi"><span>${esc(G.name)} mean</span><b>${G.mean.toFixed(1)}<small>/${G.max}</small></b><div class="db-mini"><i style="width:${G.mean/G.max*100}%"></i></div></div>
-    <div class="db-kpi"><span>Passed (≥ 50%)</span><b>${pct(G.pass/G.n*100)}</b><div class="db-mini ok"><i style="width:${G.pass/G.n*100}%"></i></div></div>
-    <div class="db-kpi"><span>Papers graded</span><b>${G.n}</b><em>${G.missing} absent</em></div>`:''}
-    <div class="db-kpi"><span>Reflections logged</span><b>${refl.length}</b><em>${missingRefl.length?missingRefl.length+' weeks without one':'all weeks covered'}</em></div>
-  </section>
-  <section class="db-row">
-    <div class="db-card db-3d"><div class="db-card-h"><h2>Midterm results in 3D</h2><span>score band × section · drag to rotate</span></div><div id="d3" class="db-canvas" role="img" aria-label="3D bars of midterm scores by section"></div><div class="db-legend" id="d3leg"></div></div>
-    <div class="db-card"><div class="db-card-h"><h2>CLO attainment</h2><span>from the midterm sections</span></div>
-      ${G?G.parts.map((p,i)=>{ const v=p.mean/p.max*100; return `<div class="db-gauge"><svg viewBox="0 0 120 120" width="110" height="110"><circle cx="60" cy="60" r="48" fill="none" stroke="var(--line)" stroke-width="12"/><circle cx="60" cy="60" r="48" fill="none" stroke="${v<60?'var(--bad)':'var(--wk)'}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${(v/100*301.6).toFixed(1)} 302" transform="rotate(-90 60 60)"/><text x="60" y="66" text-anchor="middle" font-size="22" font-weight="700" fill="var(--ink)">${Math.round(v)}%</text></svg><div><b>CLO ${i+1}</b><span>${esc(p.k)} · ${p.mean.toFixed(2)} / ${p.max}</span><em>${v<60?'Below the 60% target: revisit before the final':'At or above the 60% target'}</em></div></div>`; }).join(''):'<p class="lead">Add a grade book to see attainment.</p>'}
-    </div>
-  </section>
-  <section class="db-card"><div class="db-card-h"><h2>Semester map</h2><span>colour = CLO · ● assessment · ▲ this week</span></div><div class="db-weeks">${B.course.weeks.map(w=>{ const n=+w.w, L=B.lessons[n], c=L?(L.clo.match(/\d/)||[0])[0]:0;
-      return `<div class="db-wk c${c}${n===wk?' now':''}${n<=8?' rel':''}" title="Week ${n}${L?': '+esc(L.title):''}"><b>${n}</b><span>${L?esc(L.title.split(':')[0]):'Final exams'}</span>${(w.ev||[]).map(id=>{ const a=B.course.assess.find(x=>x.id===id); return a?`<i>● ${esc(a.short||a.name)}</i>`:''; }).join('')}</div>`; }).join('')}</div></section>
-  <section class="db-row">
-    <div class="db-card"><div class="db-card-h"><h2>To do</h2><span>generated from your resources</span></div><ul class="db-todo">
-      ${missingRefl.length?`<li data-go="reflect"><b>Reflections</b> missing for Week ${missingRefl.join(', ')}</li>`:''}
-      ${next?`<li data-go="syllabus"><b>${esc(next.a.name)}</b> in Week ${next.w}: ${esc((next.a.covers||[]).join('; '))}</li>`:''}
-      <li data-go="sol-labs"><b>Lab answer keys</b> for Labs 9–14 when those weeks are released</li>
-      <li data-go="sol-class"><b>In-class answers</b> for Weeks 9–15 when released</li>
-      ${G&&G.parts.some(p=>p.mean/p.max<0.6)?`<li data-go="grades"><b>Midterm follow-up:</b> ${G.n-G.pass} students below 50% to invite to office hours</li>`:''}
-    </ul></div>
-    ${(()=>{ const L=B.lessons[Math.min(wk,15)]; return L?`<div class="db-card"><div class="db-card-h"><h2>This week</h2><span>Week ${Math.min(wk,15)} · ${esc(L.clo)}</span></div><b style="font-size:1.1rem">${esc(L.title)}</b><p class="lead" style="margin:4px 0 10px">${L.topics.length} topics · ${L.inClass?L.inClass.items.length:0} board exercises · ${L.practice} practice questions</p><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${L.topics.map(t=>`<span class="tag">${esc(t.t)}</span>`).join('')}</div><button class="pf-btn main" data-plan="${Math.min(wk,15)}">Open the teaching plan</button> <button class="pf-btn" data-run="${Math.min(wk,15)}">▶ Run this class</button></div>`:''; })()}
-  </section>
-  <section class="bi" id="bi"></section>
-  <div class="bi-tip" id="tip"></div>`;
-  m.onclick=e=>{ const p=e.target.closest('[data-plan],[data-run]'); if(p){ sessionStorage.setItem('prof-plan-week',p.dataset.plan||p.dataset.run); if(p.dataset.run) sessionStorage.setItem('prof-plan-run','1'); go('plans'); return; }
-    const w=e.target.closest('.db-wk'); if(w&&w.dataset.w){ sessionStorage.setItem('prof-plan-week',w.dataset.w); go('plans'); return; }
-    const b=e.target.closest('[data-go]'); if(b&&!b.closest('#bi')) go(b.dataset.go); };
-  m.querySelectorAll('.db-wk').forEach((el,i)=>{ const n=i+1; if(B.lessons[n]){ el.dataset.w=n; el.style.cursor='pointer'; } });
-  biPanel($('#bi',m),{wk,refl,G,missingRefl,ico});
-  if(G) draw3d($('#d3',m),$('#d3leg',m),G);
+  const next=evs.find(e=>e.w>wk)||evs.find(e=>e.w>=wk), days=next?Math.max(0,Math.round((START.getTime()+(next.w-1)*6048e5+2*864e5-now)/864e5)):null;
+  const reflWeeks=new Set(refl.map(r=>+r.week)), missingRefl=Array.from({length:Math.min(wk,8)},(_,i)=>i+1).filter(w=>!reflWeeks.has(w));
+  const IC={syllabus:'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5',plans:'M4 5h16M4 12h16M4 19h10','sol-practice':'M9 12l2 2 4-4M4 4h16v16H4z','sol-class':'M3 5h18v12H3zM8 21h8M12 17v4','sol-labs':'M4 4h16v16H4zM4 10h16M10 4v16',
+    reflect:'M4 20l4-1 11-11-3-3L5 16zM14 6l3 3',guide:'M5 4h10l4 4v12H5zM15 4v4h4',trainer:'M12 3l9 5-9 5-9-5zM7 11v5c3 2 7 2 10 0v-5',grades:'M4 20V10M10 20V4M16 20v-7M22 20H2',video:'M4 6h12v12H4zM16 10l5-3v10l-5-3'};
+  const ico=k=>`<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[k]||IC.guide}"/></svg>`;
+  const TOP=[['Shape and graphs',['Q1 a','Q1 b'],2,'week-02'],['Boxplot',['Q1 ci','Q1 cii','Q1 ciii'],4,'week-04'],['Mean and mode',['Q2 mean','Q2 mode'],3,'week-03'],['Var, SD, CV',['Q2 var','Q2 sd','Q2 cv'],4,'week-04'],
+    ['Probability rules',['Q3 a','Q3 b','Q3 c','Q3 d'],5,'week-05'],['Trees and sample space',['Q4 a','Q4 b','Q4 c','Q4 d'],5,'week-05'],['Distribution and k',['Q5 a','Q5 b'],6,'week-06'],['E(X), Var(X), SD',['Q5 c','Q5 d'],6,'week-06']];
+  const ST=G&&G.students?G.students.filter(s=>s.items&&Object.keys(s.items).length):[], SECS=[...new Set(ST.map(s=>s.sec))].sort();
+  const col=p=>p>=70?'#2b8a3e':p>=55?'#e8a200':'#d9480f', bg=p=>`color-mix(in srgb,${col(p)} ${Math.round(18+(100-p)*0.25)}%,transparent)`;
+  let sec=sessionStorage.getItem('prof-db-sec')||'All';
+  m.innerHTML=`<section class="dh"><div><p class="db-eyebrow">MTH 105 · Introduction to Statistics · Fall 2026</p><h1>${hello}, Eng. Nadia</h1>
+      <div class="dh-meta"><span>Week <b>${wk}</b> of 16</span>${next?`<span class="cd"><b>${days}</b> days to ${esc(next.a.name)}</span>`:''}<span>${G?`${G.n} midterm papers graded`:''}</span></div></div>
+      <div class="dh-today">${L[cw]?`<small>This week · ${esc(L[cw].clo)}</small><b>${esc(L[cw].title)}</b><span>${L[cw].topics.length} topics · ${L[cw].inClass?L[cw].inClass.items.length:0} board exercises</span><p><button class="pf-btn main" data-run="${cw}">▶ Run the class</button> <button class="pf-btn" data-plan="${cw}">Plan</button></p>`:''}</div></section>
+    <div class="slicer" role="group" aria-label="Filter by section"><span>Section</span>${['All',...SECS].map(s=>`<button class="bi-chip" data-sec="${s}" aria-pressed="${s===sec}">${s}</button>`).join('')}<em>filters every panel below</em></div>
+    <section id="dbk"></section>
+    <section class="db-row"><div class="db-card"><div class="db-card-h"><h2>Action centre</h2><span>what the data suggests this week</span></div><ol class="act" id="act"></ol></div>
+      <div class="db-card"><div class="db-card-h"><h2>Topic mastery</h2><span>share of midterm marks earned · click a topic</span></div><div id="heat"></div></div></section>
+    <section class="db-row"><div class="db-card"><div class="db-card-h"><h2>Students needing attention</h2><span>below 50% · codes only</span></div><div id="risk"></div></div>
+      <div class="db-card"><div class="db-card-h"><h2>Score distribution</h2><span>midterm · pass line at 10</span></div><div id="hist"></div></div></section>
+    <section class="db-card"><div class="db-card-h"><h2>Item analysis</h2><span>difficulty p = share of marks earned · discrimination D = top 27% − bottom 27%</span></div><div id="items"></div></section>
+    <section class="db-row"><div class="db-card"><div class="db-card-h"><h2>Semester map</h2><span>colour = CLO · ● assessment · click a week for its plan</span></div><div class="db-weeks">${B.course.weeks.map(w=>{ const n=+w.w, l=L[n], c=l?(l.clo.match(/\d/)||[0])[0]:0;
+        return `<div class="db-wk c${c}${n===wk?' now':''}${n<=8?' rel':''}" ${l?`data-w="${n}" style="cursor:pointer"`:''} title="Week ${n}${l?': '+esc(l.title):''}"><b>${n}</b><span>${l?esc(l.title.split(':')[0]):'Final exams'}</span>${(w.ev||[]).map(id=>{ const a=B.course.assess.find(x=>x.id===id); return a?`<i>● ${esc(a.short||a.name)}</i>`:''; }).join('')}${reflWeeks.has(n)?'<u title="reflection logged">✎</u>':''}</div>`; }).join('')}</div></div>
+      <div class="db-card"><div class="db-card-h"><h2>Teaching log</h2><span>reflections after class</span></div><div id="log"></div></div></section>
+    <section class="bi" id="bi"></section><div class="bi-tip" id="tip"></div>`;
+  const draw=()=>{ const S=ST.filter(s=>sec==='All'||s.sec===sec), n=S.length, max=G?G.max:20;
+    if(!n){ ['#dbk','#heat','#risk','#hist','#items'].forEach(id=>$(id,m).innerHTML='<p class="lead">Add a grade book to see this panel.</p>'); return; }
+    const T=S.map(s=>s.t), mean=T.reduce((a,b)=>a+b,0)/n, pass=T.filter(t=>t>=max/2).length, risk=S.filter(s=>s.t<max/2).sort((a,b)=>a.t-b.t);
+    const topicP=(t,set)=>{ let g=0,mx=0; set.forEach(s=>t[1].forEach(k=>{ const v=s.items[k]; if(v){ g+=v[0]; mx+=v[1]; } })); return mx?g/mx*100:0; };
+    const tp=TOP.map(t=>({t,p:topicP(t,S),bySec:SECS.map(sc=>topicP(t,S.filter(s=>s.sec===sc)))})), weak=[...tp].sort((a,b)=>a.p-b.p);
+    const parts=Object.keys(S[0].parts||{}).map((k,i)=>({k,clo:i+1,p:S.reduce((a,s)=>a+s.parts[k][0],0)/S.reduce((a,s)=>a+s.parts[k][1],0)*100}));
+    const keys=Object.keys(S[0].items), ord=[...S].sort((a,b)=>b.t-a.t), k27=Math.max(1,Math.round(n*.27)), up=ord.slice(0,k27), lo=ord.slice(-k27);
+    const IA=keys.map(k=>{ const mx=S[0].items[k][1], p=S.reduce((a,s)=>a+s.items[k][0],0)/(mx*n), D=(up.reduce((a,s)=>a+s.items[k][0],0)-lo.reduce((a,s)=>a+s.items[k][0],0))/(mx*k27); return {k,mx,p:p*100,D}; });
+    const flagged=IA.filter(x=>x.D<0.2&&x.p<90).sort((a,b)=>a.D-b.D);
+    $('#dbk',m).innerHTML=`<div class="db-kpis">${[
+      ['Class average',`${mean.toFixed(1)}<small>/${max}</small>`,`median ${[...T].sort((a,b)=>a-b)[Math.floor(n/2)]}`,mean/max*100],
+      ['Passed (≥ 50%)',`${Math.round(pass/n*100)}<small>%</small>`,`${pass} of ${n} students`,pass/n*100],
+      ['At risk (< 50%)',`${risk.length}`,'feedback sheets ready',100-risk.length/n*100],
+      ['Weakest topic',`${Math.round(weak[0].p)}<small>%</small>`,esc(weak[0].t[0]),weak[0].p],
+      ...parts.map(p=>[`CLO ${p.clo} attainment`,`${Math.round(p.p)}<small>%</small>`,p.p<60?'below the 60% target':'on target',p.p])
+    ].map(([a,b,c,v])=>`<div class="db-kpi"><span>${a}</span><b>${b}</b><em>${c}</em><div class="db-mini"><i style="width:${Math.max(3,v)}%;background:${col(v)}"></i></div></div>`).join('')}</div>`;
+    const acts=[]; if(weak[0].p<60) acts.push([`Reteach <b>${esc(weak[0].t[0])}</b>: the class earned ${Math.round(weak[0].p)}% of its marks.`,`Week ${weak[0].t[2]} plan`,`plan:${weak[0].t[2]}`]);
+    if(weak[1]&&weak[1].p<60) acts.push([`Add a revision exercise on <b>${esc(weak[1].t[0])}</b> (${Math.round(weak[1].p)}%).`,'Practice answers',`go:sol-practice`]);
+    if(risk.length) acts.push([`Give the one-page feedback sheet to <b>${risk.length} students</b> below 50% and invite them to office hours.`,'Feedback sheets','go:grades:fb']);
+    if(flagged.length) acts.push([`Review item <b>${esc(flagged[0].k)}</b>: it hardly separates strong and weak students (D = ${flagged[0].D.toFixed(2)}).`,'Item analysis','scroll:items']);
+    if(next&&days<=21) acts.push([`<b>${esc(next.a.name)}</b> in ${days} days: ${esc((next.a.covers||[]).join('; '))}.`,'Teaching plans',`plan:${Math.min(next.w,15)}`]);
+    if(missingRefl.length) acts.push([`Write the reflection for Week ${missingRefl.slice(-3).join(', ')}: two minutes, mostly taps.`,'Reflect','go:reflect']);
+    $('#act',m).innerHTML=acts.slice(0,5).map(([t,b,d],i)=>`<li style="animation-delay:${i*.06}s"><span>${t}</span><button class="pf-btn" data-act="${d}">${b} →</button></li>`).join('');
+    $('#heat',m).innerHTML=`<table class="hm"><tr><th></th>${(sec==='All'?SECS:[sec]).map(s=>`<th>${s}</th>`).join('')}<th>${sec==='All'?'All':''}</th><th></th></tr>${tp.map(x=>`<tr data-topic="${esc(x.t[0])}"><td>${esc(x.t[0])}<small>Week ${x.t[2]}</small></td>${(sec==='All'?x.bySec:[]).map(v=>`<td class="c" style="background:${bg(v)}">${Math.round(v)}%</td>`).join('')}<td class="c" style="background:${bg(x.p)};font-weight:700">${Math.round(x.p)}%</td><td><div class="db-mini" style="margin:0;width:90px"><i style="width:${x.p}%;background:${col(x.p)}"></i></div></td></tr>`).join('')}</table>`;
+    let all=false; const riskTbl=()=>{ const R=all?[...S].sort((a,b)=>a.t-b.t):risk; $('#risk',m).innerHTML=(R.length?`<div class="tw" style="max-height:330px;overflow:auto"><table class="t"><tr><th>Code</th><th>Sec.</th><th>Score</th><th>Next marks are in</th><th></th></tr>${R.map(s=>`<tr><td><code>${esc(s.id)}</code></td><td class="c">${esc(s.sec)}</td><td><b style="color:${col(s.t/max*100)}">${s.t}</b>/${max}</td><td style="font-size:.82rem">${esc(((s.brief||{}).mistakes||[]).slice(0,2).map(x=>x.split(':')[0]).join(' · '))}</td><td><button class="pf-btn" style="padding:3px 8px;font-size:.75rem" data-book="feedback-${esc(s.id)}.pdf">Sheet</button></td></tr>`).join('')}</table></div>`:'<p class="lead">No student below 50% in this view.</p>')+`<p style="margin:8px 0 0"><button class="pf-btn" id="rall">${all?'Show only students at risk':'Show all students'}</button></p>`;
+      $('#rall',m).onclick=()=>{ all=!all; riskTbl(); }; wireBooks($('#risk',m)); }; riskTbl();
+    const bins=Array.from({length:10},(_,i)=>i*2), hc=bins.map(b=>T.filter(t=>t>=b&&(b===18?t<=20:t<b+2)).length), hm=Math.max(1,...hc), W=460,Hh=180;
+    $('#hist',m).innerHTML=`<svg viewBox="0 0 ${W} ${Hh+30}" style="width:100%;height:auto">${hc.map((c,i)=>{ const h=c/hm*(Hh-20), x=20+i*(W-30)/10; return `<rect data-tip="${bins[i]}–${bins[i]+2}: ${c} students" x="${x}" y="${Hh-h}" width="${(W-30)/10-6}" height="${h}" rx="4" fill="${bins[i]<10?'#f08c6b':'#5c9ce6'}"/>${c?`<text x="${x+(W-30)/20-3}" y="${Hh-h-5}" text-anchor="middle" font-size="12" fill="var(--ink)">${c}</text>`:''}<text x="${x+(W-30)/20-3}" y="${Hh+16}" text-anchor="middle" font-size="11" fill="var(--muted)">${bins[i]}</text>`; }).join('')}<line x1="${20+5*(W-30)/10-3}" x2="${20+5*(W-30)/10-3}" y1="10" y2="${Hh}" stroke="var(--ink)" stroke-dasharray="4 3"/><text x="${20+5*(W-30)/10}" y="20" font-size="11" fill="var(--muted)">pass</text></svg>
+      <div class="db-legend"><span><i style="background:#f08c6b"></i>below 10</span><span><i style="background:#5c9ce6"></i>10 or more</span><span>mean ${mean.toFixed(1)} · ${n} students</span></div>`;
+    $('#items',m).innerHTML=`<div class="ia">${IA.map(x=>{ const f=x.p<30?'hard':x.p>90?'easy':x.D<0.2?'review':''; return `<div class="ia-i${f?' f':''}" data-tip="${esc(x.k)} · p ${Math.round(x.p)}% · D ${x.D.toFixed(2)}${f?' · '+f:''}"><b>${esc(x.k.replace(/^Q/,''))}</b><div class="ia-b"><i style="height:${Math.max(3,x.p)}%;background:${col(x.p)}"></i></div><span>${x.D.toFixed(2)}</span>${f?`<em>${f}</em>`:''}</div>`; }).join('')}</div>
+      <p class="lead" style="margin:8px 0 0;font-size:.85rem">Bar = difficulty p; number = discrimination D. Items below D = 0.20 hardly separate strong and weak students: check the wording or the marking.</p>`; };
+  const log=()=>{ const W=Array.from({length:Math.min(wk,15)},(_,i)=>i+1); $('#log',m).innerHTML=`<div class="lg">${W.map(w=>`<button data-rw="${w}" class="${reflWeeks.has(w)?'d':''}" title="Week ${w}">${w}<i>${reflWeeks.has(w)?'✓':'+'}</i></button>`).join('')}</div>
+      <p class="lead" style="margin:10px 0 0">${refl.length} reflections · ${missingRefl.length?`${missingRefl.length} taught weeks without one`:'every taught week covered'}. Click a week to write one.</p>`; }; log();
+  m.onclick=e=>{ const t=e.target;
+    const sc=t.closest('[data-sec]'); if(sc){ sec=sc.dataset.sec; sessionStorage.setItem('prof-db-sec',sec); m.querySelectorAll('[data-sec]').forEach(b=>b.setAttribute('aria-pressed',b===sc)); draw(); return; }
+    const p=t.closest('[data-plan],[data-run]'); if(p){ sessionStorage.setItem('prof-plan-week',p.dataset.plan||p.dataset.run); if(p.dataset.run) sessionStorage.setItem('prof-plan-run','1'); go('plans'); return; }
+    const a=t.closest('[data-act]'); if(a){ const [k,v,x]=a.dataset.act.split(':'); if(k==='plan'){ sessionStorage.setItem('prof-plan-week',v); go('plans'); } else if(k==='scroll') $('#'+v,m).scrollIntoView({behavior:'smooth',block:'center'}); else { if(x) sessionStorage.setItem('prof-grades-tab',x); go(v); } return; }
+    const rw=t.closest('[data-rw]'); if(rw){ sessionStorage.setItem('prof-refl-week',rw.dataset.rw); go('reflect'); return; }
+    const tr=t.closest('[data-topic]'); if(tr){ const x=TOP.find(y=>y[0]===tr.dataset.topic); drawer(x[0],`Week ${x[2]} · midterm items ${x[1].join(', ')}`,`<p>Open the Week ${x[2]} plan to reteach it with a new board exercise, and point students to the practice questions of that week.</p><p><a class="pf-btn" href="${x[3]}.html#practice" target="_blank" rel="noopener">Week ${x[2]} practice ↗</a></p>`,'plans'); sessionStorage.setItem('prof-plan-week',x[2]); return; }
+    const w=t.closest('.db-wk[data-w]'); if(w){ sessionStorage.setItem('prof-plan-week',w.dataset.w); go('plans'); return; } };
+  m.onmousemove=e=>{ const r=e.target.closest('#items [data-tip],#hist [data-tip]'), tip=$('#tip'); if(!tip) return; if(r){ tip.textContent=r.dataset.tip; tip.style.display='block'; tip.style.left=e.clientX+12+'px'; tip.style.top=e.clientY-28+'px'; } else if(!e.target.closest('#bi')) tip.style.display='none'; };
+  draw(); biPanel($('#bi',m),{wk,refl,G,missingRefl,ico});
 },
+
 
 syllabus(m){ const C=B.course, notes=LS.get('prof-syl-notes',{});
   const weights=C.assess.map(a=>parseFloat(a.weight)||0), total=weights.reduce((s,x)=>s+x,0);
@@ -425,6 +504,7 @@ syllabus(m){ const C=B.course, notes=LS.get('prof-syl-notes',{});
   const wByClo={}; C.assess.forEach(a=>{ const cs=cloNums(a.clos); cs.forEach(c=>wByClo[c]=(wByClo[c]||0)+(parseFloat(a.weight)||0)/cs.length); });
   m.innerHTML=`<h1>Syllabus review</h1><p class="lead">Constructive alignment: each CLO should be taught, practised and assessed. Your notes are saved on this computer.</p>
   ${B.sylStudio?`<div class="db-card" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><div><h2 style="margin:0">Review the syllabus, part by part</h2><p class="lead" style="margin:4px 0 0">The current MTH 105 syllabus on the left, your suggestion on the right. Download the reviewed version in the same Word template.</p></div><button class="pf-btn main" id="studio">Open the review studio</button></div>`:''}
+  ${(()=>{ const R=LS.get('prof-reflections',[]).filter(r=>r.a&&r.a.syl&&r.a.syl!=='No'); return `<div class="db-card"><div class="db-card-h"><h2>From your reflections</h2><span>suggestions you flagged after class</span></div>${R.length?`<ul>${R.map(r=>`<li><b>Week ${esc(r.week)}</b> (${esc((B.lessons[r.week]||{}).title||'')}): ${esc(r.a.syl.replace(/^Yes: /,''))}${r.a.hard&&!/None/.test(r.a.hard)?` · hardest: ${esc(r.a.hard)}`:''}${r.a.note?` · ${esc(r.a.note)}`:''}</li>`).join('')}</ul><p class="lead" style="margin:6px 0 0">Bring these into the review studio when you rewrite the weekly schedule or the assessments.</p>`:'<p class="lead">None yet. When a reflection says a topic needs more time, a move or an assessment change, it appears here.</p>'}</div>`; })()}
   <h2>Assessments</h2><div class="tw"><table class="t"><tr><th>Assessment</th><th>Type</th><th>Weight</th><th>CLOs</th><th>When</th></tr>
   ${C.assess.map(a=>`<tr><td>${esc(a.name)}</td><td>${esc(a.type)}</td><td class="c">${esc(a.weight)}</td><td class="c">${esc(a.clos)}</td><td>${esc(a.when)}</td></tr>`).join('')}
   <tr><th>Total</th><td></td><th class="c ${total===100?'ok':'bad'}">${total}%</th><td></td><td></td></tr></table></div>
@@ -456,47 +536,51 @@ plans(m){ const weeks=Object.keys(B.lessons).filter(w=>B.lessons[w]).map(Number)
     $('#plan',m).innerHTML=`<div class="anim">
     <section class="ph" style="--c:${c}"><p class="db-eyebrow">${esc(L.chapter)}</p><h2>Week ${w} · ${esc(L.title)}</h2><p>${esc(L.clo)}${released?'':' · not released to students yet'}</p>
       <div class="st"><div><b>${L.topics.length}</b><span>topics</span></div><div><b>${L.inClass?L.inClass.items.length:0}</b><span>board exercises</span></div><div><b>${L.practice}</b><span>practice questions</span></div><div><b>${tot}</b><span>minutes</span></div></div>
-      <div class="acts"><button class="pf-btn main" id="go">▶ Run this class</button><a class="pf-btn" href="week-${k}.html" target="_blank" rel="noopener">Lecture page ↗</a><a class="pf-btn" href="live.html#teach" target="_blank" rel="noopener">Live board ↗</a><label class="pf-btn">Class length <select id="len" style="padding:2px 4px;margin-left:4px">${[50,75,100,150].map(x=>`<option${x==LS.get('prof-class-min',75)?' selected':''}>${x}</option>`).join('')}</select> min</label></div></section>
-    <div><div class="tbar" aria-label="Time plan">${S.map((s,i)=>`<button data-j="${i}" title="${esc(s.lbl+': '+s.t+' · '+s.min+' min')}" style="width:${s.min/tot*100}%;background:${PC[s.ph]}">${s.min}′ ${esc(s.lbl)}</button>`).join('')}</div>
+      <div class="acts"><button class="pf-btn main" id="go">▶ Run this class</button><a class="pf-btn" href="week-${k}.html" target="_blank" rel="noopener">Lecture page ↗</a><a class="pf-btn" href="live.html#teach" target="_blank" rel="noopener">Live board ↗</a><label class="pf-btn">Class length <select id="len" style="padding:2px 4px;margin-left:4px">${[50,75,100,150].map(x=>`<option${x==LS.get('prof-class-min',75)?' selected':''}>${x}</option>`).join('')}</select> min</label></div>
+      <div class="pv" id="pv"></div></section>
+    <div id="pb"><div><div class="tbar" aria-label="Time plan">${S.map((s,i)=>`<button data-j="${i}" title="${esc(s.lbl+': '+s.t+' · '+s.min+' min')}" style="width:${s.min/tot*100}%;background:${PC[s.ph]}">${s.min}′ ${esc(s.lbl)}</button>`).join('')}</div>
       <div class="db-legend">${[['warm','Warm-up'],['ido','I do'],['wedo','We do'],['close','Close']].map(([p,t])=>`<span><i style="background:${PC[p]}"></i>${t}</span>`).join('')}</div></div>
     <div class="grid2" style="margin-top:6px"><div><h2>Lesson flow</h2><ol class="tl">${S.map((s,i)=>`<li id="st${i}" data-i="${i+1}" style="--pc:${PC[s.ph]};animation-delay:${.1+i*.07}s"><div class="k"><span class="ph-tag">${esc(s.lbl)}</span><b>${esc(s.t)}</b><span class="min">${s.min} min</span></div><p>${esc(s.d)}</p>
         ${s.flow?`<div class="flow">${s.flow.map(f=>`<span>${esc(f)}</span>`).join('<span style="background:none;color:var(--muted)">→</span>')}</div>`:''}${s.demo?`<p><i>On the board:</i> ${esc(s.demo)}</p>`:''}${s.items?`<ol>${s.items.map(q=>`<li>${esc(q)}</li>`).join('')}</ol>`:''}</li>`).join('')}</ol></div>
       <div><h2>Before class</h2><ul class="chk">${before.map((b,i)=>`<li><label><input type="checkbox" data-ck="${i}"${ck.includes(i)?' checked':''}><span>${esc(b)}</span></label></li>`).join('')}</ul>
         <h2>Coaching notes</h2><div class="tips" style="grid-template-columns:1fr"><div class="tip w"><h3>⚠ Watch for</h3><ul>${N.watch.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div class="tip b"><h3>✎ On the board</h3><ul>${N.board.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div></div>
-        <p style="margin-top:14px"><button class="pf-btn main" id="refl">Write the reflection for this class</button></p></div></div></div>`;
+        <p style="margin-top:14px"><button class="pf-btn main" id="refl">Write the reflection for this class</button></p></div></div></div></div>`;
+    planVersion(m,w);
     $('#plan',m).querySelectorAll('[data-j]').forEach(b=>b.onclick=()=>{ const el=$('#st'+b.dataset.j,m); el.scrollIntoView({behavior:'smooth',block:'center'}); el.animate([{boxShadow:`0 0 0 4px ${b.style.background}`},{boxShadow:'0 0 0 0 transparent'}],{duration:1200}); });
     $('#plan',m).querySelectorAll('[data-ck]').forEach(x=>x.onchange=()=>{ const a=new Set(CK[w]||[]); x.checked?a.add(+x.dataset.ck):a.delete(+x.dataset.ck); CK[w]=[...a]; LS.set('prof-plan-check',CK); });
     $('#len',m).onchange=e=>{ LS.set('prof-class-min',+e.target.value); show(w); };
     $('#refl',m).onclick=()=>{ sessionStorage.setItem('prof-refl-week',w); go('reflect'); };
     $('#go',m).onclick=()=>runClass(w,S,c,PC); };
-  $('#wr',m).onclick=e=>{ const b=e.target.closest('[data-w]'); if(b) show(+b.dataset.w); };
+  $('#wr',m).onclick=e=>{ const b=e.target.closest('[data-w]'); if(b) show(+b.dataset.w); }; VIEWS.plans.reshow=show;
   const first=weeks.includes(pre)?pre:weeks[0]; show(first); m.querySelector(`#wr [data-w="${first}"]`).scrollIntoView({inline:'center',block:'nearest'});
   if(run) runClass(first,steps(first),colOf(first),PC); },
 
 'sol-practice'(m){ const pages=Object.keys(B.practiceQ||{}), lab=p=>p==='midterm-practice'?'Midterm':'W'+(+p.slice(5));
   m.innerHTML=`<h1>Practice answers</h1><p class="lead">Every practice question with its answer and a marking rubric: what earns full, partial and no credit, the typical wrong answers, and the questions that guide a student to the right one. While you are signed in, the lecture pages also open every practice answer.</p>
-  ${booksHTML([['practice-answers','Practice answer book','Weeks 1–15 + midterm · 171 answers with rubrics']])}${POLICY}
+  <div id="bk"></div>${POLICY}
   <nav class="wr" id="pg">${pages.map((p,i)=>`<button data-p="${p}" style="--c:${p==='midterm-practice'?'#C8102E':'#2F5597'}">${lab(p)}<small>${(B.practiceQ[p]||[]).length} items</small></button>`).join('')}</nav>
   <p style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><input type="search" id="q" placeholder="Search the answers…" style="flex:1;min-width:200px"><button class="pf-btn" id="ex">Expand all</button><a class="pf-btn" id="lp" target="_blank" rel="noopener">Lecture page ↗</a></p><div id="rl"></div>`;
   let cur=pages[0], all=false;
   const show=()=>{ const q=$('#q',m).value.trim().toLowerCase(); const src=q?pages:[cur];
     m.querySelectorAll('#pg button').forEach(b=>b.setAttribute('aria-current',!q&&b.dataset.p===cur));
     $('#lp',m).href=cur==='midterm-practice'?'midterm-practice.html':`${cur}.html#practice`;
+    const slug=cur==='midterm-practice'?'midterm':cur; $('#bk',m).innerHTML=booksHTML([[`practice-${slug}`,`${cur==='midterm-practice'?'Midterm revision':'Week '+(+cur.slice(5))} · answers`,`${(B.practiceQ[cur]||[]).length} answers, each with its rubric`]]); wireBooks($('#bk',m));
     const html=src.map(p=>(B.practiceQ[p]||[]).map(it=>{ const r=B.rubrics[p+'#'+it.n]; if(!r) return ''; const qt=stripTags(it.q);
       if(q&&!(qt+' '+r.answer).toLowerCase().includes(q)) return ''; return rubHTML(r,it.n,(q?`<b>${lab(p)}</b> · `:'')+qt,it.type); }).join('')).join('');
     $('#rl',m).innerHTML=html||'<p class="lead">No answer matches.</p>'; if(all) m.querySelectorAll('#rl details').forEach(d=>d.open=true); };
   $('#pg',m).onclick=e=>{ const b=e.target.closest('[data-p]'); if(b){ cur=b.dataset.p; $('#q',m).value=''; show(); } };
   $('#q',m).oninput=show; $('#ex',m).onclick=e=>{ all=!all; e.target.textContent=all?'Collapse all':'Expand all'; m.querySelectorAll('#rl details').forEach(d=>d.open=all); };
-  wireBooks(m); show(); },
+  show(); },
 
 'sol-class'(m){ const RD=(B.rubricsD||{}).inclass||{};
   m.innerHTML=`<h1>In-class answers</h1><p class="lead">The board exercises: marking rubric first, then the handwritten model answer with the calculator entries. Students see the handwritten answers only when you open them from the side button in class.</p>
-  ${booksHTML([['inclass-answers','In-class answer book','Board exercises with rubrics']])}${POLICY}
+  <div id="bk"></div>${POLICY}
   <nav class="wr" id="wk">${B.inclassWeeks.map(w=>`<button data-w="${w}" style="--c:#0ca678">W${w}<small>${esc((B.lessons[w]||{}).title||'').slice(0,14)}</small></button>`).join('')}</nav>
   <div id="rl"></div><h2>Handwritten model answer <a class="pf-btn" id="dl" download style="font-size:.8rem;margin-left:6px">Download PDF</a></h2><div class="pdfbox" id="pdf"></div>
   <p class="lead" style="margin-top:12px">Answers for Weeks 9–15 are added when each week is released.</p>`;
   wireBooks(m);
   const show=async w=>{ m.querySelectorAll('#wk button').forEach(b=>b.setAttribute('aria-current',+b.dataset.w===+w));
+    $('#bk',m).innerHTML=booksHTML([[`inclass-week-${String(w).padStart(2,'0')}`,`Week ${w} · in-class answers`,'Board exercises with rubrics']]); wireBooks($('#bk',m));
     const L=B.lessons[w]; $('#rl',m).innerHTML=L&&L.inClass?L.inClass.items.map((q,i)=>rubHTML(RD[w+'#'+(i+1)],i+1,esc(q),'Board')).join(''):'';
     const f=`solutions/week-${String(w).padStart(2,'0')}.pdf`; $('#dl',m).href=f; const box=$('#pdf',m); box.innerHTML='Opening…';
     try{ pdfjsLib.GlobalWorkerOptions.workerSrc='assets/vendor/pdfjs/pdf.worker.min.js'; const doc=await pdfjsLib.getDocument({url:f,password:B.inclassPin}).promise; box.innerHTML='';
@@ -506,93 +590,173 @@ plans(m){ const weeks=Object.keys(B.lessons).filter(w=>B.lessons[w]).map(Number)
 
 'sol-labs'(m){ const ids=Object.keys(B.keys), RD=(B.rubricsD||{}).labs||{};
   m.innerHTML=`<h1>Lab answer keys</h1><p class="lead">Computed from the same data as the student workbooks. Each task opens its rubric: the expected formula, partial credit, typical Excel mistakes and guiding questions.</p>
-  ${booksHTML([['lab-answers','Lab answer book','All 8 Excel labs with rubrics']])}${POLICY}
+  <div id="bk"></div>${POLICY}
   <nav class="wr" id="lb">${ids.map(id=>{ const l=B.labs.find(x=>x.id===id); return `<button data-l="${id}" style="--c:#B4562F">Lab ${+id.slice(4)}<small>Week ${esc(l?l.week:'')} · ${B.keys[id].length}</small></button>`; }).join('')}</nav>
   <p style="display:flex;gap:8px;flex-wrap:wrap"><a class="pf-btn" id="wb" download>Student workbook</a><button class="pf-btn" id="tv">Compact table</button></p><div id="key"></div>`;
   let cur=ids[0], tbl=false; wireBooks(m);
   const show=()=>{ const id=cur; m.querySelectorAll('#lb button').forEach(b=>b.setAttribute('aria-current',b.dataset.l===id)); $('#wb',m).href=`lab/${id}.xlsx`;
+    $('#bk',m).innerHTML=booksHTML([[id,`Lab ${+id.slice(4)} · answers`,`${B.keys[id].length} tasks with rubrics and Excel screenshots`]]); wireBooks($('#bk',m));
     $('#key',m).innerHTML=tbl?`<div class="tw"><table class="t"><tr><th>Task</th><th>Answer</th><th>Excel / method</th></tr>${B.keys[id].map(([t,a,f])=>`<tr><td>${esc(t)}</td><td><b>${esc(a)}</b></td><td><code>${esc(f)}</code></td></tr>`).join('')}</table></div>`
       :B.keys[id].map(([t,a,f],i)=>rubHTML(RD[id+'#'+(i+1)]||{answer:String(a),full:'',partial:[],zero:'',guide:[]},i+1,esc(t),'Excel',f?`<div><code>${esc(f)}</code></div>`:'')).join(''); };
   $('#lb',m).onclick=e=>{ const b=e.target.closest('[data-l]'); if(b){ cur=b.dataset.l; show(); } };
   $('#tv',m).onclick=e=>{ tbl=!tbl; e.target.textContent=tbl?'Rubric view':'Compact table'; show(); }; show(); },
 
-reflect(m){ const all=LS.get('prof-reflections',[]), pre=sessionStorage.getItem('prof-refl-week')||'';
-  sessionStorage.removeItem('prof-refl-week');
-  m.innerHTML=`<h1>Reflections after class</h1><p class="lead">Two minutes after each class: what worked, where students struggled, and the change you would make. Saved on this computer; export them to keep them with the course.</p>
-  <form id="rf" class="card"><div class="grid2"><label>Week <select name="week">${Array.from({length:16},(_,i)=>i+1).map(w=>`<option${String(w)===pre?' selected':''}>${w}</option>`).join('')}</select></label><label>Date <input type="date" name="date" value="${new Date().toISOString().slice(0,10)}"></label>
-  <label>Section <input type="text" name="section" placeholder="e.g. 101"></label><label>Topic <input type="text" name="topic" placeholder="optional"></label></div>
-  <p><label>What worked<textarea name="worked"></textarea></label></p><p><label>Where students struggled<textarea name="struggled"></textarea></label></p>
-  <p><label>What I will change next time<textarea name="change"></textarea></label></p><p><label>Recommendation for whoever teaches this next<textarea name="recommend"></textarea></label></p>
-  <button class="pf-btn main">Save reflection</button></form>
-  <p style="margin:14px 0"><button class="pf-btn" id="ej">Export (JSON)</button> <button class="pf-btn" id="ec">Export (CSV)</button> <label class="pf-btn">Import JSON<input type="file" id="ij" accept=".json" hidden></label></p><div id="list"></div>`;
-  const draw=()=>{ const by={}; all.forEach((r,i)=>(by[r.week]=by[r.week]||[]).push([r,i]));
-    $('#list',m).innerHTML=all.length?Object.keys(by).sort((a,b)=>a-b).map(w=>`<h2>Week ${w}</h2>`+by[w].map(([r,i])=>`<div class="card" style="margin:8px 0"><b>${esc(r.date)}${r.section?' · Section '+esc(r.section):''}${r.topic?' · '+esc(r.topic):''}</b>
-      ${[['Worked','worked'],['Struggled','struggled'],['Change','change'],['Recommendation','recommend']].filter(([,k])=>r[k]).map(([t,k])=>`<p style="margin:6px 0 0"><span class="tag">${t}</span> ${esc(r[k])}</p>`).join('')}
-      <p style="margin:8px 0 0"><button class="pf-btn" data-del="${i}">Delete</button></p></div>`).join('')).join(''):'<p class="lead">No reflections yet.</p>'; };
-  draw();
-  $('#rf',m).onsubmit=e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); if(!d.worked&&!d.struggled&&!d.change&&!d.recommend) return; all.push(d); LS.set('prof-reflections',all); e.target.reset(); draw(); };
-  $('#list',m).onclick=e=>{ const b=e.target.closest('[data-del]'); if(b&&confirm('Delete this reflection?')){ all.splice(+b.dataset.del,1); LS.set('prof-reflections',all); draw(); } };
-  const save=(name,text,type)=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); };
-  $('#ej',m).onclick=()=>save('mth105-reflections.json',JSON.stringify(all,null,1),'application/json');
-  $('#ec',m).onclick=()=>{ const k=['week','date','section','topic','worked','struggled','change','recommend']; save('mth105-reflections.csv',[k.join(',')].concat(all.map(r=>k.map(x=>'"'+String(r[x]||'').replace(/"/g,'""')+'"').join(','))).join('\n'),'text/csv'); };
-  $('#ij',m).onchange=async e=>{ try{ const d=JSON.parse(await e.target.files[0].text()); if(Array.isArray(d)){ d.forEach(r=>all.push(r)); LS.set('prof-reflections',all); draw(); } }catch(x){ alert('That file is not a reflections export.'); } }; },
+reflect(m){ const all=LS.get('prof-reflections',[]); let pre=sessionStorage.getItem('prof-refl-week'); sessionStorage.removeItem('prof-refl-week');
+  const now=new Date(), wk=Math.max(1,Math.min(15,Math.floor((now-new Date('2026-08-31T00:00:00+04:00'))/6048e5)+1));
+  const QS=w=>{ const L=B.lessons[w]||{topics:[]}, N=B.notes[w]||{watch:[]}; return [
+    {s:'Coverage and time',id:'covered',q:'Did you cover everything you planned?',t:'one',o:['Yes, all of it','Most of it','About half','Less than half']},
+    {s:'Coverage and time',id:'time',q:'How was the timing?',t:'one',o:['Ran short of time','Just right','Time left over']},
+    {s:'Coverage and time',id:'slow',q:'Which part took longer than planned?',t:'many',o:['Warm-up',...L.topics.map(x=>x.t),'Board exercises (we do)','Technical issues','Nothing'],other:true},
+    {s:'Understanding',id:'solved',q:'How many students solved the board exercises on their own?',t:'one',o:['Most','About half','A few','None']},
+    {s:'Understanding',id:'hard',q:'Which topic was hardest for them today?',t:'one',o:[...L.topics.map(x=>x.t),'None stood out'],other:true},
+    {s:'Understanding',id:'errors',q:'Which mistakes did you see?',t:'many',o:[...N.watch,'None of these'],other:true},
+    {s:'Student interactivity',id:'attend',q:'Attendance',t:'one',o:['Full','Most','About half','Less than half']},
+    {s:'Student interactivity',id:'paper',q:'Did students solve on paper with a calculator?',t:'one',o:['Yes, most','Some did','Few did']},
+    {s:'Student interactivity',id:'questions',q:'Did students ask questions?',t:'one',o:['Many','Some','None']},
+    {s:'Student interactivity',id:'quiet',q:'Did the quiet students take part?',t:'one',o:['Yes','A few of them','No']},
+    {s:'Student interactivity',id:'tools',q:'Which tools did you use?',t:'many',o:['Board','Live board','Lecture page on the projector','Paper handout','Calculator on screen','Learning supports']},
+    {s:'Materials',id:'materials',q:'Did the lecture page and exercises work as planned?',t:'one',o:['Yes','Mostly','No: something to fix'],other:true},
+    {s:'The room',id:'energy',q:'Energy in the room',t:'scale',o:['😴','😐','🙂','😀','🤩']},
+    {s:'The room',id:'feel',q:'How do you feel about this class?',t:'scale',o:['1','2','3','4','5']},
+    {s:'Next time',id:'change',q:'What will you change next time?',t:'many',o:['Shorter theory','More board exercises','More examples around us','Slower formula steps','More practice time','Revisit this topic next class','Change the order of topics','Nothing: keep it'],other:true},
+    {s:'Next time',id:'syl',q:'Should this lead to a syllabus suggestion?',t:'one',o:['No','Yes: more time for this topic','Yes: move this topic','Yes: change the assessment']},
+    {s:'Next time',id:'note',q:'Anything else? (optional)',t:'text'}]; };
+  const sumOf=r=>{ const a=r.a||{}, f=k=>Array.isArray(a[k])?a[k].join(', '):(a[k]||''); return r.a?{worked:`Covered: ${f('covered')} · solved alone: ${f('solved')} · energy ${f('energy')}`,struggled:[f('hard'),f('errors')].filter(Boolean).join(' · '),change:f('change'),recommend:[f('syl')!=='No'?f('syl'):'',f('note')].filter(Boolean).join(' · ')}:r; };
+  const home=()=>{ const weeks=new Set(all.map(r=>+r.week)), streak=(()=>{ let k=0; for(let w=wk;w>=1;w--){ if(weeks.has(w)) k++; else if(w<wk) break; } return k; })();
+    const cnt=(k,v)=>all.filter(r=>r.a&&(Array.isArray(r.a[k])?r.a[k].includes(v):r.a[k]===v)).length, rs=all.filter(r=>r.a);
+    m.innerHTML=`<header class="cs-head"><p>Two minutes after each class · mostly taps</p><h2>Reflections after class</h2></header>
+    <div class="rf-start"><div><b>Which class are you reflecting on?</b><div class="wr" id="rw" style="margin-top:8px">${Array.from({length:15},(_,i)=>i+1).map(w=>`<button data-w="${w}" style="--c:${weeks.has(w)?'#1E7F4F':'#2F5597'}" ${String(w)===String(pre||wk)?'aria-current="true"':''}>W${w}<small>${weeks.has(w)?'✓ done':w<=wk?'to do':''}</small></button>`).join('')}</div>
+      <p style="margin:12px 0 0"><button class="pf-btn main" id="go" style="padding:10px 18px">Start the reflection →</button></p></div>
+      <div class="rf-streak"><b>${streak}</b><span>week${streak===1?'':'s'} in a row</span><em>${weeks.size} of ${Math.min(wk,15)} taught weeks reflected</em></div></div>
+    ${rs.length?`<h2>What your reflections say</h2><div class="cards">
+      <div class="card"><h3>Time</h3><p>Ran short in ${cnt('time','Ran short of time')} of ${rs.length} classes.</p></div>
+      <div class="card"><h3>Understanding</h3><p>Most solved alone in ${cnt('solved','Most')} of ${rs.length} classes.</p></div>
+      <div class="card"><h3>Participation</h3><p>Quiet students took part in ${cnt('quiet','Yes')} of ${rs.length} classes.</p></div>
+      <div class="card"><h3>Syllabus</h3><p>${rs.filter(r=>r.a.syl&&r.a.syl!=='No').length} suggestions for the syllabus review.</p></div></div>`:''}
+    <h2>Your reflections</h2><div id="list"></div>
+    <p style="margin:14px 0"><button class="pf-btn" id="ej">Export (JSON)</button> <button class="pf-btn" id="ec">Export (CSV)</button> <label class="pf-btn">Import JSON<input type="file" id="ij" accept=".json" hidden></label></p>`;
+    let sel=+(pre||wk); m.querySelector('#rw').onclick=e=>{ const b=e.target.closest('[data-w]'); if(b){ sel=+b.dataset.w; m.querySelectorAll('#rw button').forEach(x=>x.setAttribute('aria-current',x===b)); } };
+    $('#go',m).onclick=()=>wizard(sel);
+    $('#list',m).innerHTML=all.length?all.map((r,i)=>[r,i]).sort((a,b)=>b[0].week-a[0].week).map(([r,i])=>{ const x=sumOf(r); return `<div class="card rf-card"><b>Week ${esc(r.week)} · ${esc(r.date||'')}${r.a&&r.a.energy?' · '+esc(r.a.energy):''}</b>
+      ${[['Class','worked'],['Hard','struggled'],['Change','change'],['Syllabus / note','recommend']].filter(([,k])=>x[k]).map(([t,k])=>`<p style="margin:6px 0 0"><span class="tag">${t}</span> ${esc(x[k])}</p>`).join('')}<p style="margin:8px 0 0"><button class="pf-btn" data-del="${i}">Delete</button></p></div>`; }).join(''):'<p class="lead">No reflections yet. The first one takes two minutes.</p>';
+    $('#list',m).onclick=e=>{ const b=e.target.closest('[data-del]'); if(b&&confirm('Delete this reflection?')){ all.splice(+b.dataset.del,1); LS.set('prof-reflections',all); home(); } };
+    const save=(name,text,type)=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; a.click(); };
+    $('#ej',m).onclick=()=>save('mth105-reflections.json',JSON.stringify(all,null,1),'application/json');
+    $('#ec',m).onclick=()=>{ const k=['week','date','worked','struggled','change','recommend']; save('mth105-reflections.csv',[k.join(',')].concat(all.map(r=>{ const x={...r,...sumOf(r)}; return k.map(c=>'"'+String(x[c]||'').replace(/"/g,'""')+'"').join(','); })).join('\n'),'text/csv'); };
+    $('#ij',m).onchange=async e=>{ try{ const d=JSON.parse(await e.target.files[0].text()); if(Array.isArray(d)){ d.forEach(r=>all.push(r)); LS.set('prof-reflections',all); home(); } }catch(x){ alert('That file is not a reflections export.'); } }; };
+  const CHEER=['Nice start.','Good, keep going.','Halfway there.','Almost done.','Last one.'];
+  const wizard=w=>{ const Q=QS(w), a={}; let i=0;
+    const paint=()=>{ const q=Q[i], v=a[q.id], pct=Math.round(i/Q.length*100), secs=[...new Set(Q.map(x=>x.s))];
+      m.innerHTML=`<div class="rz"><div class="rz-top"><button class="pf-btn" id="qx">✕ Close</button><div class="rz-prog"><i style="width:${pct}%"></i></div><span>${i+1} / ${Q.length}</span></div>
+        <div class="rz-secs">${secs.map(s=>`<span class="${s===q.s?'on':secs.indexOf(s)<secs.indexOf(q.s)?'dn':''}">${esc(s)}</span>`).join('')}</div>
+        <div class="rz-card" style="animation:up .35s both"><small>Week ${w} · ${esc((B.lessons[w]||{}).title||'')}</small><h2>${esc(q.q)}</h2>
+        ${q.t==='text'?`<textarea id="tx" placeholder="A sentence is enough." style="min-height:110px">${esc(v||'')}</textarea>`:
+          `<div class="rz-opts ${q.t==='scale'?'sc':''}">${q.o.map(o=>{ const on=q.t==='many'?(v||[]).includes(o):v===o; return `<button data-o="${esc(o)}" aria-pressed="${on}">${esc(o)}</button>`; }).join('')}</div>
+          ${q.other?`<input type="text" id="ot" placeholder="Other (optional)" value="${esc(a[q.id+'_other']||'')}" style="width:100%;margin-top:10px">`:''}`}
+        <p class="rz-hint">${q.t==='many'?'Choose all that apply.':q.t==='one'||q.t==='scale'?'One tap moves on.':''} ${CHEER[Math.min(4,Math.floor(i/Q.length*5))]}</p></div>
+        <div class="rz-nav"><button class="pf-btn" id="qb" ${i?'':'disabled'}>← Back</button><button class="pf-btn" id="qs">Skip</button><button class="pf-btn main" id="qn">${i<Q.length-1?'Next →':'Save reflection ✓'}</button></div></div>`;
+      m.querySelectorAll('[data-o]').forEach(b=>b.onclick=()=>{ const o=b.dataset.o; if(q.t==='many'){ const s=new Set(a[q.id]||[]); s.has(o)?s.delete(o):s.add(o); a[q.id]=[...s]; b.setAttribute('aria-pressed',s.has(o)); } else { a[q.id]=o; m.querySelectorAll('[data-o]').forEach(x=>x.setAttribute('aria-pressed',x===b)); if(!q.other) setTimeout(()=>step(1),220); } });
+      $('#qx',m).onclick=home; $('#qb',m).onclick=()=>step(-1); $('#qs',m).onclick=()=>step(1); $('#qn',m).onclick=()=>step(1); };
+    const keep=()=>{ const q=Q[i]; const tx=$('#tx',m), ot=$('#ot',m); if(tx) a[q.id]=tx.value.trim(); if(ot&&ot.value.trim()){ a[q.id+'_other']=ot.value.trim(); if(q.t==='many') a[q.id]=[...new Set([...(a[q.id]||[]),ot.value.trim()])]; else a[q.id]=ot.value.trim(); } };
+    const step=d=>{ keep(); if(i+d>=Q.length){ all.push({week:String(w),date:new Date().toISOString().slice(0,10),a}); LS.set('prof-reflections',all); done(w,a); return; } i=Math.max(0,i+d); paint(); };
+    paint(); };
+  const done=(w,a)=>{ const tips=[]; if(a.time==='Ran short of time') tips.push('You ran short of time: next week, try one fewer worked example and keep the board exercises.');
+    if(a.solved==='A few'||a.solved==='None') tips.push(`Few solved alone: open Week ${w+1<=15?w+1:w} with a 5-minute recall of ${a.hard&&!/None/.test(a.hard)?a.hard:'today\'s hardest step'}.`);
+    if(a.quiet==='No') tips.push('Quiet students did not take part: try the live board and walk the room, or pairs on paper before answers.');
+    if(a.syl&&a.syl!=='No') tips.push('Added to your syllabus suggestions: you will find it when you open the syllabus review.');
+    if(!tips.length) tips.push('A steady class. Keep what worked and note one small change for next time.');
+    m.innerHTML=`<div class="rz"><div class="rz-card rz-done" style="animation:pop .4s both"><div class="rz-tick">✓</div><h2>Saved. Thank you.</h2><p class="lead">Week ${w} is in your teaching log.</p><ul>${tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>
+      <p style="margin-top:16px"><button class="pf-btn main" id="h">Back to reflections</button> <button class="pf-btn" id="d">Dashboard</button></p></div></div>`;
+    $('#h',m).onclick=()=>{ pre=null; home(); }; $('#d',m).onclick=()=>go('home'); };
+  if(pre) wizard(+pre); else home(); },
 
-guide(m){ const tmp=document.createElement('div'); tmp.innerHTML=B.guide; const ch=[{t:'Welcome',n:[]}];
-  [...tmp.childNodes].forEach(n=>{ if(n.nodeType===1&&n.tagName==='H2') return; if(n.nodeType===1&&n.tagName==='H3') ch.push({t:n.textContent.replace(/^\d+\.\s*/,''),n:[]}); else ch[ch.length-1].n.push(n); });
-  const title=(tmp.querySelector('h2')||{}).textContent||'Teacher guide';
-  ch.forEach(c=>{ const d=document.createElement('div'); c.n.forEach(n=>d.appendChild(n)); c.html=d.innerHTML; c.min=Math.max(1,Math.round(d.textContent.split(/\s+/).length/200)); });
-  const done=new Set(LS.get('prof-guide-done',[])); let at=+(sessionStorage.getItem('prof-guide-ch')||LS.get('prof-guide-at',0)); sessionStorage.removeItem('prof-guide-ch'); if(!(at>=0&&at<ch.length)) at=0;
+
+guide(m){ const all=guideChapters(), title='Teacher guide: the course materials';
+  const intro={t:'How the materials fit together',min:2,html:`<p>This guide is about the <strong>materials</strong> of MTH 105: what each one is, how it is built, and how to use it in class. The teaching method, the mathematics and the pedagogy behind them are in <em>Train the trainer</em>.</p>
+    <table><tr><th>Material</th><th>Where</th><th>Used for</th></tr><tr><td>Lecture page (one per week)</td><td>Student site · Lectures</td><td>Definition, example around us, formula step by step, what it means; takeaways; practice</td></tr>
+    <tr><td>In-class part</td><td>Lecture page · In class</td><td>Board exercises solved on paper; model answers behind the side button</td></tr><tr><td>Practice</td><td>Lecture page · Practice</td><td>Answers unlock after a correct result; recap after three tries</td></tr>
+    <tr><td>Labs</td><td>Student site · Labs</td><td>Excel workbooks: demo sheet, then guided exercises</td></tr><tr><td>Midterm revision</td><td>Student site · Exams</td><td>Mixed questions on commonly confused topics</td></tr>
+    <tr><td>Learning supports</td><td>Every page</td><td>Supports students choose for themselves</td></tr><tr><td>Live board and calculator</td><td>In class</td><td>Your handwriting on the projector while you walk the room</td></tr>
+    <tr><td>Professor resources</td><td>This site</td><td>Plans, answers with rubrics, reflections, grades</td></tr></table>`};
+  const ch=[intro,...all.filter(c=>c.num>=3&&c.num<=9)];
+  const done=new Set(LS.get('prof-guide-done2',[])); let at=+LS.get('prof-guide-at2',0); if(!(at>=0&&at<ch.length)) at=0;
   m.innerHTML=`<div class="cs"><aside class="cs-side"><h3>${esc(title)}</h3><div class="cs-prog"><i id="gp"></i></div><small id="gs"></small><ol id="gl"></ol></aside><div id="gc"></div></div>`;
   const side=()=>{ $('#gp',m).style.width=done.size/ch.length*100+'%'; $('#gs',m).textContent=`${done.size} of ${ch.length} chapters · ${ch.reduce((a,c)=>a+c.min,0)} min in total`;
-    $('#gl',m).innerHTML=ch.map((c,i)=>`<li><button data-c="${i}" aria-current="${i===at}"><i class="${done.has(i)?'d':''}">${done.has(i)?'✓':i}</i><span>${esc(c.t)}</span></button></li>`).join(''); };
-  const show=i=>{ at=i; LS.set('prof-guide-at',i); const c=ch[i];
-    $('#gc',m).innerHTML=`<header class="cs-head"><p>${i?'Chapter '+i+' of '+(ch.length-1):'Introduction'} · ${c.min} min read</p><h2>${esc(c.t)}</h2></header><article class="guide cs-body">${c.html}</article>
+    $('#gl',m).innerHTML=ch.map((c,i)=>`<li><button data-c="${i}" aria-current="${i===at}"><i class="${done.has(i)?'d':''}">${done.has(i)?'✓':i+1}</i><span>${esc(c.t)}</span></button></li>`).join(''); };
+  const show=i=>{ at=i; LS.set('prof-guide-at2',i); const c=ch[i];
+    $('#gc',m).innerHTML=`<header class="cs-head"><p>Chapter ${i+1} of ${ch.length} · ${c.min} min read</p><h2>${esc(c.t)}</h2></header><article class="guide cs-body">${c.html}</article>
     <div class="cs-nav"><button class="pf-btn" id="pv" ${i?'':'disabled'}>← ${i?esc(ch[i-1].t):''}</button><button class="pf-btn main" id="nx">${done.has(i)?'':'Mark as read · '}${i<ch.length-1?'Next: '+esc(ch[i+1].t)+' →':'Finish the guide ✓'}</button></div>`;
-    $('#pv',m).onclick=()=>show(i-1); $('#nx',m).onclick=()=>{ done.add(i); LS.set('prof-guide-done',[...done]); if(i<ch.length-1) show(i+1); else { side(); $('#gc',m).insertAdjacentHTML('afterbegin','<div class="card" style="margin-bottom:12px;border-color:var(--ok)"><b class="ok">Guide complete.</b> Continue with Train the trainer for the mathematics track.</div>'); } };
+    $('#pv',m).onclick=()=>show(i-1); $('#nx',m).onclick=()=>{ done.add(i); LS.set('prof-guide-done2',[...done]); if(i<ch.length-1) show(i+1); else { side(); $('#gc',m).insertAdjacentHTML('afterbegin','<div class="card" style="margin-bottom:12px;border-color:var(--ok)"><b class="ok">Guide complete.</b> Continue with Train the trainer for the certificate.</div>'); } };
     side(); scrollTo({top:0,behavior:'smooth'}); };
   $('#gl',m).onclick=e=>{ const b=e.target.closest('[data-c]'); if(b) show(+b.dataset.c); }; show(at); },
 
-trainer(m){ const own=LS.get('prof-stamps',[]), done=new Set(LS.get('prof-trainer-done',[])), work=LS.get('prof-trainer-work',{});
-  const A=(B.trainer||[]).map(([t,g,a,r],i)=>({id:'a'+(i+1),t,g,a,r})), M=(B.trainerMath||[]).map(x=>({...x,id:'b'+x.id.replace(/^m/,'')}));
-  const all=[...A,...M], TAB=[['derivation','The mathematics'],['meaning','What it means'],['beyond','Beyond the course'],['simplify','Simplify it'],['stretch','Stretch strong students'],['pitfalls','Pitfalls']];
-  let at=sessionStorage.getItem('prof-trainer-at')||'home';
-  const side=()=>`<aside class="cs-side"><h3>Train the trainer</h3><div class="cs-prog"><i style="width:${done.size/all.length*100}%"></i></div><small>${done.size} of ${all.length} modules complete</small>
-    <ol><li><button data-m="home" aria-current="${at==='home'}"><i>⌂</i><span>Course home</span></button></li></ol>
-    <div class="grp">Track A · The method</div><ol>${A.map((x,i)=>`<li><button data-m="${x.id}" aria-current="${at===x.id}"><i class="${done.has(x.id)?'d':''}">${done.has(x.id)?'✓':'A'+(i+1)}</i><span>${esc(x.t)}</span></button></li>`).join('')}</ol>
-    <div class="grp">Track B · The mathematics</div><ol>${M.map((x,i)=>`<li><button data-m="${x.id}" aria-current="${at===x.id}"><i class="${done.has(x.id)?'d':''}">${done.has(x.id)?'✓':'B'+(i+1)}</i><span>${esc(x.title)}</span></button></li>`).join('')}</ol>
-    <ol><li><button data-m="stamps" aria-current="${at==='stamps'}"><i>★</i><span>Stamps of experience</span></button></li></ol></aside>`;
-  const navBtns=id=>{ const i=all.findIndex(x=>x.id===id), p=all[i-1], n=all[i+1], nm=x=>x.t||x.title;
-    return `<div class="cs-nav"><button class="pf-btn" data-m="${p?p.id:'home'}">← ${p?esc(nm(p)):'Course home'}</button><button class="pf-btn main" data-done="${id}" data-next="${n?n.id:'stamps'}">${done.has(id)?'':'Complete · '}${n?'Next: '+esc(nm(n))+' →':'Finish the course ✓'}</button></div>`; };
-  const body=()=>{ if(at==='home') return `<header class="cs-head"><p>Course for lecturers · ${all.length} modules · 2 tracks</p><h2>Teaching MTH 105: the method and the mathematics</h2></header>
-      <p class="lead">Track A trains the teaching method: each module ends with something you produce from your own course. Track B goes formula by formula through the mathematics of the course: the derivation for you, what it means, where it leads beyond the course, how to simplify it for students who struggle, and how to stretch strong students.</p>
-      <h2>Track A · The method</h2><div class="trk">${A.map((x,i)=>`<button class="mod${done.has(x.id)?' d':''}" data-m="${x.id}"><em>A${i+1} · ${esc(x.r)}</em><b>${esc(x.t)}</b><span>${esc(x.g)}</span></button>`).join('')}</div>
-      <h2>Track B · The mathematics</h2><div class="trk">${M.map((x,i)=>`<button class="mod${done.has(x.id)?' d':''}" data-m="${x.id}"><em>B${i+1} · ${x.formulas.length} formulas</em><b>${esc(x.title)}</b><span>${esc(x.intro)}</span></button>`).join('')}</div>`;
-    if(at==='stamps') return `<header class="cs-head"><p>Lessons from past semesters</p><h2>Stamps of experience</h2></header><p class="lead">Every new semester adds its own.</p>
+trainer(m){ const own=LS.get('prof-stamps',[]), C=LS.get('prof-cert',{passed:{},work:{},name:''}); C.passed=C.passed||{}; C.work=C.work||{};
+  const save=()=>LS.set('prof-cert',C), GC=guideChapters(), READ={p1:[1,2],r2:[10,11]};
+  const cu=B.cert||[], U=[{id:'U1',title:cu[0].title,mods:cu[0].modules.map(x=>({...x,kind:'p'}))},
+    {id:'U2',title:'The mathematics of the course',mods:(B.trainerMath||[]).map(x=>({...x,kind:'m',quiz:(B.mathQuiz||{})[x.id]||[],minutes:40}))},
+    {id:'U3',title:cu[1].title,mods:cu[1].modules.map(x=>({...x,kind:'p'}))},{id:'U4',title:cu[2].title,mods:cu[2].modules.map(x=>({...x,kind:'p'}))}];
+  const ALL=U.flatMap(u=>u.mods.map(x=>({...x,unit:u}))), nPass=()=>ALL.filter(x=>C.passed[x.id]>=80).length, hours=Math.round(ALL.reduce((a,x)=>a+(x.minutes||30),0)/60);
+  const TAB=[['derivation','The mathematics'],['meaning','What it means'],['beyond','Beyond the course'],['simplify','Simplify it'],['stretch','Stretch strong students'],['pitfalls','Pitfalls']];
+  let at=sessionStorage.getItem('prof-trainer-at2')||'home';
+  const badge=x=>C.passed[x.id]>=80?'d':'';
+  const side=()=>`<aside class="cs-side"><h3>Certificate in Teaching Introductory Statistics</h3><div class="cs-prog"><i style="width:${nPass()/ALL.length*100}%"></i></div><small>${nPass()} of ${ALL.length} module tests passed</small>
+    <ol><li><button data-m="home" aria-current="${at==='home'}"><i>⌂</i><span>Programme home</span></button></li></ol>
+    ${U.map((u,k)=>`<div class="grp">Unit ${k+1} · ${esc(u.title)}</div><ol>${u.mods.map((x,j)=>`<li><button data-m="${x.id}" aria-current="${at===x.id}"><i class="${badge(x)}">${badge(x)?'✓':(k+1)+'.'+(j+1)}</i><span>${esc(x.title)}</span></button></li>`).join('')}</ol>`).join('')}
+    <ol><li><button data-m="cert" aria-current="${at==='cert'}"><i>★</i><span>Your certificate</span></button></li><li><button data-m="stamps" aria-current="${at==='stamps'}"><i>✎</i><span>Stamps of experience</span></button></li></ol></aside>`;
+  const quizHTML=x=>`<section class="qz" id="qz"><div class="qz-h"><h2>Module test</h2><span>${x.quiz.length} questions · pass mark 80%${C.passed[x.id]!=null?` · best score ${C.passed[x.id]}%`:''}</span></div>
+    ${x.quiz.map((q,i)=>`<fieldset class="qq" data-q="${i}"><legend><b>${i+1}.</b> ${esc(q.q)}</legend>${q.opts.map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}"><span>${esc(o)}</span></label>`).join('')}<p class="why" hidden></p></fieldset>`).join('')}
+    <p><button class="pf-btn main" id="sub">Submit the test</button> <span id="res" aria-live="polite"></span></p></section>`;
+  const body=()=>{ if(at==='home'){ const p=nPass()/ALL.length;
+      return `<section class="cert-hero"><div><p>Professional programme for lecturers · about ${hours} hours</p><h2>Certificate in Teaching Introductory Statistics</h2><span>Pedagogy, the mathematics behind every formula, assessment, and a teaching practicum. Each module ends with a graded test; pass all ${ALL.length} at 80% to earn the certificate.</span></div>
+        <svg viewBox="0 0 120 120" width="120" height="120"><circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="11"/><circle cx="60" cy="60" r="50" fill="none" stroke="#fff" stroke-width="11" stroke-linecap="round" stroke-dasharray="${(p*314.2).toFixed(1)} 315" transform="rotate(-90 60 60)"/><text x="60" y="66" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">${Math.round(p*100)}%</text></svg></section>
+        ${U.map((u,k)=>`<h2>Unit ${k+1} · ${esc(u.title)}</h2><div class="trk">${u.mods.map((x,j)=>`<button class="mod ${badge(x)}" data-m="${x.id}"><em>${k+1}.${j+1} · ${x.minutes||30} min · test ${x.quiz.length} q</em><b>${esc(x.title)}</b><span>${esc(x.kind==='m'?x.intro:(x.objectives||[])[0]||'')}</span></button>`).join('')}</div>`).join('')}`; }
+    if(at==='stamps') return `<header class="cs-head"><p>Lessons from past semesters</p><h2>Stamps of experience</h2></header>
       <div class="tw"><table class="t"><tr><th>Semester</th><th>What happened</th><th>Lesson kept</th></tr>${B.stamps.concat(own).map(([s,w,l])=>`<tr><td>${esc(s)}</td><td>${esc(w)}</td><td>${esc(l)}</td></tr>`).join('')}</table></div>
       <form id="sf" class="card"><h3>Add a stamp</h3><div class="grid2"><input type="text" name="s" placeholder="Semester, e.g. Spring 2027"><input type="text" name="by" placeholder="Lecturer (optional)"></div><p><textarea name="w" placeholder="What happened"></textarea></p><p><textarea name="l" placeholder="Lesson kept"></textarea></p><button class="pf-btn main">Add</button></form>`;
-    const x=all.find(y=>y.id===at); if(!x){ at='home'; return body(); }
-    if(x.id[0]==='a'){ const n=(x.r.match(/\d+/)||[1])[0]; return `<header class="cs-head"><p>Track A · Module ${x.id.slice(1)} of ${A.length}</p><h2>${esc(x.t)}</h2></header>
-      <div class="anim"><div class="card"><h3>Goal</h3><p>${esc(x.g)}</p></div><div class="card" style="margin-top:10px"><h3>Read</h3><p>${esc(x.r)} of the teacher guide.</p><p style="margin-top:8px"><button class="pf-btn" data-gch="${n}">Open the chapter →</button></p></div>
-      <div class="card" style="margin-top:10px"><h3>Your task</h3><p>${esc(x.a)}</p><p style="margin-top:8px"><textarea data-work="${x.id}" placeholder="Write or paste your work here. Saved on this computer." style="min-height:140px">${esc(work[x.id]||'')}</textarea></p></div></div>${navBtns(x.id)}`; }
-    return `<header class="cs-head"><p>Track B · Module ${x.id.slice(1)} of ${M.length} · ${x.formulas.length} formulas</p><h2>${esc(x.title)}</h2></header><p class="lead">${esc(x.intro)}</p>
-      ${x.formulas.map((f,k)=>`<section class="fx" style="animation-delay:${k*.06}s"><div class="fx-h"><h3>${esc(f.name)}</h3><span class="tag">${k+1} / ${x.formulas.length}</span></div><div class="fx-f" data-tex="${esc(f.formula)}"></div>
-        <div class="fx-tabs" role="tablist">${TAB.map(([key,t],j)=>`<button role="tab" data-tab="${key}" aria-selected="${j===0}">${t}</button>`).join('')}</div>
-        ${TAB.map(([key],j)=>`<div class="fx-p" data-pane="${key}"${j?' hidden':''}>${key==='pitfalls'?`<ul>${(f.pitfalls||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:esc(f[key]||'')}</div>`).join('')}</section>`).join('')}${navBtns(x.id)}`; };
-  const draw=()=>{ sessionStorage.setItem('prof-trainer-at',at); m.innerHTML=`<div class="cs">${side()}<div id="tc">${body()}</div></div>`;
-    m.querySelectorAll('[data-tex]').forEach(el=>{ try{ katex.render(el.dataset.tex,el,{displayMode:true,throwOnError:false}); }catch(e){ el.textContent=el.dataset.tex; } });
-    tex($('#tc',m)); const sf=$('#sf',m); if(sf) sf.onsubmit=e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); if(!d.w) return; own.push([d.s+(d.by?' · '+d.by:''),d.w,d.l]); LS.set('prof-stamps',own); draw(); };
-    m.querySelectorAll('[data-work]').forEach(t=>t.oninput=()=>{ work[t.dataset.work]=t.value; LS.set('prof-trainer-work',work); }); };
+    if(at==='cert'){ const ok=nPass()===ALL.length;
+      return `<header class="cs-head"><p>${nPass()} of ${ALL.length} modules passed</p><h2>Your certificate</h2></header>
+      ${ok?`<div class="card"><p>Congratulations. Enter your name as it should appear.</p><p><input type="text" id="cn" value="${esc(C.name||'')}" placeholder="Full name" style="width:100%;max-width:420px"></p><button class="pf-btn main" id="cp">Open the printable certificate</button></div>`
+        :`<div class="card"><p>Pass every module test at 80% or more to unlock the certificate. Still to pass:</p><ul>${ALL.filter(x=>!(C.passed[x.id]>=80)).map(x=>`<li><button class="pf-btn" style="padding:3px 8px;margin:2px 0" data-m="${x.id}">${esc(x.title)}</button>${C.passed[x.id]!=null?` <small>best ${C.passed[x.id]}%</small>`:''}</li>`).join('')}</ul></div>`}`; }
+    const x=ALL.find(y=>y.id===at); if(!x){ at='home'; return body(); }
+    const idx=ALL.indexOf(x), nx=ALL[idx+1], pv=ALL[idx-1], k=U.indexOf(x.unit)+1, j=x.unit.mods.findIndex(y=>y.id===x.id)+1;
+    const head=`<header class="cs-head"><p>Unit ${k} · ${esc(x.unit.title)} · Module ${k}.${j} · ${x.minutes||30} min</p><h2>${esc(x.title)}</h2></header>`;
+    const nav=`<div class="cs-nav"><button class="pf-btn" data-m="${pv?pv.id:'home'}">← ${pv?esc(pv.title):'Programme home'}</button><button class="pf-btn main" data-m="${nx?nx.id:'cert'}">${nx?'Next: '+esc(nx.title)+' →':'Your certificate →'}</button></div>`;
+    if(x.kind==='m') return head+`<p class="lead">${esc(x.intro)}</p>${x.formulas.map((f,i)=>`<section class="fx" style="animation-delay:${i*.05}s"><div class="fx-h"><h3>${esc(f.name)}</h3><span class="tag">${i+1} / ${x.formulas.length}</span></div><div class="fx-f" data-tex="${esc(f.formula)}"></div>
+        <div class="fx-tabs" role="tablist">${TAB.map(([key,t],q)=>`<button role="tab" data-tab="${key}" aria-selected="${q===0}">${t}</button>`).join('')}</div>
+        ${TAB.map(([key],q)=>`<div class="fx-p" data-pane="${key}"${q?' hidden':''}>${key==='pitfalls'?`<ul>${(f.pitfalls||[]).map(p=>`<li>${esc(p)}</li>`).join('')}</ul>`:esc(f[key]||'')}</div>`).join('')}</section>`).join('')}${quizHTML(x)}${nav}`;
+    return head+`<div class="card obj"><h3>Learning outcomes</h3><ul>${(x.objectives||[]).map(o=>`<li>${esc(o)}</li>`).join('')}</ul></div>
+      ${(x.lessons||[]).map((l,i)=>`<section class="lsn" style="animation-delay:${i*.06}s"><h3><span>${i+1}</span>${esc(l.h)}</h3><div class="guide">${l.body}</div></section>`).join('')}
+      ${READ[x.id]?`<details class="card" style="margin:12px 0"><summary><b>Further reading from the course designer</b></summary>${READ[x.id].map(n=>{ const c=GC.find(g=>g.num===n); return c?`<h3>${esc(c.t)}</h3><div class="guide">${c.html}</div>`:''; }).join('')}</details>`:''}
+      <div class="card"><h3>Activity</h3><p>${esc(x.activity||'')}</p><p style="margin-top:8px"><textarea data-work="${x.id}" placeholder="Your work. Saved on this computer." style="min-height:120px">${esc(C.work[x.id]||'')}</textarea></p></div>
+      ${quizHTML(x)}${nav}`; };
+  const draw=()=>{ sessionStorage.setItem('prof-trainer-at2',at); m.innerHTML=`<div class="cs">${side()}<div id="tc">${body()}</div></div>`;
+    m.querySelectorAll('[data-tex]').forEach(el=>{ try{ katex.render(el.dataset.tex,el,{displayMode:true,throwOnError:false}); }catch(e){ el.textContent=el.dataset.tex; } }); tex($('#tc',m));
+    const sf=$('#sf',m); if(sf) sf.onsubmit=e=>{ e.preventDefault(); const d=Object.fromEntries(new FormData(e.target)); if(!d.w) return; own.push([d.s+(d.by?' · '+d.by:''),d.w,d.l]); LS.set('prof-stamps',own); draw(); };
+    m.querySelectorAll('[data-work]').forEach(t=>t.oninput=()=>{ C.work[t.dataset.work]=t.value; save(); });
+    const cp=$('#cp',m); if(cp) cp.onclick=()=>{ C.name=$('#cn',m).value.trim(); save(); if(!C.name) return; certificate(C.name,ALL,U); };
+    const sub=$('#sub',m); if(sub) sub.onclick=()=>{ const x=ALL.find(y=>y.id===at); let ok=0, miss=0;
+      x.quiz.forEach((q,i)=>{ const f=m.querySelector(`[data-q="${i}"]`), v=f.querySelector('input:checked'); f.classList.remove('r','w'); if(!v){ miss++; return; } const right=+v.value===q.a; if(right) ok++; f.classList.add(right?'r':'w');
+        const w=f.querySelector('.why'); w.hidden=false; w.innerHTML=(right?'<b>Correct.</b> ':`<b>Not quite.</b> The answer is “${esc(q.opts[q.a])}”. `)+esc(q.why); });
+      if(miss){ $('#res',m).textContent=`Answer all questions first (${miss} left).`; return; }
+      const sc=Math.round(ok/x.quiz.length*100); C.passed[x.id]=Math.max(C.passed[x.id]||0,sc); save();
+      $('#res',m).innerHTML=sc>=80?`<b class="ok">${sc}%: passed.</b>`:`<b class="bad">${sc}%:</b> read the explanations and try again.`;
+      tex($('#qz',m)); m.querySelector('.cs-side').outerHTML=side(); }; };
   m.onclick=e=>{ const t=e.target.closest('[data-tab]'); if(t){ const s=t.closest('.fx'); s.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-selected',b===t)); s.querySelectorAll('[data-pane]').forEach(p=>p.hidden=p.dataset.pane!==t.dataset.tab); return; }
-    const g=e.target.closest('[data-gch]'); if(g){ sessionStorage.setItem('prof-guide-ch',g.dataset.gch); go('guide'); return; }
-    const d=e.target.closest('[data-done]'); if(d){ done.add(d.dataset.done); LS.set('prof-trainer-done',[...done]); at=d.dataset.next; draw(); scrollTo({top:0,behavior:'smooth'}); return; }
     const b=e.target.closest('[data-m]'); if(b){ at=b.dataset.m; draw(); scrollTo({top:0,behavior:'smooth'}); } };
   draw(); },
 
-grades(m){ m.innerHTML=`<h1>Grades dashboard</h1><div class="pf-tabs" role="tablist"><button class="pf-btn main" data-t="book">Fall 2026 grade book</button> <button class="pf-btn" data-t="csv">Analyse a new CSV</button></div><div id="gt"></div>`;
+
+grades(m){ m.innerHTML=`<h1>Grades dashboard</h1><div class="pf-tabs" role="tablist"><button class="pf-btn main" data-t="book">Fall 2026 grade book</button> <button class="pf-btn" data-t="fb">Student feedback sheets <span class="tag">pilot</span></button> <button class="pf-btn" data-t="csv">Analyse a new CSV</button></div><div id="gt"></div>`;
   const tabs=t=>{ m.querySelectorAll('[data-t]').forEach(b=>b.classList.toggle('main',b.dataset.t===t)); const g=$('#gt',m);
     if(t==='book'){ g.innerHTML=B.gradebook?`<p class="lead">Your grade book, with every student's name and ID replaced by a code. The codes cannot be traced back to students.</p><iframe title="Grade book" style="width:100%;height:82vh;border:1px solid var(--line);border-radius:12px;background:#fff"></iframe>`:'<p class="lead">No grade book added yet.</p>'; if(B.gradebook) g.querySelector('iframe').srcdoc=B.gradebook; }
-    else VIEWS.csvView(g); };
-  m.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>tabs(b.dataset.t)); tabs(B.gradebook?'book':'csv'); },
+    else if(t==='fb') VIEWS.fbView(g); else VIEWS.csvView(g); };
+  m.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>tabs(b.dataset.t)); const pt=sessionStorage.getItem('prof-grades-tab'); sessionStorage.removeItem('prof-grades-tab'); tabs(pt||(B.gradebook?'book':'csv')); },
+fbView(g){ const G=B.gbStats, S=(G&&G.students||[]).slice().sort((a,b)=>a.sec.localeCompare(b.sec)||a.id.localeCompare(b.id));
+  g.innerHTML=`<div class="db-card" style="margin-top:12px"><div class="db-card-h"><h2>One page per student, to hand back with the paper</h2><span>midterm pilot · ${S.length} sheets</span></div>
+    <p class="lead">A calm, one-page sheet: what went well, where the next marks are with one thing to practise and the week to revise, a three-step plan before Quiz 2, and a closing note. Students appear by code; write the name on the line at the top.</p>
+    <p><button class="pf-btn main" data-book="feedback-all.pdf">All sheets in one PDF (by section)</button></p>
+    <div class="fbg">${S.map(s=>{ const p=s.t/G.max*100; return `<div class="fbc"><div><code>${esc(s.id)}</code><small>Section ${esc(s.sec)}</small></div><b style="color:${p>=70?'#2b8a3e':p>=50?'#b07800':'#d9480f'}">${s.t}<small>/${G.max}</small></b><span>${esc(((s.brief||{}).mistakes||[]).slice(0,2).map(x=>x.split(':')[0].split(' (')[0]).join(' · '))}</span><button class="pf-btn" data-book="feedback-${esc(s.id)}.pdf">Sheet PDF</button></div>`; }).join('')}</div></div>`;
+  wireBooks(g); },
 csvView(m){ m.innerHTML=`<p class="lead">Open a gradebook CSV to see how the class did, question by question and CLO by CLO. The file is read on this computer only; nothing is uploaded or saved.</p>
   <div class="card"><b>CSV format</b><p>Header: <code>StudentID,Section,Q1,Q2,…</code>. Optional rows after the header: <code>MAX,,10,5,…</code> (marks per question) and <code>CLO,,1,2,…</code>.</p>
   <p style="margin-top:10px"><label class="pf-btn main">Open a CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label> <button class="pf-btn" id="demo">Show with fictional demo data</button></p></div><div id="out"></div>`;
