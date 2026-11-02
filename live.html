@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=202611021159">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
 <style>
 :root{--wk:#C8102E;--wk-soft:rgba(200,16,46,.09)}
 html,body{height:100%}
@@ -70,9 +70,9 @@ body.full .lv-stage{border-radius:0;border:0}
   <div class="row"><button type="button" class="btn" id="copy">Copy link</button><button type="button" class="btn ghost" id="closeShare">Close</button></div>
 </dialog>
 <p class="support-note">This website is interactive course support. It does not replace classes, attendance or class activities.</p>
-<script src="assets/supports.js?v=202611021159"></script>
-<script src="assets/vendor/mqtt.min.js?v=202611021159"></script>
-<script src="assets/vendor/qrcode.js?v=202611021159"></script>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/vendor/mqtt.min.js?v=202610231305"></script>
+<script src="assets/vendor/qrcode.js?v=202610231305"></script>
 <script>
 /* MTH 105 live board.
    Projector and students: live.html shows the board live, view only.
@@ -80,7 +80,7 @@ body.full .lv-stage{border-radius:0;border:0}
    The strokes travel through free public relay servers (MQTT over secure WebSocket), several at once in case one is blocked. No accounts. */
 (function(){
   const $=s=>document.querySelector(s), main=$('#main'), ctl=$('#ctl'), st=$('#st');
-  const KEY={"pub": {"kty": "EC", "crv": "P-256", "x": "yNOeRNhmcmzz7wchKgJzKjZD8tRFhVjS1eUfqlL--SY", "y": "c8OI9H1KFhTT7Z09vEik4H1nnur0aV-JIylhLND9EIk"}, "enc": {"salt": "XgC2JV4qzldXaGM0Heh7Kg==", "iv": "Oih84kcIwUCgMhgE", "ct": "MoaBR+qNlcgIIMSNhIqQ3lfqqZsfCqKYhoIJMdO2HZwt4A1OsYQ4TLxBd8zZIH35urIdzxhTgiF53rJLSVTzy2lfg7sWheTrSAwdpA7ui9bBKDI+wFTv9+NeG5ZOtF7aqLEGVd66I70MomXncIdlchV+tCslRhHqkWZrs9IEDYyoQKMHA6/1ExeCLkxgzS5b30GYzj0Yvx+xg2qDXPxecp8OBEuBd4TwXf29SCyEm1PN20OrpTehFBjytiC2elMPS92wSKzGOcpNxjieXS11gCNTM6PewIqFdbQ/5nIP"}}, ROOM='d1605d0472753433918f989c', TOPIC='mth105cud/live/'+ROOM;
+  const KEY={"pub":{"kty":"EC","crv":"P-256","x":"yNOeRNhmcmzz7wchKgJzKjZD8tRFhVjS1eUfqlL--SY","y":"c8OI9H1KFhTT7Z09vEik4H1nnur0aV-JIylhLND9EIk"},"enc":{"salt":"+gNbzNCBhRlYufixpedFBA==","iv":"EmEiD7YKSv7nFjtE","ct":"to0u3WaDvuII4YS2pAfRK8meLTJV/3DJ1xgve26vk4Oo+sT3GKes04OXBNrE7WQGU9u9TEEcVC1XfS0vRl9br/0JkxowtonMnGMEiNdZpokXeV3VeH/JkDsBvxUxEqcTQoyUT0HH17bftsLHWoVzdADHQQPqvn2Az9+4wqmhJB0gDcPQdSf+OOWY67yYnHM3qVBg/kJ6C3ZkbzuE4vlgQMBw/JeYkpAc44CX2JhPvL7CEt0QQUGwzv+yf1mV8lY5HsuMOoADKW/FMD/PrCOBAhI7guPThzEpgkNKFna1"}}, ROOM='d1605d0472753433918f989c', TOPIC='mth105cud/live/'+ROOM;
   const q=new URLSearchParams(location.search), srv=q.get('srv');
   const RELAYS=srv?[{url:'ws://'+srv}]:[{url:'wss://broker.emqx.io:8084/mqtt'},{url:'wss://broker.hivemq.com:8884/mqtt'},{url:'wss://public.cloud.shiftr.io',username:'public',password:'public'}];
   const hash=location.hash.slice(1);
@@ -156,7 +156,7 @@ body.full .lv-stage{border-radius:0;border:0}
     if(saved){ importPriv(saved).then(teach).catch(()=>{ try{ sessionStorage.removeItem('live-key'); }catch(e){} lock(); }); return; }
     ctl.innerHTML=''; status('Locked');
     main.innerHTML=`<div class="lv-card"><h1>Professor board</h1><p>Type the professor code to write on the board.</p>
-      <input id="code" type="password" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="••••-••••" aria-label="Professor code"><div class="err" id="err"></div>
+      <input id="code" type="password" autocomplete="off" spellcheck="false" placeholder="Password" aria-label="Professor password"><div class="err" id="err"></div>
       <div class="row"><button type="button" class="btn" id="go">Unlock the board</button><a class="btn ghost" href="live.html" style="text-decoration:none">Back to the board</a></div></div>`;
     const go=async()=>{ const c=$('#code').value; $('#err').textContent=''; $('#go').disabled=true; $('#go').textContent='Checking…';
       try{ const jwk=await unlock(c); try{ sessionStorage.setItem('live-key',jwk); }catch(e){} teach(await importPriv(jwk)); }
