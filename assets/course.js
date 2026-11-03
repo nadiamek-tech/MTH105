@@ -107,7 +107,7 @@
       el.querySelectorAll('.pq .wbtn').forEach(b=>b.addEventListener('click',()=>{ const pq=b.closest('.pq'), i=+pq.dataset.i, box=pq.querySelector('.padbox'); box.hidden=!box.hidden; b.textContent=box.hidden?'Write':'Hide writing';
         if(!box.hidden&&!box.dataset.on&&window.Pad){ box.dataset.on=1;
           box.innerHTML=`<div class="wspace"><div class="wpad"></div><div class="wcalc"></div></div>${items[i].check?'<button type="button" class="btn wsave">Save my working</button> <span class="wsaved" aria-live="polite"></span>':''}`;
-          Pad.create(box.querySelector('.wpad'),{key:(opts.key||'p')+'-'+i,bg:'grid',name:'practice-'+(i+1),height:320});
+          Pad.create(box.querySelector('.wpad'),{key:(opts.key||'p')+'-'+i,bg:'grid',name:'practice-'+(i+1),height:320,open:true});
           if(window.CASIO&&window.CALC) CASIO.mount(box.querySelector('.wcalc'));
           const sv=box.querySelector('.wsave'); if(sv) sv.addEventListener('click',()=>{ let n=0; try{ n=JSON.parse(localStorage.getItem(pk(i))||'[]').length; }catch(e){}
             const msg=box.querySelector('.wsaved'); if(!n){ msg.textContent='Write your working in the pad first.'; return; } msg.textContent='Saved on this device.'; step2(pq); }); } }));
