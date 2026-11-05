@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/site.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<style>:root{--wk:#C8102E;--wk-soft:rgba(200,16,46,.08);--wk-d:#FF7A7F;--wk-soft-d:rgba(255,122,127,.14)}</style>
+<title>MTH 105 · Lab Quiz 1 · Section 102</title>
+<link rel="stylesheet" href="assets/portal.css?v=202610231305">
+</head>
+<body>
+<div id="hub" data-cur="lab"></div>
+<main class="wrap">
+  <p style="margin:18px 0 0"><a class="pt-flag" href="lab-revision.html">← Revision lab</a></p>
+  <h1 class="pg">Lab Quiz 1 · Section 102</h1>
+  <p class="lead">Archived · Wed 4 Nov 2026 · Labs 1–4 · Eng. Nadia Mek</p>
+  <div class="qz-rules"><div><small>Marks</small><b>10 marks</b></div><div><small>Work</small><b>Individual, in Excel</b></div><div class="no"><small>Not allowed</small><b>No phone · no internet</b><span>except this page, Excel, OneDrive and Moodle</span></div><div><small>Status</small><b>Closed · Wed 4 Nov, 1:00 PM</b></div><div><small>Submit</small><b><a href="https://my.cud.ac.ae/mod/assign/view.php?id=21999" target="_blank" rel="noopener">On Moodle ↗</a>, before the end of the session</b></div></div>
+  <div class="qz-clock" id="clock" aria-live="polite"></div>
+  <div class="qz-lock" id="lock"><b>Archived</b><p>Professor access only.</p>
+    <form id="unlock" autocomplete="off"><input id="pw" type="text" inputmode="numeric" aria-label="Lab password" placeholder="Password" spellcheck="false"><button class="dl" type="submit">Open</button></form><p class="err" id="err" aria-live="polite"></p></div>
+  <div id="gl" hidden></div>
+</main>
+<style>.qz-rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0}.qz-rules div{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface)}.qz-rules small{display:block;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}.qz-rules span{display:block;font-size:.8rem;color:var(--muted)}.qz-rules .no{border-color:#C8102E}
+.qz-clock{text-align:center;margin:10px 0;font-size:1.05rem}.qz-clock b{color:#C8102E}.qz-lock{max-width:420px;margin:22px auto;border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--surface);text-align:center}.qz-lock p{color:var(--muted);margin:4px 0 12px}.qz-lock form{display:flex;gap:8px}.qz-lock input{flex:1;font:inherit;font-size:1.1rem;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);text-align:center;letter-spacing:.2em}.qz-lock .dl{border:0;cursor:pointer;font:inherit}.qz-lock .err{color:#C8102E;min-height:1.2em}
+.qz-step{display:flex;gap:14px;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;background:var(--surface)}.qz-step>div{flex:1;min-width:0}.qz-step .n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#217346;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}.qz-step b{font-size:1.05rem}.qz-step p{margin:6px 0}
+.xlb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}.xlb button{border:0;cursor:pointer;font:inherit}.dl.ghost{background:var(--surface);color:#217346;border:1px solid #217346}.xlv iframe{width:100%;height:480px;border:1px solid var(--line);border-radius:10px;background:#fff}.tip{font-size:.88rem;color:var(--muted)}</style>
+<footer style="max-width:1100px;margin:0 auto;padding:18px 16px 30px;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted);text-align:center">This website is interactive course support. It does not replace classes, attendance or class activities.<br> <b>Eng. Nadia Mek</b> · <a href="https://github.com/nadiamek-tech/MTH105">github.com/nadiamek-tech/MTH105</a></footer>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202610231305"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/labquiz1-sealed.js?v=6"></script>
+<script>
+(function(){ const S=window.SEALED, enc=new TextEncoder(), b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0)), tob64=u=>btoa(String.fromCharCode(...new Uint8Array(u)));
+  const KEY='mth105-lq1', err=document.getElementById('err'), inp=document.getElementById('pw');
+  const dec=(k,x)=>crypto.subtle.decrypt({name:'AES-GCM',iv:b64(x.iv)},k,b64(x.ct));
+  const closed=()=>Date.now()>=Date.parse(S.until);
+  async function unwrap(pw){ const base=await crypto.subtle.importKey('raw',enc.encode(pw.trim().toUpperCase()),'PBKDF2',false,['deriveKey']);
+    for(const x of S.wraps){ try{ const w=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(x.salt),iterations:S.iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']); const raw=await dec(w,x);
+        if(x.until&&closed()) throw {closed:1}; return raw; }catch(e){ if(e&&e.closed) throw e; } } throw new Error('bad'); }
+  async function show(raw){ const k=await crypto.subtle.importKey('raw',raw,'AES-GCM',false,['decrypt']), gl=document.getElementById('gl');
+    gl.innerHTML=new TextDecoder().decode(await dec(k,S.page)); gl.hidden=false; document.getElementById('lock').hidden=true; err.textContent='';
+    try{ sessionStorage.setItem(KEY,tob64(raw)); }catch(e){}
+    document.getElementById('q-get').addEventListener('click',async()=>{ const url=URL.createObjectURL(new Blob([await dec(k,S.file)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})); const a=document.createElement('a'); a.href=url; a.download=S.name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); }); }
+  document.getElementById('unlock').addEventListener('submit',async e=>{ e.preventDefault(); if(!window.crypto||!crypto.subtle){ err.textContent='Please use an up-to-date browser (Chrome, Edge or Safari).'; return; }
+    err.textContent='Checking…'; try{ const raw=await unwrap(inp.value); try{ sessionStorage.setItem(KEY+'-at',String(Date.now())); sessionStorage.setItem(KEY+'-p',(S.wraps.length>1&&!(await isProf(inp.value)))?'s':'p'); }catch(e){} await show(raw); }catch(x){ err.textContent=x&&x.closed?'The lab quiz closed at 1:00 PM.':'Wrong password. Try again.'; inp.select(); } });
+  async function isProf(pw){ const x=S.wraps[S.wraps.length-1]; try{ const base=await crypto.subtle.importKey('raw',enc.encode(pw.trim().toUpperCase()),'PBKDF2',false,['deriveKey']); const w=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(x.salt),iterations:S.iter,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['decrypt']); await dec(w,x); return true; }catch(e){ return false; } }
+  const clock=document.getElementById('clock'); const tick=()=>{ const left=Date.parse(S.until)-Date.now(); if(left<=0){ clock.innerHTML='<b>Archived.</b> Closed on Wed 4 Nov at 1:00 PM.'; let who=null; try{ who=sessionStorage.getItem(KEY+'-p'); }catch(e){} if(who!=='p'){ const gl=document.getElementById('gl'); if(!gl.hidden){ gl.hidden=true; gl.innerHTML=''; document.getElementById('lock').hidden=false; } } return; }
+    const t=Math.round(left/1000), h=Math.floor(t/3600), m=Math.floor(t%3600/60), sec=t%60; clock.innerHTML=`Closes at <b>1:00 PM</b> · time left <b>${h?h+':':''}${String(m).padStart(h?2:1,'0')}:${String(sec).padStart(2,'0')}</b>`; };
+  tick(); setInterval(tick,1000);
+  let saved=null, who=null; try{ saved=sessionStorage.getItem(KEY); who=sessionStorage.getItem(KEY+'-p'); }catch(e){} if(saved&&(!closed()||who==='p')) show(b64(saved)).catch(()=>{});
+})();
+</script>
+</body>
+</html>
