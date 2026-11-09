@@ -79,7 +79,8 @@
     const builds=[];
     /* top bar: back link, contents, voice, theme */
     const bar=el('header',{class:'lbar'});
-    const secs=cfg.topics.map(t=>({id:t.id,t:t.title})).concat(cfg.inClass?[{id:'in-class',t:'In class'}]:[]).concat([{id:'takeaways',t:'Takeaways'},{id:'practice',t:'Practice'}]);
+    const secs=(cfg.opener?[{id:'start',t:'Before we start'}]:[]).concat(cfg.topics.map(t=>({id:t.id,t:t.title}))).concat(cfg.mistakes?[{id:'mistakes',t:'Mistake → fix'}]:[]).concat(cfg.inClass?[{id:'in-class',t:'In class'}]:[]).concat([{id:'takeaways',t:'Takeaways'}]).concat(cfg.exit?[{id:'exit',t:'Exit check'}]:[]).concat([{id:'practice',t:'Practice'}]);
+    const num=id=>secs.findIndex(x=>x.id===id)+1;
     bar.innerHTML=`<div class="lbar-in"><a class="brand" href="${cfg.home||'lectures.html'}"><b>MTH 105</b><span>← Lectures · Week ${cfg.week}</span></a>
       <nav class="lchips" aria-label="In this lecture">${secs.map((s,i)=>`<a href="#${s.id}" data-id="${s.id}"><span>${i+1}</span>${esc(s.t)}</a>`).join('')}</nav>
       <div class="lctl">${LS.on('voice')?'<button type="button" class="pill listen" id="listen">▶ Listen</button>':''}<button type="button" class="pill" id="theme" title="Light or dark">◐</button></div></div><div class="progress"><i></i></div>`;
@@ -102,8 +103,13 @@
         speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(say(w)+'. '+say(m)); u.lang='en-GB'; speechSynthesis.speak(u); });
       main.appendChild(k); }
 
+    /* before we start: short bridge scenes (one idea per card) */
+    if(cfg.opener){ const s=el('section',{class:'lsec lopen',id:'start'}); s.appendChild(el('h2',{},`<span class="no">${num('start')}</span>Before we start`));
+      cfg.opener.forEach(o=>{ const c=el('div',{class:'lpart lp-open','data-part':'open'}); c.innerHTML=`<span class="ltag">${esc(o.tag||'Start')}</span><h3 class="lopen-h">${o.title}</h3>${o.text?`<p class="ltext say">${o.text}</p>`:''}<div class="lopen-b"></div>`;
+        const b=c.querySelector('.lopen-b'); if(o.html) b.innerHTML=o.html; if(o.build) builds.push(()=>o.build(b)); s.appendChild(c); });
+      main.appendChild(s); }
     cfg.topics.forEach((t,i)=>{
-      const s=el('section',{class:'lsec',id:t.id}); s.appendChild(el('h2',{},`<span class="no">${i+1}</span>${esc(t.title)}`));
+      const s=el('section',{class:'lsec',id:t.id}); s.appendChild(el('h2',{},`<span class="no">${num(t.id)}</span>${esc(t.title)}`));
       if(t.demo) s.appendChild(el('div',{class:'ldemo'},`<b>Demonstrated in class</b><span>${t.demo}</span>`));
       if(t.def) s.appendChild(part('def',t.def,t.defFig||null,builds));
       if(t.life) s.appendChild(part('life',t.life.text,t.life.fig,builds));
@@ -123,10 +129,14 @@
       main.appendChild(s);
     });
 
+    /* common mistakes, each next to its fix */
+    if(cfg.mistakes){ const s=el('section',{class:'lsec',id:'mistakes'}); s.appendChild(el('h2',{},`<span class="no">${num('mistakes')}</span>Mistake → fix`));
+      const c=el('div',{class:'lpart','data-part':'mistakes'}); c.innerHTML=`<span class="ltag">Check your working</span><div class="lmist">${cfg.mistakes.map(([b,g])=>`<div><span class="bad"><i>✗</i>${b}</span><span class="good"><i>✓</i>${g}</span></div>`).join('')}</div>`;
+      s.appendChild(c); main.appendChild(s); }
     if(cfg.inClass) solutionsTab(cfg);
     if(cfg.inClass){
       const ic=cfg.inClass, sec=el('section',{class:'lsec lclass',id:'in-class'});
-      sec.appendChild(el('h2',{},`<span class="no">${cfg.topics.length+1}</span>In class`));
+      sec.appendChild(el('h2',{},`<span class="no">${num('in-class')}</span>In class`));
       sec.appendChild(el('div',{class:'lc-paper'},`<span class="lc-stamp">On the board · on paper</span>
         <p class="lc-lead say">${ic.intro||'We solve these together in class. Bring the handout, or write in the box below each exercise.'}</p>
         <ol class="lc-how"><li><b>Watch</b> your professor demonstrate the method on the board.</li><li><b>Try</b> it yourself on the handout or in the writing box.</li><li><b>Check</b> the answer together in class. It is not posted online.</li></ol>
@@ -159,13 +169,25 @@
       main.appendChild(sec);
     }
 
-    const tk=el('section',{class:'lsec',id:'takeaways'}); tk.appendChild(el('h2',{},`<span class="no">${secs.length-1}</span>Takeaways`));
+    const tk=el('section',{class:'lsec',id:'takeaways'}); tk.appendChild(el('h2',{},`<span class="no">${num('takeaways')}</span>Takeaways`));
     const tkb=el('div',{class:'lpart','data-part':'takeaways'}); const tkf=figure(cfg.takeaways); tkb.appendChild(tkf.fig); builds.push(tkf.build); tk.appendChild(tkb); main.appendChild(tk);
-    const pr=el('section',{class:'lsec',id:'practice'}); pr.appendChild(el('h2',{},`<span class="no">${secs.length}</span>Practice`));
+    /* exit check: quick taps, instant feedback */
+    if(cfg.exit){ const s=el('section',{class:'lsec',id:'exit'}); s.appendChild(el('h2',{},`<span class="no">${num('exit')}</span>Exit check`));
+      const c=el('div',{class:'lpart','data-part':'exit'}); c.innerHTML=`<span class="ltag">One minute · tap an answer</span><div class="lexit">${cfg.exit.map(([q,o,a,w],i)=>`<div class="lx" data-i="${i}"><b>${i+1}. ${q}</b><div class="lx-o">${o.map((x,j)=>`<button type="button" data-j="${j}">${x}</button>`).join('')}</div><p class="lx-w" hidden></p></div>`).join('')}</div>`;
+      c.addEventListener('click',e=>{ const b=e.target.closest('[data-j]'); if(!b) return; const q=b.closest('.lx'), it=cfg.exit[+q.dataset.i], ok=+b.dataset.j===it[2];
+        q.querySelectorAll('[data-j]').forEach(x=>x.classList.remove('r','w')); b.classList.add(ok?'r':'w'); const w=q.querySelector('.lx-w'); w.hidden=false; w.innerHTML=(ok?'<b>Correct.</b> ':'<b>Not quite.</b> ')+it[3]; });
+      s.appendChild(c); main.appendChild(s); }
+    const pr=el('section',{class:'lsec',id:'practice'}); pr.appendChild(el('h2',{},`<span class="no">${num('practice')}</span>Practice`));
     const prb=el('div',{class:'lpart','data-part':'practice'}); prb.appendChild(el('p',{class:'ltext say'},'Solve on paper first, then open the model working. Easy to hard.'));
     const pbox=el('div'); prb.appendChild(pbox); builds.push(()=>W.practice(pbox,cfg.practice,{label:'Show answer',prefix:''})); pr.appendChild(prb);
     if(cfg.next) pr.appendChild(el('p',{class:'lnext'},cfg.next));
     main.appendChild(pr);
+    /* go to the next lecture */
+    const TT={"1": "Introduction to Statistics", "2": "Describing and Organizing Data", "3": "Measures of Central Tendency and Position", "4": "Measures of Dispersion", "5": "Probability Theory", "6": "Discrete Probability Distributions", "7": "Bernoulli and Binomial Distributions", "8": "The Normal Distribution", "9": "The Standard Normal Distribution and z-Scores", "10": "Sampling Distribution of the Mean", "11": "Confidence Intervals", "12": "Contingency Tables and the Chi-square Test", "13": "Correlation and the Regression Line", "14": "Simple Linear Regression: Finding and Using the Line", "15": "Interpreting Regression"}; if(!cfg.nextTitle) cfg.nextTitle=TT[cfg.week+1];
+    const nw=cfg.week+1, last=cfg.lastWeek||15, nf=`week-${String(nw).padStart(2,'0')}.html`, pf=`week-${String(cfg.week-1).padStart(2,'0')}.html`;
+    const go=el('nav',{class:'lgo','aria-label':'Other lectures'});
+    go.innerHTML=`${cfg.week>1?`<a class="lgo-prev" href="${pf}"><small>← Previous lecture</small><b>Week ${cfg.week-1}</b></a>`:'<span></span>'}${nw<=last?`<a class="lgo-next" href="${nf}"><small>Next lecture →</small><b>Week ${nw}</b>${cfg.nextTitle?`<span>${esc(cfg.nextTitle)}</span>`:''}</a>`:`<a class="lgo-next" href="${cfg.home||'lectures.html'}"><small>All done →</small><b>All lectures</b></a>`}`;
+    main.appendChild(go);
 
     const pager=el('nav',{class:'lpager','aria-label':'Move through the lecture'}); main.appendChild(pager);
     document.body.appendChild(main);
@@ -190,6 +212,7 @@
       const lab=u=>!u?'':u[1]?`${sections.indexOf(u[0])+1} · ${u[1].querySelector('.ltag')?u[1].querySelector('.ltag').textContent.split(' · ')[0]:ttl(u[0])}`:ttl(u[0]);
       pager.innerHTML=`<button type="button" class="prev" ${cur===0?'disabled':''}><small>← Previous</small>${esc(lab(units[cur-1])||'Start')}</button><span class="pc">${cur+1} of ${units.length}</span><button type="button" class="next" ${cur===units.length-1?'disabled':''}><small>Next →</small>${esc(lab(units[cur+1])||'End')}</button>`;
       pager.querySelector('.prev').onclick=()=>showUnit(cur-1); pager.querySelector('.next').onclick=()=>showUnit(cur+1);
+      if(cur===units.length-1){ const nx=main.querySelector('.lgo-next'); if(nx){ const b=pager.querySelector('.next'); b.disabled=false; b.innerHTML=`<small>Next lecture →</small>${esc(nx.querySelector('b').textContent)}`; b.onclick=()=>{ location.href=nx.getAttribute('href'); }; } }
       try{ history.replaceState(null,'','#'+s.id); }catch(e){}
       if(scroll) window.scrollTo({top:0});
     }

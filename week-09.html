@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="assets/course.css?v=202610231305">
 <link rel="stylesheet" href="assets/stats.css?v=202610231305">
 <link rel="stylesheet" href="assets/banner.css?v=202610231305">
-<link rel="stylesheet" href="assets/lesson.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202611090918">
 <style>
 :root{--wk:#0369A1;--wk-soft:rgba(3,105,161,0.09);--wk-d:#7DD3FC;--wk-soft-d:rgba(125,211,252,0.14)}
 </style>
@@ -23,13 +23,13 @@
 <script src="assets/decode.js?v=202610231305"></script>
 <script src="assets/professor.js?v=202610231305"></script>
 <script src="assets/keywords.js?v=202610231305"></script>
-<script src="assets/lesson.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202611090918"></script>
 <script src="assets/pad.js?v=202610231305"></script>
 <script src="assets/calc.js?v=202610231305"></script>
 <script src="assets/casio.js?v=202610231305"></script>
 <script src="assets/board.js?v=202610231305"></script>
 <script src="assets/board-answers.js?v=202610231305"></script>
-<script src="assets/kb.js?v=202611090905"></script>
+<script src="assets/kb.js?v=202610231305"></script>
 <script src="assets/search-index.js?v=202610231305"></script>
 <script src="assets/assistant.js?v=202610231305"></script>
 <script src="assets/site.js?v=202610231305"></script>
@@ -60,6 +60,34 @@ const zLine=(()=>{ const X=z=>40+440*(z+3)/6;
   return s+`<text x="260" y="114" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">z (standard deviations from the mean)</text></svg>`; })();
 
 /* ---------- concept graphics (one per topic, beside the definition) ---------- */
+
+/* ---------- easy-method scenes ---------- */
+const PHI=z=>{ const t=1/(1+0.3275911*Math.abs(z/Math.SQRT2)); const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-z*z/2); return 0.5*(1+(z>=0?y:-y)); };
+function applesOranges(el){
+  el.innerHTML=`<div class="vs"><div><small>Height</small><b>x = 180 cm</b>μ = 170 · σ = 10<div class="rv" hidden>z = (180 − 170) ÷ 10 = <b>1.00</b></div></div><div><small>Exam</small><b>x = 85</b>μ = 70 · σ = 10<div class="rv" hidden>z = (85 − 70) ÷ 10 = <b>1.50</b></div></div></div><button type="button">Convert both to z</button><div class="rv" hidden>The exam score is further from its mean (1.5 SD against 1 SD), so it is more unusual.</div>`;
+  el.querySelector('button').onclick=()=>el.querySelectorAll('.rv').forEach(r=>r.hidden=false); }
+function zReader(el){
+  el.innerHTML=`<div class="tool"><div class="sl"><label for="zr-z">Type z</label><input type="number" id="zr-z" min="0" max="2.09" step="0.01" value="1.40" style="width:6em"><b class="mono" id="zr-out"></b></div><div class="pic" style="overflow-x:auto"></div></div>`;
+  const run=()=>{ let z=Math.abs(parseFloat(el.querySelector('#zr-z').value)); if(isNaN(z)) z=0; z=Math.min(2.09,z); const r=Math.floor(z*10+1e-9)/10, c=Math.round((z-r)*100);
+    const r0=Math.max(0,Math.min(1.6,+(r-0.2).toFixed(1))), rows=[0,1,2,3,4].map(i=>+(r0+i*0.1).toFixed(1));
+    el.querySelector('.pic').innerHTML=`<table class="ztab"><tr><th>z</th>${[0,1,2,3,4,5,6,7,8,9].map(j=>`<th class="${j===c?'zc':''}">.0${j}</th>`).join('')}</tr>${rows.map(rr=>{ const on=Math.abs(rr-r)<1e-6; return `<tr class="${on?'zr':''}"><th>${rr.toFixed(1)}</th>${[0,1,2,3,4,5,6,7,8,9].map(j=>`<td class="${on&&j===c?'zhit':(j===c?'zc':'')}">${PHI(rr+j/100).toFixed(4)}</td>`).join('')}</tr>`; }).join('')}</table>`;
+    el.querySelector('#zr-out').textContent=`row ${r.toFixed(1)} + column .0${c} → area to the left = ${PHI(r+c/100).toFixed(4)}`; };
+  el.querySelector('input').addEventListener('input',run); run(); }
+const miniBell=(a,b)=>{ const W=200,H=86,X=z=>8+184*(z+3.2)/6.4,Y=z=>H-12-62*Math.exp(-z*z/2); let d='',sh='';
+  for(let z=-3.2;z<=3.21;z+=0.05) d+=(d?'L':'M')+X(z).toFixed(1)+' '+Y(z).toFixed(1);
+  for(let z=Math.max(a,-3.2);z<=Math.min(b,3.2)+1e-9;z+=0.05) sh+=(sh?'L':'M')+X(z).toFixed(1)+' '+Y(z).toFixed(1);
+  sh+=`L${X(Math.min(b,3.2)).toFixed(1)} ${H-12}L${X(Math.max(a,-3.2)).toFixed(1)} ${H-12}Z`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Shaded area"><path d="${sh}" fill="var(--wk)" fill-opacity=".35"/><path d="${d}" fill="none" stroke="var(--wk)" stroke-width="2"/><line x1="8" x2="192" y1="${H-12}" y2="${H-12}" stroke="var(--muted)"/></svg>`; };
+const threeCases=`<div class="cases3"><div><small>Less than</small>${miniBell(-9,1)}<code>P(Z &lt; z) = table</code></div><div><small>Greater than</small>${miniBell(1,9)}<code>P(Z &gt; z) = 1 − table</code></div><div><small>Between</small>${miniBell(-0.8,1.4)}<code>table(z<sub>b</sub>) − table(z<sub>a</sub>)</code></div></div>`;
+function step0(el){
+  const T=['<b>Step 0 · Draw and shade.</b> Sketch the bell, put 5.2 in the middle, mark 4 and 7.3, and shade between them. Expect more than half.',
+    '<b>Step 1 · Find z.</b> z<sub>a</sub> = (4 − 5.2) ÷ 1.5 = −0.80 · z<sub>b</sub> = (7.3 − 5.2) ÷ 1.5 = 1.40',
+    '<b>Step 2 · Read the table.</b> Φ(1.40) = 0.9192 · Φ(−0.80) = 0.2119 · between = 0.9192 − 0.2119 = 0.7073',
+    '<b>Step 3 · Answer in context.</b> About 71% of students use the phone between 4 and 7.3 hours a day.'];
+  el.innerHTML=`<div class="tool"><div class="seg2">${['0 · Draw','1 · z','2 · Table','3 · Answer'].map((t,i)=>`<button type="button" aria-pressed="${i===0}">${t}</button>`).join('')}</div><div class="pic"></div><div class="feedback"></div></div>`;
+  const draw=i=>{ el.querySelectorAll('.seg2 button').forEach((b,j)=>b.setAttribute('aria-pressed',j===i)); el.querySelector('.pic').innerHTML=ST.normalCurve(5.2,1.5,4,7.3,i>=1?[4,7.3]:[]); el.querySelector('.feedback').innerHTML=T[i]; };
+  el.querySelectorAll('.seg2 button').forEach((b,i)=>b.addEventListener('click',()=>draw(i))); draw(0); }
+
 const RED='#C62828';
 const G9=(()=>{ const {svg,card,text,arrow,curveArrow,pill,bell,bellArea,zx,axis}=CG;
   /* z-score: a ruler whose step is σ */
@@ -127,6 +155,8 @@ const G9=(()=>{ const {svg,card,text,arrow,curveArrow,pill,bell,bellArea,zx,axis
 Lesson.mount({
   week:9, clo:'CLO 2', title:'The Standard Normal Distribution and z-Scores', chapter:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)',
   intro:'Every normal curve becomes one curve, N(0, 1), once values are turned into z-scores. One table then gives every probability.',
+  opener:[
+    {tag:'Think first', title:'Apples and oranges', text:'Sara is 180 cm tall. Omar scored 85 in an exam. Which one is more unusual? Different units: we cannot compare them directly.', build:applesOranges}],
   topics:[
   { id:'z-score', title:'The z-score',
     def:'A <b>z-score</b> counts how many standard deviations a value is from the mean. Positive: above the mean. Negative: below. z = 0: at the mean.',
@@ -155,7 +185,7 @@ Lesson.mount({
   { id:'z-table', demo:'Your professor reads the z-table on the board: row, column, area.', title:'Reading the z-table: area to the left',
     def:'The standard normal table gives the <b>area to the left</b> of z: <b>Φ(z) = P(Z &lt; z)</b>. Row: z to one decimal. Column: the second decimal.',
     defFig:{label:'Row + column → area', html:G9.tb},
-    life:{text:'Same screen times, μ = 5.2 h, σ = 1.5 h. What proportion of students use the phone less than 7.3 h?'},
+    life:{text:'Same screen times, μ = 5.2 h, σ = 1.5 h. What proportion of students use the phone less than 7.3 h? First, practise reading the table: type any z.', fig:{label:'Row + column → area', build:zReader}},
     formula:{f:`${T('P','P('+v('X')+' &lt; '+v('x')+')')} = ${T('Z','P('+v('Z')+' &lt; '+v('z')+')')} = ${T('phi','Φ('+v('z')+')')}`,
       parts:[['P','<b>P(X &lt; x)</b>: the question, in hours.'],['Z','<b>P(Z &lt; z)</b>: the same area on the z-scale.'],['phi','<b>Φ(z)</b>: the table value, area to the left.']],
       sub:'P(X &lt; 7.3) = P(Z &lt; 1.40)', subNote:'z = 1.40 from topic 1. Row 1.4, column .00.',
@@ -165,8 +195,8 @@ Lesson.mount({
 
   { id:'right-between', title:'Greater than, and between two values',
     def:'Total area = 1. <b>Greater than</b>: P(Z &gt; z) = 1 − Φ(z). <b>Between</b>: P(a &lt; X &lt; b) = Φ(z<sub>b</sub>) − Φ(z<sub>a</sub>), big area minus small area.',
-    defFig:{label:'Big area − small area', html:G9.btw},
-    life:{text:'Same screen times. What proportion use the phone between 4 h and 7.3 h?'},
+    defFig:{label:'Three cases · the table gives the left area', html:threeCases},
+    life:{text:'Same screen times. What proportion use the phone between 4 h and 7.3 h? Always start with Step 0.', fig:{label:'Step 0 first', build:step0}},
     formula:[{name:'Greater than', f:`${T('P','P('+v('X')+' &gt; '+v('x')+')')} = ${T('one','1')} − ${T('phi','Φ('+v('z')+')')}`,
       parts:[['P','<b>P(X &gt; x)</b>: the area to the right of x.'],['one','<b>1</b>: the total area.'],['phi','<b>Φ(z)</b>: the table value, area to the left. z = 1.40 → 0.9192.']],
       sub:'P(X &gt; 7.3) = 1 − 0.9192', keys:'1 − 0 . 9 1 9 2 =', ans:`<div class="m">P(X &gt; 7.3) = <b>0.0808</b></div>`, ansRaw:true},
@@ -186,6 +216,12 @@ Lesson.mount({
       sub:'x = 5.2 + 0.84 × 1.5', keys:'5 . 2 + 0 . 8 4 × 1 . 5 =', ans:`<div class="m">x ≈ <b>6.46</b> hours</div>`, ansRaw:true},
     meaning:{text:'Students above 6.46 h a day are the top 20% of users. 6.46 h is the 80th percentile.', fig:{label:'Shaded: top 20%', html:ST.normalCurve(5.2,1.5,6.46,1e9,[6.46])}} }
   ],
+  mistakes:[
+    ['<code>7.3 − 5.2 ÷ 1.5</code> = 3.83','<code>(7.3 − 5.2) ÷ 1.5</code> = 1.40 · brackets first'],
+    ['P(Z &gt; 1.40) = 0.9192','1 − 0.9192 = 0.0808 · the table is the left area'],
+    ['Using σ² = 2.25 as the ruler','Use σ = 1.5, not the variance'],
+    ['x = 4 gives z = +0.80','Below the mean: z = −0.80'],
+    ['Reading z = 1.40 in row 1.0, column .40','Row 1.4, column .00']],
   inClass:{intro:'Sketch, shade, find z, read the table: we do each step together on the board.', items:[
     {q:'Delivery times of a food app are normal with μ = 32 minutes and σ = 6 minutes. Sketch and shade, then find (a) P(X &lt; 40), (b) P(X &gt; 27), (c) P(29 &lt; X &lt; 41). Data: illustrative.', draw:true, tips:['Round z to 2 decimals.','Greater than: 1 − table value.','Between: big area − small area.']},
     {q:'Leila scores 68 in a test with μ = 60, σ = 5. Omar scores 80 in a different test with μ = 72, σ = 6. Who did better relative to their class? What proportion of each class scored below them? Data: illustrative.', tips:['One z for each student.','Higher z = relatively better.','Proportion below = table value.']}]},
@@ -195,6 +231,11 @@ Lesson.mount({
     {t:'Table',items:['Φ(z) = area to the left','Row: 1 decimal, column: 2nd']},
     {t:'Areas',items:['Less than: Φ(z)','Greater than: 1 − Φ(z)','Between: Φ(z_b) − Φ(z_a)']},
     {t:'Back to x',items:['Area → z inside the table','x = μ + zσ']}]}},
+  exit:[
+    ['z = 2.0 means…',['2 SD above the mean','2% of students','x = 2'],0,'z counts standard deviations from the mean.'],
+    ['P(Z &gt; 1.5) =',['0.9332','0.0668','1.5'],1,'The table gives the left area: 1 − 0.9332.'],
+    ['μ = 50, σ = 5, x = 40: z =',['2','−2','−10'],1,'(40 − 50) ÷ 5 = −2.'],
+    ['Before any calculation, you…',['read the table','draw and shade','find x'],1,'Step 0: draw and shade, so you know what area you expect.']],
   practice:[
     {check:[{l:'z',v:1.4,tol:0.006}],revise:'z = (x − μ) ÷ σ. Subtract in brackets first, then divide.',see:{t:'Revise: The z-score',href:'#z-score'},type:'Easy',q:'μ = 40, σ = 5. Find the z-score of x = 47.',hint:MA({b:[gZ(47,40,5)]},{s:[['Meaning','x = 47 is <b>1.4 SDs above</b> the mean.']]})},
     {check:[{l:'P(Z &lt; 0.84)',v:0.7995}],revise:'Row 0.8, column 0.04. The table gives the area to the left directly.',see:{t:'Revise: Reading the z-table: area to the left',href:'#z-table'},type:'Easy',q:'Find P(Z &lt; 0.84).',hint:BA.steps([['Table','Row 0.8, column .04'],['Answer','P(Z &lt; 0.84) = <b>0.7995</b>']])},

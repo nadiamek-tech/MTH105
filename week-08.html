@@ -7,32 +7,32 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=202611021159">
-<link rel="stylesheet" href="assets/stats.css?v=202611021159">
-<link rel="stylesheet" href="assets/banner.css?v=202611021159">
-<link rel="stylesheet" href="assets/lesson.css?v=202611021159">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202611090918">
 <style>
 :root{--wk:#4338CA;--wk-soft:rgba(67,56,202,0.09);--wk-d:#A5B4FF;--wk-soft-d:rgba(165,180,255,0.14)}
 </style>
 </head>
 <body>
-<script src="assets/supports.js?v=202611021159"></script>
-<script src="assets/course.js?v=20261103p"></script>
-<script src="assets/stats.js?v=202611021159"></script>
-<script src="assets/concept.js?v=202611021159"></script>
-<script src="assets/decode.js?v=202611021159"></script>
-<script src="assets/professor.js?v=202611021159"></script>
-<script src="assets/keywords.js?v=202611021159"></script>
-<script src="assets/lesson.js?v=1793616787"></script>
-<script src="assets/pad.js?v=20261103p"></script>
-<script src="assets/calc.js?v=202611021159"></script>
-<script src="assets/casio.js?v=202611021159"></script>
-<script src="assets/board.js?v=202611021159"></script>
-<script src="assets/board-answers.js?v=202611021159"></script>
-<script src="assets/kb.js?v=202611090905"></script>
-<script src="assets/search-index.js?v=202611021159"></script>
-<script src="assets/assistant.js?v=202611021159"></script>
-<script src="assets/site.js?v=202611021159"></script>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/concept.js?v=202610231305"></script>
+<script src="assets/decode.js?v=202610231305"></script>
+<script src="assets/professor.js?v=202610231305"></script>
+<script src="assets/keywords.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202611090918"></script>
+<script src="assets/pad.js?v=202610231305"></script>
+<script src="assets/calc.js?v=202610231305"></script>
+<script src="assets/casio.js?v=202610231305"></script>
+<script src="assets/board.js?v=202610231305"></script>
+<script src="assets/board-answers.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202610231305"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
 <script>
 const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
 const {T, fr, sq, SG, XB, PH, v} = F;
@@ -80,6 +80,19 @@ const pieces=(()=>{ const X=k=>14+492*(k+3.6)/7.2;
   const lab=[[0.5,'34%',140],[1.5,'13.5%',140],[2.5,'2.35%',118]];
   return ST.normalCurve(72,6,78,1e9,[66,78]).replace('</svg>',lab.map(([k,t,y])=>[k,-k].map(s=>`<text x="${X(s)}" y="${y}" text-anchor="middle" ${MONO} font-size="11" font-weight="600" fill="var(--ink)">${t}</text>`).join('')).join('')+'</svg>'); })();
 
+
+/* ---------- easy-method scenes (bridge, hook, area slider) ---------- */
+const PHI=z=>{ const t=1/(1+0.3275911*Math.abs(z/Math.SQRT2)); const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-z*z/2); return 0.5*(1+(z>=0?y:-y)); };
+const vsCard=`<div class="vs"><div><small>Weeks 6–7 · Binomial</small><b>Counting</b><ul><li>Whole numbers: 0, 1, 2, 3…</li><li>Number of successes in n trials</li><li>Bars on a chart</li></ul></div><div><small>Week 8 · Normal</small><b>Measuring</b><ul><li>Any value: 172.4 cm, 8.25 min</li><li>Height, time, exam marks</li><li>A smooth curve</li></ul></div></div>`;
+function hookQ(el){ el.innerHTML=`<button type="button" aria-expanded="false">Show the answer</button><div class="rv" hidden>Many small effects (sleep, practice, luck) add up. Some push up, some push down, and most cancel out. That pile-up in the middle is the bell shape.</div>`;
+  const b=el.querySelector('button'), r=el.querySelector('.rv'); b.onclick=()=>{ r.hidden=!r.hidden; b.setAttribute('aria-expanded',!r.hidden); b.textContent=r.hidden?'Show the answer':'Hide the answer'; }; }
+function areaTool(el){
+  el.innerHTML=`<div class="tool"><div class="sl"><label for="ar-x">Height x</label><input type="range" id="ar-x" min="146" max="194" value="178"><b class="mono" id="ar-xv"></b></div><div class="pic"></div><div class="feedback"></div></div>`;
+  const run=()=>{ const x=+el.querySelector('#ar-x').value; el.querySelector('#ar-xv').textContent=x+' cm';
+    el.querySelector('.pic').innerHTML=ST.normalCurve(170,8,-1e9,x,[x]);
+    el.querySelector('.feedback').innerHTML=`Shaded: students shorter than <b>${x} cm</b>. Area = <b>${PHI((x-170)/8).toFixed(4)}</b>, about <b>${Math.round(PHI((x-170)/8)*100)}%</b>. The whole area is 1.`; };
+  el.querySelector('input').addEventListener('input',run); run(); }
+
 /* ---------- concept graphics (one per topic, beside the definition) ---------- */
 const G8=(()=>{ const {svg,card,text,arrow,pill,bell,bellArea,zx,axis}=CG;
   const H=[2,6,14,20,14,6,2];
@@ -121,12 +134,15 @@ const G8=(()=>{ const {svg,card,text,arrow,pill,bell,bellArea,zx,axis}=CG;
 Lesson.mount({
   week:8, clo:'CLO 2', title:'The Normal Distribution', chapter:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)',
   intro:'Binomial X was counted. Height, time and weight are measured: they are continuous. Their most common model is the bell-shaped normal curve.',
+  opener:[
+    {tag:'Bridge', title:'From counting to measuring', text:'Last weeks we counted successes. This week we measure: height, time, weight.', html:vsCard},
+    {tag:'Think first', title:'Why do most students score near the middle of an exam?', text:'Very high and very low marks are rare. Think, then check.', build:hookQ}],
   topics:[
   { id:'density', title:'From histogram to density curve',
     def:'A <b>continuous</b> random variable can take any value in a range, decimals included. Its distribution is a smooth <b>density curve</b>. The total area under the curve is 1.',
     defFig:{label:'From bars to a curve', html:G8.dens},
     life:{text:'Student heights in cm. With more data and thinner bars, the histogram turns into a smooth curve. Data: simulated.', fig:{label:'Add more data', build:smoothTool}},
-    meaning:{text:'For a continuous X, <b>probability = area under the curve</b> between two values. P(X = one exact value) is 0, so P(X &lt; a) and P(X ≤ a) are the same.'} },
+    meaning:{text:'For a continuous X, <b>probability = area under the curve</b> between two values. P(X = one exact value) is 0, so P(X &lt; a) and P(X ≤ a) are the same.', fig:{label:'Area = probability · move x', build:areaTool, caption:'Heights, μ = 170 cm, σ = 8 cm.'}} },
 
   { id:'normal-curve', title:'The normal distribution N(μ, σ)',
     def:'The <b>normal distribution</b> is bell-shaped and symmetric. Mean = median = mode, at the peak. It is written <b>X ~ N(μ, σ)</b>.',
@@ -153,6 +169,11 @@ Lesson.mount({
       sub:`P(X &gt; 78) = ${fr('100% − 68%','2')}`, keys:'( 1 0 0 − 6 8 ) ÷ 2 =', ans:`<div class="m">P(X &gt; 78) = <b>16%</b> = 0.16</div>`, ansRaw:true},
     meaning:{text:'Add the pieces: 50% on each side of μ, then 34%, 13.5%, 2.35% and 0.15% moving out. Above 78: 13.5 + 2.35 + 0.15 = 16%.', fig:{label:'Heart rate · shaded: above 78 bpm', html:pieces}} }
   ],
+  mistakes:[
+    ['Using the variance: σ² = 36 as the ruler','Use σ = 6, the standard deviation'],
+    ['68% is above μ + 1σ','68% is <b>between</b> μ − 1σ and μ + 1σ'],
+    ['Tail beyond 2σ = 5%','Two tails share 5%: one tail = 2.5%'],
+    ['72 − 2 × 6 typed as (72 − 2) × 6','Multiply first: 72 − 12 = 60']],
   inClass:{intro:'We draw the curve and mark the bands together on the board.', items:[
     {q:'The battery life of a phone model is normal with μ = 20 hours and σ = 2 hours. Draw the curve and mark μ ± 1σ, 2σ and 3σ. Between which values do about 68%, 95% and 99.7% of batteries last? Data: illustrative.', draw:true, tips:['Put μ in the middle of the axis.','Add and subtract σ each step.','Label each band with its percentage.']},
     {q:'Same batteries. What percentage last (a) more than 24 hours, (b) less than 18 hours, (c) between 18 and 24 hours? Shade each area first.', draw:true, tips:['24 = μ + 2σ; 18 = μ − 1σ.','Use 34%, 13.5%, 2.35%, 0.15%.','Tail beyond kσ = (100% − band) ÷ 2.']}]},
@@ -161,6 +182,11 @@ Lesson.mount({
     {t:'Shape',items:['Bell, symmetric','Mean = median = mode','μ: centre, σ: width']},
     {t:'Rule',items:['68% within μ ± 1σ','95% within μ ± 2σ','99.7% within μ ± 3σ']},
     {t:'Tails',items:['Tail = (100% − band) ÷ 2','34%, 13.5%, 2.35%, 0.15%']}]}},
+  exit:[
+    ['Height, weight and time are…',['counted','measured'],1,'They are measured, so they are continuous.'],
+    ['In a normal curve, the mean, median and mode are…',['equal, at the peak','all different'],0,'The curve is symmetric, so all three sit at the peak.'],
+    ['About what share lies within μ ± 2σ?',['68%','95%','99.7%'],1,'Two standard deviations: about 95%.'],
+    ['The whole area under the curve is…',['1','100','σ'],0,'Total probability is 1.']],
   practice:[
     {check:[{l:'Lower',v:46},{l:'Upper',v:54}],revise:'About 68% of the data lie within μ ± 1σ.',see:{t:'Revise: The 68–95–99.7 rule',href:'#empirical-rule'},type:'Easy',q:'X ~ N(50, 4). Between which values are about 68% of the data?',hint:BA.board(gBand(50,4,1,68))},
     {check:[{l:'Lower',v:140,u:'cm'},{l:'Upper',v:180,u:'cm'}],revise:'About 95% lie within μ ± 2σ: subtract and add 2 × σ, not σ.',see:{t:'Revise: The 68–95–99.7 rule',href:'#empirical-rule'},type:'Easy',q:'Adult heights: μ = 160 cm, σ = 10 cm. Between which heights are about 95%? Data: illustrative.',hint:BA.board(gBand(160,10,2,95,'cm'))},
