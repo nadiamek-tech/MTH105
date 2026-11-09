@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=1793618559">
+<link rel="stylesheet" href="assets/course.css">
 <style>
 :root{--wk:#1F3864;--wk-soft:rgba(31,56,100,.08);--ok:#1E7F4F;--bad:#C62828}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-display)}
@@ -530,7 +530,7 @@ plans(m){ const weeks=Object.keys(B.lessons).filter(w=>B.lessons[w]).map(Number)
     L.topics.forEach(t=>S.push({ph:'ido',lbl:'I do',t:t.t,d:t.def,demo:t.demo,f:t.f,min:tp,flow:['Definition + graphic','Example around us',...(t.f?['Formula: decoded, numbers in, calculator']:[]),'What it means']}));
     if(L.inClass) S.push({ph:'wedo',lbl:'We do',t:'Solve on paper together',d:L.inClass.intro,items:L.inClass.items,min:we,flow:['Students try first','Live board + calculator','Model answers from the side button']});
     S.push({ph:'close',lbl:'Close',t:'Takeaways and next steps',d:`The takeaways mind map, one exit question, and the ${L.practice} practice questions on the lecture page.`,min:5}); return S; };
-  const show=w=>{ const L=B.lessons[w], N=B.notes[w]||{watch:[],board:[]}, k=String(w).padStart(2,'0'), released=+w<=8, c=colOf(w), S=steps(w), tot=S.reduce((a,s)=>a+s.min,0), CK=LS.get('prof-plan-check',{}), ck=CK[w]||[];
+  const show=w=>{ const L=B.lessons[w], N=B.notes[w]||{watch:[],board:[]}, k=String(w).padStart(2,'0'), released=true, c=colOf(w), S=steps(w), tot=S.reduce((a,s)=>a+s.min,0), CK=LS.get('prof-plan-check',{}), ck=CK[w]||[];
     m.querySelectorAll('#wr button').forEach(b=>b.setAttribute('aria-current',+b.dataset.w===w)); m.style.setProperty('--c',c);
     const before=['Print the in-class handout for students without devices','Open the live board on your tablet; class link on the projector','Paper, pen and calculator on every desk','Review "Watch for" below'];
     $('#plan',m).innerHTML=`<div class="anim">

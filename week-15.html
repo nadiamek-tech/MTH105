@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Week 15 · Interpreting Regression</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202610231305">
+<style>
+:root{--wk:#4D7C0F;--wk-soft:rgba(77,124,15,0.09);--wk-d:#B5E36B;--wk-soft-d:rgba(181,227,107,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/concept.js?v=202610231305"></script>
+<script src="assets/decode.js?v=202610231305"></script>
+<script src="assets/professor.js?v=202610231305"></script>
+<script src="assets/keywords.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202610231305"></script>
+<script src="assets/pad.js?v=202610231305"></script>
+<script src="assets/calc.js?v=202610231305"></script>
+<script src="assets/casio.js?v=202610231305"></script>
+<script src="assets/board.js?v=202610231305"></script>
+<script src="assets/board-answers.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202611090905"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
+<script>
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice model answers: formula calculations written on the board (assets/board.js), everything else typed */
+const BD=Board, XBd=BA.XB, LCD=BA.lcd, bL=BD.line, bA=h=>BD.line(h,'ans'), bF=BD.frac;
+const bX=(pre,top,bot,o={})=>`<div class="bfx">${pre?`<span>${pre}</span>`:''}${bF(o.plain?top:`<span class="g">${top}</span>`,o.plain?bot:`<span class="r">${bot}</span>`)}${o.after?`<span>${o.after}</span>`:''}${o.n||o.d?`<span class="bnote"><span class="g">${o.n?'⟶ '+o.n:''}</span><span class="r">${o.d?'⟶ '+o.d:''}</span></span>`:''}</div>`;
+/* long calculator entries with no + to break on: wrap them on × ÷ − so the whole entry stays on the screen */
+const bWrap=e=>{ const tk=e.split(/(?<=\+)/).flatMap(s=>s.length>21?s.split(/(?<=[×÷−])/):[s]), out=[]; let c='';
+  tk.forEach(t=>{ if((c+t).length>21&&c){ out.push(c); c=t; } else c+=t; }); if(c) out.push(c); return out; };
+let bK=0;
+const bMake=gs=>{ const rep=[]; const g2=gs.map(g=>{ if(!g.calc||!g.calc[0].split(/(?<=\+)/).some(s=>s.length>22)) return g;
+    const ch=bWrap(g.calc[0]), id=bK++, ph=ch.map((c,i)=>`Q${id}Z${i}`.padEnd(21,'Z')); rep.push([ph,ch,g.calc[0],ph.join('+')]); return Object.assign({},g,{calc:[ph.join('+'),g.calc[1]]}); });
+  let h=BD.make(g2); rep.forEach(([ph,ch,real,fake])=>{ h=h.replace(`Calculator: ${fake} =`,`Calculator: ${real} =`); ph.forEach((p,i)=>{ h=h.replace(p+(i<ph.length-1?'+':''),ch[i]); }); }); return h; };
+const bT=BA.steps, bM=(...ps)=>ps.map(p=>Array.isArray(p)?bMake(p):p).join('')+`<p class="bd-foot">${BA.HOW}</p>`;
+/* (no extra helpers for week 15) */
+/* scatterplot: points, optional fitted line ŷ = a + bx, optional residual segments, extra marks */
+function scat(o){
+  const Wd=o.w||480,Hd=o.h||270,L=48,R=14,Tp=14,B=42,[x0,x1]=o.xr,[y0,y1]=o.yr;
+  const X=v=>L+(Wd-L-R)*(v-x0)/(x1-x0), Y=v=>Tp+(Hd-Tp-B)*(1-(v-y0)/(y1-y0));
+  let s=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="${o.label||'Scatterplot'}">`;
+  (o.yt||[]).forEach(t=>{ s+=`<line x1="${L}" x2="${Wd-R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(t)+4}" text-anchor="end" ${MONO} font-size="11" fill="var(--muted)">${t}</text>`; });
+  (o.xt||[]).forEach(t=>{ s+=`<text x="${X(t)}" y="${Hd-B+16}" text-anchor="middle" ${MONO} font-size="11" fill="var(--muted)">${t}</text>`; });
+  s+=`<line x1="${L}" x2="${L}" y1="${Tp}" y2="${Hd-B}" stroke="var(--ink)"/><line x1="${L}" x2="${Wd-R}" y1="${Hd-B}" y2="${Hd-B}" stroke="var(--ink)"/>`;
+  s+=`<text x="${(L+Wd-R)/2}" y="${Hd-6}" text-anchor="middle" ${FT} font-size="12" fill="var(--ink)">${o.xl}</text><text transform="translate(13 ${(Tp+Hd-B)/2}) rotate(-90)" text-anchor="middle" ${FT} font-size="12" fill="var(--ink)">${o.yl}</text>`;
+  if(o.line){ const [a,b]=o.line, lx=o.lx||[x0,x1];
+    if(o.resid) o.x.forEach((x,i)=>{ s+=`<line x1="${X(x)}" x2="${X(x)}" y1="${Y(o.y[i])}" y2="${Y(a+b*x)}" stroke="var(--c3)" stroke-width="2" stroke-dasharray="4 3"/>`; });
+    s+=`<line x1="${X(lx[0])}" y1="${Y(a+b*lx[0])}" x2="${X(lx[1])}" y2="${Y(a+b*lx[1])}" stroke="var(--wk)" stroke-width="2.4"/>`; }
+  if(o.extra) s+=o.extra(X,Y);
+  o.x.forEach((x,i)=>{ s+=`<circle cx="${X(x)}" cy="${Y(o.y[i])}" r="5.5" fill="var(--c2)" stroke="var(--surface)" stroke-width="1.5"/>`; });
+  return s+'</svg>';
+}
+const tbl=(h,rows,foot)=>`<div class="tblwrap"><table class="tbl"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}${foot?`<tr>${foot.map(x=>`<th>${x}</th>`).join('')}</tr>`:''}</table></div>`;
+const MG=a=>`<div class="mg">${a.map(([l,t])=>l==='Calculator'?`<div><span>Calculator</span>${F.keys(t)}</div>`:`<div${l==='Answer'?' class="fin"':''}><span>${l}</span><span>${t}</span></div>`).join('')}</div>`;
+const lab=(X,Y,x,y,t,dx,dy,c)=>`<text x="${X(x)+(dx||0)}" y="${Y(y)+(dy||0)}" ${MONO} font-size="11" font-weight="600" fill="${c||'var(--ink)'}">${t}</text>`;
+
+/* deliveries from Week 14: ŷ = 8 + 3x. Data: illustrative */
+const DX=[2,4,5,7,8], DY=[16,19,21,27,35];
+const deliv=o=>scat(Object.assign({x:DX,y:DY,xr:[0,9],yr:[5,40],xt:[0,1,2,3,4,5,6,7,8,9],yt:[5,10,15,20,25,30,35,40],xl:'Distance (km)',yl:'Delivery time (min)',label:'Scatterplot of distance and delivery time'},o||{}));
+const RES=DX.map((x,i)=>DY[i]-(8+3*x));
+
+const SHARE=`<svg viewBox="0 0 520 92" role="img" aria-label="90% of the variation explained, 10% not explained"><rect x="20" y="20" width="${480*.9}" height="34" rx="6" fill="var(--wk)"/><rect x="${20+480*.9}" y="20" width="${480*.1}" height="34" rx="6" fill="var(--line)"/><text x="${20+480*.45}" y="42" text-anchor="middle" ${FT} font-weight="700" font-size="13" fill="#fff">90% explained by distance</text><text x="${20+480*.95}" y="42" text-anchor="middle" ${FT} font-weight="700" font-size="12" fill="var(--ink)">10%</text><text x="500" y="76" text-anchor="end" ${FT} font-size="12" fill="var(--muted)">other factors: traffic, weather, waiting</text></svg>`;
+
+const LURK=`<svg viewBox="0 0 520 170" role="img" aria-label="Summer heat drives both ice-cream sales and air-conditioner sales"><defs><marker id="ar15" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--ink)"/></marker></defs>
+  <rect x="180" y="10" width="160" height="40" rx="10" fill="var(--wk-soft)" stroke="var(--wk)" stroke-width="2"/><text x="260" y="35" text-anchor="middle" ${FT} font-weight="700" font-size="13" fill="var(--ink)">Summer heat</text>
+  <rect x="20" y="112" width="170" height="40" rx="10" fill="var(--surface)" stroke="var(--ink)"/><text x="105" y="137" text-anchor="middle" ${FT} font-size="13" fill="var(--ink)">Ice-cream sales</text>
+  <rect x="330" y="112" width="170" height="40" rx="10" fill="var(--surface)" stroke="var(--ink)"/><text x="415" y="137" text-anchor="middle" ${FT} font-size="13" fill="var(--ink)">AC sales</text>
+  <line x1="230" y1="50" x2="130" y2="110" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#ar15)"/><line x1="290" y1="50" x2="390" y2="110" stroke="var(--ink)" stroke-width="1.8" marker-end="url(#ar15)"/>
+  <line x1="190" y1="132" x2="330" y2="132" stroke="var(--c2)" stroke-width="2" stroke-dasharray="6 4"/><text x="260" y="124" text-anchor="middle" ${MONO} font-size="11" fill="var(--c2)">high r</text><text x="260" y="150" text-anchor="middle" ${MONO} font-size="11" fill="var(--c2)">no cause</text></svg>`;
+
+function cautions(el){
+  const CX=[1,2,3,4,5,6,7], CY=[2,6,9,10,9,6,2], c=ST.regStats(CX,CY);
+  const OX=DX.concat([9]), OY=DY.concat([12]), o=ST.regStats(OX,OY);
+  const curve=scat({x:CX,y:CY,line:[c.a,c.b],xr:[0,8],yr:[0,12],xt:[1,3,5,7],yt:[0,4,8,12],xl:'Curved: r = 0',yl:'y',w:300,h:240,label:'Curved pattern with r = 0'});
+  const out=scat({x:OX,y:OY,xr:[0,10],yr:[5,40],xt:[0,2,4,6,8,10],yt:[10,20,30,40],xl:'One outlier at (9, 12)',yl:'Time (min)',w:300,h:240,label:'An outlier changes the line',
+    extra:(X,Y)=>`<line x1="${X(1)}" y1="${Y(8+3*1)}" x2="${X(10)}" y2="${Y(8+3*10)>Y(40)?Y(8+3*10):Y(40)}" stroke="var(--muted)" stroke-width="2" stroke-dasharray="6 4"/><line x1="${X(0.5)}" y1="${Y(o.a+o.b*0.5)}" x2="${X(10)}" y2="${Y(o.a+o.b*10)}" stroke="var(--wk)" stroke-width="2.4"/><circle cx="${X(9)}" cy="${Y(12)}" r="10" fill="none" stroke="var(--wk)" stroke-width="2"/>`});
+  el.innerHTML=BA.side([['Curve',curve],['Outlier',out]]);
+}
+
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G15=(()=>{ const {svg,card,text,arrow,brace,pill,cross}=CG;
+  const dot=(x,y,c='var(--c2)',r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+  const ax=(x0,y0,x1,y1)=>`<path d="M${x0},${y1} L${x0},${y0} L${x1},${y0}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`;
+  /* slope in context: +1 unit of x gives +b units of y */
+  const row=(y,l1,s1,l2,s2,c,op)=>card(20,y,190,74,c,{op})+text(115,y+36,l1,{a:'middle',s:24,w:800,mono:true})+text(115,y+60,s1,{a:'middle',s:12,c:'var(--muted)'})+
+    arrow(220,y+37,296,y+37,c,2.4)+card(306,y,194,74,c,{op})+text(403,y+36,l2,{a:'middle',s:24,w:800,mono:true,c})+text(403,y+60,s2,{a:'middle',s:12,c:'var(--muted)'});
+  const coef=svg(520,250,
+    row(20,'+1','unit of x','+b','units of y','var(--wk)',.1)+
+    text(20,140,'Deliveries: b = 3',{s:12,w:700,c:'var(--muted)',mono:true})+
+    row(152,'+1 km','distance','+3 min','delivery time','var(--c2)',.07),
+    'Slope in context: one more unit of x changes the predicted y by b units of y');
+  /* r²: square r; the shaded part of the unit square is the share explained */
+  const r2=svg(520,250,
+    `<rect x="40" y="20" width="180" height="180" fill="var(--muted)" fill-opacity=".1" stroke="var(--muted)" stroke-width="1.5"/>`+
+    `<rect x="40" y="56" width="144" height="144" fill="var(--wk)" fill-opacity=".3" stroke="var(--wk)" stroke-width="2"/>`+
+    text(112,124,'r²',{a:'middle',s:26,w:800,it:true,c:'var(--wk)'})+text(112,148,'= 0.64',{a:'middle',s:16,w:800,mono:true})+
+    brace(40,184,206,false)+text(112,232,'r = 0.8',{a:'middle',s:14,w:700,mono:true,c:'var(--wk)'})+
+    pill(262,30,236,36,'(0.8)² = 0.64')+
+    `<rect x="262" y="96" width="18" height="18" rx="4" fill="var(--wk)" fill-opacity=".45"/>`+text(290,111,'64% explained by x',{s:15,w:700,c:'var(--wk)'})+
+    `<rect x="262" y="132" width="18" height="18" rx="4" fill="var(--muted)" fill-opacity=".25"/>`+text(290,147,'36% other factors',{s:15,w:700,c:'var(--muted)'})+
+    text(262,192,'square r: 0.8 is not 80%',{s:13,c:'var(--ink)'}),
+    'Square r to get r squared: r = 0.8 gives 0.64, so 64% of the variation in y is explained by x');
+  /* residual: vertical gap from the point to the line */
+  const yl=x=>184-(x-50)*0.3;
+  const res=svg(520,250,
+    ax(50,206,500,16)+`<line x1="50" x2="496" y1="${yl(50)}" y2="${yl(496)}" stroke="var(--wk)" stroke-width="3"/>`+
+    `<line x1="180" x2="180" y1="78" y2="${yl(180)}" stroke="var(--c3)" stroke-width="3" stroke-dasharray="5 4"/>`+dot(180,yl(180),'var(--wk)',4)+dot(180,78,'var(--c3)',8)+
+    text(194,83,'y',{s:15,w:800,mono:true})+text(192,yl(180)+22,'ŷ',{s:15,w:800,mono:true,c:'var(--wk)'})+text(168,118,'e > 0',{a:'end',s:15,w:800,mono:true,c:'var(--c3)'})+text(168,136,'above',{a:'end',s:12,c:'var(--muted)'})+
+    `<line x1="380" x2="380" y1="${yl(380)}" y2="168" stroke="${RED}" stroke-width="3" stroke-dasharray="5 4"/>`+dot(380,yl(380),'var(--wk)',4)+dot(380,168,RED,8)+
+    text(368,yl(380)-10,'ŷ',{a:'end',s:15,w:800,mono:true,c:'var(--wk)'})+text(394,173,'y',{s:15,w:800,mono:true})+text(392,128,'e < 0',{s:15,w:800,mono:true,c:RED})+text(392,146,'below',{s:12,c:'var(--muted)'})+
+    pill(60,16,170,34,'e = y − ŷ'),
+    'A residual is the vertical gap from the point to the line: positive above the line, negative below');
+  /* extrapolation: the line is only trusted inside the range of the data */
+  const ye=x=>188-(x-50)*0.3;
+  const pts=[[110,176],[140,150],[170,160],[200,136],[232,140],[262,118],[290,122]];
+  const ext=svg(520,250,
+    `<rect x="100" y="34" width="200" height="174" fill="var(--wk)" fill-opacity=".08"/>`+text(200,52,'data range',{a:'middle',s:13,w:700,c:'var(--wk)'})+
+    ax(50,208,504,24)+pts.map(([x,y])=>dot(x,y,'var(--c2)',5)).join('')+
+    `<line x1="100" x2="300" y1="${ye(100)}" y2="${ye(300)}" stroke="var(--wk)" stroke-width="3"/><line x1="300" x2="490" y1="${ye(300)}" y2="${ye(490)}" stroke="var(--wk)" stroke-width="3" stroke-dasharray="8 6" stroke-opacity=".6"/>`+
+    cross(460,ye(460)-30,13,RED)+text(400,170,'extrapolation',{a:'middle',s:15,w:800,c:RED})+text(400,190,'no data here',{a:'middle',s:12,c:'var(--muted)'})+
+    text(200,232,'trust',{a:'middle',s:13,w:700,c:'var(--wk)'})+text(400,232,'do not trust',{a:'middle',s:13,w:700,c:RED}),
+    'Inside the data range the line can be used; far outside it (extrapolation) the prediction is not reliable');
+  return {coef,r2,res,ext};
+})();
+
+Lesson.mount({
+  week:15, clo:'CLO 5', title:'Interpreting Regression', chapter:'Ch 4: Regression Analysis: Exploring Associations between Variables · Gould, Ryan & Wong (2020)',
+  intro:'The line is found. Now: what b, a and r² say, how far the points are from the line, and when not to trust it.',
+  topics:[
+  { id:'coefficients', title:'Interpreting the slope and the intercept',
+    def:'<b>Slope b</b>: for each 1-unit increase in x, ŷ changes by b units of y. <b>Intercept a</b>: the predicted y when x = 0. It has a practical meaning only if x = 0 makes sense and lies near the data.',
+    defFig:{label:'Slope in context', html:G15.coef},
+    life:{text:'Deliveries from Week 14: ŷ = 8 + 3x, x = distance (km), y = delivery time (min). Data: illustrative.',
+      fig:{label:'ŷ = 8 + 3x', html:deliv({line:[8,3],lx:[0,9],extra:(X,Y)=>`<rect x="${X(2)}" y="${Y(40)}" width="${X(8)-X(2)}" height="${Y(5)-Y(40)}" fill="var(--wk-soft)"/><text x="${X(5)}" y="${Y(38)}" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">data: 2 to 8 km</text><line x1="${X(3)}" x2="${X(7)}" y1="${Y(17)}" y2="${Y(17)}" stroke="var(--ink)" stroke-dasharray="4 3"/><line x1="${X(7)}" x2="${X(7)}" y1="${Y(17)}" y2="${Y(29)}" stroke="var(--ink)" stroke-dasharray="4 3"/>${lab(X,Y,4.3,17,'+4 km',0,16)}${lab(X,Y,7,23,'+12 min',6,0)}<circle cx="${X(0)}" cy="${Y(8)}" r="5" fill="var(--wk)"/>${lab(X,Y,0,8,'a = 8',8,-8,'var(--wk)')}`})}},
+    formula:{f:`${T('dy','change in '+v('ŷ'))} = ${T('b',v('b'))} × ${T('dx','change in '+v('x'))}`,
+      parts:[['dy','How much the prediction changes.'],['b','<b>b</b> = 3 minutes per km.'],['dx','How much x changes: here 4 km more.']],
+      sub:'change in ŷ = 3 × 4', keys:'3 × 4 =',
+      ans:`<div class="m">change in ŷ = <b>12</b> minutes</div>`, ansRaw:true, ansNote:'An order 4 km further away is predicted to take 12 minutes longer.'},
+    meaning:{text:'<b>Slope</b>: each extra km adds about 3 minutes to the predicted delivery time. <b>Intercept</b>: at 0 km, ŷ = 8 minutes, roughly the time to prepare and leave. x = 0 is outside the data (2 to 8 km), so read it with care.'} },
+
+  { id:'r-squared', demo:'Your professor shows on the board how r becomes r² and a percentage.', title:'Coefficient of determination r²',
+    def:'The <b>coefficient of determination r²</b> is the proportion of the variation in y explained by the regression line on x. It is between 0 and 1, usually given as a percentage.',
+    defFig:{label:'Square r', html:G15.r2},
+    life:{text:'Deliveries: r = 0.950 (from the Week 13 formula).'},
+    formula:{f:`${T('r2',v('r')+'<sup>2</sup>')} = (${T('r',v('r'))})<sup>2</sup> ${T('p','× 100%')}`,
+      parts:[['r2','<b>r²</b>: share of the variation in y explained by x.'],['r','<b>r</b>: the correlation. Square it, sign and all.'],['p','<b>× 100%</b>: write it as a percentage.']],
+      sub:`${v('r')}<sup>2</sup> = (0.950)<sup>2</sup> × 100%`, keys:'( 0 . 9 5 0 ) x² × 1 0 0 =',
+      ans:`<div class="m">r² = 0.9025 ≈ <b>90%</b></div>`, ansRaw:true, ansNote:'90% of the variation in delivery time is explained by distance.'},
+    meaning:{text:'The other 10% comes from factors not in the model. r² = 1: every point on the line. r² = 0: the line explains nothing. Always square: r = 0.8 gives r² = 0.64, not 0.8.', fig:{label:'Variation in delivery time', html:SHARE}} },
+
+  { id:'residuals', demo:'Your professor draws each residual as a vertical segment on the board.', title:'Residuals',
+    def:'A <b>residual</b> (error) is the actual value minus the predicted value: <b>e = y − ŷ</b>. Positive: the point is above the line. Negative: below it.',
+    defFig:{label:'The vertical gap', html:G15.res},
+    life:{text:'Deliveries: the 8 km order took 35 minutes.',
+      fig:{label:'Residuals (dashed)', html:deliv({line:[8,3],lx:[1,9],resid:true,extra:(X,Y)=>`${lab(X,Y,8,33.5,'e = 3',-48,4,'var(--c3)')}`})}},
+    formula:{f:`${T('e',v('e'))} = ${T('y',v('y'))} − ${T('yh',v('ŷ'))}`,
+      parts:[['e','<b>e</b>: the residual.'],['y','<b>y</b>: the actual value, 35 min.'],['yh','<b>ŷ</b>: the predicted value, 8 + 3(8).']],
+      sub:`${v('e')} = 35 − (8 + 3(8))`, keys:'3 5 − ( 8 + 3 × 8 ) =',
+      ans:`<div class="m">e = 35 − 32 = <b>3</b> minutes</div>`, ansRaw:true, ansNote:'This order took 3 minutes longer than predicted.'},
+    meaning:{text:'The residuals add to 0. A <b>residual plot</b> (e against x) should show random scatter around 0, with no pattern.',
+      fig:{label:'All residuals', html:BA.side([['Table',tbl(['x (km)','y (min)','ŷ = 8 + 3x','e = y − ŷ'],DX.map((x,i)=>[x,DY[i],8+3*x,RES[i]<0?'−'+(-RES[i]):RES[i]]))],['Residual plot',scat({x:DX,y:RES,line:[0,0],lx:[1,9],resid:true,xr:[1,9],yr:[-4,4],xt:[2,4,6,8],yt:[-4,-2,0,2,4],xl:'Distance (km)',yl:'Residual e',h:220,label:'Residual plot'})]])}} },
+
+  { id:'cautions', title:'Cautions: when not to trust the line',
+    def:'<b>Extrapolation</b>: predicting far outside the x-range of the data. <b>Correlation is not causation</b>: a lurking variable may drive both. <b>Outliers</b> can pull the line. A <b>curved</b> pattern needs a different model.',
+    defFig:{label:'Stay inside the data', html:G15.ext},
+    life:{text:'Over a year, ice-cream sales and air-conditioner sales in Dubai rise and fall together, so r is high. Neither causes the other: summer heat drives both.', fig:{label:'A lurking variable', html:LURK}},
+    meaning:{text:'At 40 km the delivery line gives ŷ = 8 + 3(40) = 128 minutes, but the data stop at 8 km: not reliable. Always plot first. Left: r = 0 yet a clear curve. Right: one unusual order cuts the slope from 3 to 0.91 and r from 0.95 to 0.29.',
+      fig:{label:'Plot first', build:cautions}} }
+  ],
+  inClass:{intro:'We compute the residuals and interpret the line together on the board.', items:[
+    {q:'A new café records months since opening x: 1, 2, 3, 4, 6 and daily customers y: 57, 60, 65, 63, 73. The regression line is ŷ = 54 + 3x. Find ŷ and the residual for each month. Which month is furthest from the line? Check that the residuals add to 0. Data: illustrative.', tips:['ŷ: substitute each x into 54 + 3x.','e = y − ŷ. Keep the sign.','Furthest = largest residual, ignoring the sign.']},
+    {q:'Same café, r = 0.951. Find r² and interpret it. Interpret the slope and the intercept. Is it sensible to predict the customers at month 24? Sketch the residual plot.', draw:true, tips:['r² as a percentage of the variation in y.','Slope and intercept in the units of the context.','Compare 24 with the x-range of the data.']}]},
+  takeaways:{label:'Week 15 on one page', mindmap:{center:'Interpreting', branches:[
+    {t:'Slope b',items:['+1 in x → ŷ changes by b','change in ŷ = b × change in x']},
+    {t:'Intercept a',items:['ŷ when x = 0','Only if x = 0 makes sense']},
+    {t:'r²',items:['% of variation in y explained','r² = r × r']},
+    {t:'Residual',items:['e = y − ŷ','+ above, − below','Sum = 0']},
+    {t:'Cautions',items:['No extrapolation','Correlation ≠ causation','Outliers, curves: plot first']}]}},
+  practice:[
+    {check:[{l:'r²',v:49,u:'%',pct:true},{l:'Meaning',opts:['49% of the variation in y is explained by x','49% of the points lie on the line','x causes 49% of y'],v:'49% of the variation in y is explained by x'}],revise:'r² = r × r, written as a percentage: the share of the variation in y explained by x.',see:{t:'Revise: Coefficient of determination r²',href:'#r-squared'},type:'Easy',q:'r = 0.7. Find r² and interpret it.',hint:bM([{t:'r²',lines:[bL('r² = (r)² &nbsp;<span class="g">⟶ r = 0.7</span>'),bL('r² = (0.7)²'),bA('r² = 0.49 = <b>49%</b>')],calc:['(0.7)²',LCD(0.7**2)]}],bT([['Meaning','<b>49%</b> of the variation in y is explained by x; 51% by other factors.']]))},
+    {check:[{l:'e',v:1.5},{l:'Point',opts:['Above the line','Below the line','On the line'],v:'Above the line'}],revise:'Residual e = y − ŷ (actual minus predicted). A positive e means the point is above the line.',see:{t:'Revise: Residuals',href:'#residuals'},type:'Easy',q:'Actual y = 20, predicted ŷ = 18.5. Find the residual. Is the point above or below the line?',hint:bM([{t:'Residual (e)',lines:[bL('e = <span class="g">y</span> − <span class="r">ŷ</span>'),BD.dec([['y (actual)','20'],['ŷ (predicted)','18.5']]),bL('e = (20) − (18.5)'),bA('e = <b>1.5</b>')],calc:['20−18.5',LCD(20-18.5)]}],bT([['Answer','Positive residual → the point is <b>above</b> the line.']]))},
+    {check:[{l:'Slope',opts:['+1.8 kWh per extra panel','+0.5 kWh per extra panel','1.8 panels per kWh'],v:'+1.8 kWh per extra panel'},{l:'Intercept',opts:['0.5 kWh with no panels: meaningful','No practical meaning'],v:'No practical meaning'}],revise:'The slope is the change in ŷ for each one-unit increase in x. The intercept has meaning only if x = 0 makes sense in the context.',see:{t:'Revise: Interpreting the slope and the intercept',href:'#coefficients'},type:'Easy',q:'Solar panels on a villa roof x and daily energy y (kWh): ŷ = 0.5 + 1.8x. Interpret the slope and the intercept. Data: illustrative.',hint:MG([['Slope','Each extra panel increases the predicted daily energy by <b>1.8 kWh</b>.'],['Intercept','ŷ = 0.5 kWh with 0 panels. With no panels a roof makes no solar energy, and x = 0 is outside the data: <b>no practical meaning</b>.']])},
+    {check:[{l:'Change in ŷ',v:-9,u:'AED thousand'}],revise:'Change in ŷ = b × change in x. A negative b means ŷ decreases.',see:{t:'Revise: Interpreting the slope and the intercept',href:'#coefficients'},type:'Medium',q:'Used cars: ŷ = 40 − 3x, x = age (years), y = price (AED thousand). How does the predicted price change over 3 more years?',hint:bM([{t:'Change in ŷ',lines:[bL('change in ŷ = <span class="g">b</span> × <span class="r">change in x</span>'),BD.dec([['b','−3'],['change in x','3']]),bL('change in ŷ = (−3) × (3)'),bA('change in ŷ = <b>−9</b>')],calc:['(−3)×3',LCD(-3*3)]}],bT([['Answer','The predicted price <b>drops by AED 9,000</b>.']]))},
+    {check:[{l:'e at x = 2',v:1},{l:'e at x = 3',v:-3},{l:'e at x = 5',v:3},{l:'e at x = 8',v:-1},{l:'Σe',v:0}],revise:'Find ŷ for each x first, then e = y − ŷ. The residuals of a least-squares line add to 0.',see:{t:'Revise: Residuals',href:'#residuals'},type:'Medium',q:'Used cars: x: 2, 3, 5, 7, 8; y: 35, 28, 28, 19, 15; ŷ = 40 − 3x. Find every residual and their sum.',hint:bM([{t:'Residuals (e = y − ŷ)',lines:[bL('ŷ = 40 − 3x, then e = y − ŷ'),BD.tb(['x','y','ŷ','e'],[['2','35','34','1'],['3','28','31','−3'],['5','28','25','3'],['7','19','19','0'],['8','15','16','−1']],['','','Σ','0']),
+      bL('Σe = (1) + (−3) + (3) + (0) + (−1)'),bA('e: <b>1, −3, 3, 0, −1</b> · Σe = <b>0</b>')],calc:['(35−34)+(28−31)+(28−25)+(19−19)+(15−16)',LCD((35-34)+(28-31)+(28-25)+(19-19)+(15-16))]}])},
+    {check:[{l:'r',v:-0.9}],revise:'r = ±√r². Give r the same sign as the slope.',see:{t:'Revise: Coefficient of determination r²',href:'#r-squared'},type:'Medium',q:'r² = 0.81 and the slope of the line is negative. Find r.',hint:bM(bT([['Rule','r has the same sign as the slope → slope negative, so r is <b>negative</b>.']]),[{t:'r from r²',lines:[bL('r = −√<span class="g">r²</span> &nbsp;<span class="g">⟶ r² = 0.81</span>'),bL('r = −√(0.81)'),bA('r = <b>−0.9</b>')],calc:['−√(0.81)',LCD(-Math.sqrt(0.81))]}])},
+    {check:[{l:'r²',v:92.16,u:'%',pct:true,tol:0.2},{l:'ŷ at x = 15',v:-5,u:'AED thousand'},{l:'Comment',opts:['A valid prediction','Impossible: extrapolation'],v:'Impossible: extrapolation'}],revise:'r² = r × r. Predicting far outside the range of the x data (extrapolation) is not reliable.',see:{t:'Revise: Cautions: when not to trust the line',href:'#cautions'},type:'Hard',q:'Used cars: r = −0.960. Find r² and interpret it. Then predict the price of a 15-year-old car and comment.',hint:bM([{t:'r²',lines:[bL('r² = (r)² &nbsp;<span class="g">⟶ r = −0.960</span>'),bL('r² = (−0.960)²'),bA('r² = 0.9216 ≈ <b>92%</b>')],calc:['(−0.96)²',LCD((-0.96)**2)]}],bT([['Meaning','About <b>92%</b> of the variation in price is explained by age.']]),
+      [{t:'Prediction at x = 15',lines:[bL('ŷ = 40 − 3x &nbsp;<span class="g">⟶ x = 15</span>'),bL('ŷ = 40 − 3(15)'),bA('ŷ = <b>−5</b>')],calc:['40−3×15',LCD(40-3*15)]}],
+      bT([['Answer','A price of −5 thousand AED is <b>impossible</b>. 15 years is far outside the data (2 to 8 years): <b>extrapolation</b>.']]))},
+    {check:[{l:'Does fast food cause more hospitals?',opts:['Yes: r = 0.9 is strong','No: a lurking variable (population)'],v:'No: a lurking variable (population)'}],revise:'Correlation does not prove causation. Look for a lurking variable that affects both x and y.',see:{t:'Revise: Cautions: when not to trust the line',href:'#cautions'},type:'Hard',q:'Across cities, r = 0.9 between the number of fast-food outlets and the number of hospitals. Does fast food cause more hospitals? Explain.',hint:MG([['Rule','Correlation is not causation.'],['Answer','<b>No.</b> A lurking variable, <b>population size</b>, drives both: bigger cities have more of everything. A high r shows association only.']])}],
+  next:'Next: Week 16, final exam. Revise Weeks 1 to 15. <a href="exams.html">Exams and dates →</a>'
+});
+</script>
+</body>
+</html>

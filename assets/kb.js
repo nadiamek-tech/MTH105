@@ -59,7 +59,7 @@ window.MTH105_KB=[
 {q:'What is the multiplication rule?',k:'multiplication rule and independent multiply',a:'For independent events, P(A and B) = P(A) × P(B).',l:'week-05.html#multiplication',r:'Ch 5'},
 {q:'How do I use a tree diagram?',k:'tree diagram branches paths sample space',a:'Each step splits into equal branches (1/2 each). Multiply along a path; add paths for “or”.',l:'week-05.html#multiplication',r:'Ch 5'},
 {q:'What does independent mean?',k:'independent dependent events affect replacement',a:'One event does not change the probability of the other. Drawing without replacement is dependent.',l:'week-05.html#event-types',r:'Ch 5'},
-{q:'Which lectures are available?',k:'lectures available weeks next week preparation coming',a:'Weeks 1 to 6 are available. Week 7 onwards is in preparation.',l:'lectures.html'},
+{q:'Which lectures are available?',k:'lectures available weeks next week preparation coming',a:'All 15 weeks are available.',l:'lectures.html'},
 {q:'What is a discrete random variable?',k:'discrete random variable countable X',a:'A variable X with countable values (0, 1, 2 …) from a random experiment.',l:'week-06.html#random-variable',r:'Ch 6'},
 {q:'When is a probability distribution valid?',k:'valid probability distribution conditions sum 1',a:'Every P(x) is between 0 and 1, and ΣP(x) = 1.',l:'week-06.html#random-variable',r:'Ch 6'},
 {q:'How do I find k in a probability table?',k:'find k missing probability table',a:'k = 1 − (sum of the other probabilities).',l:'week-06.html#random-variable',r:'Ch 6'},

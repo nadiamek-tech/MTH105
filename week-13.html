@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Week 13 · Correlation and the Regression Line</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202610231305">
+<style>
+:root{--wk:#9F1239;--wk-soft:rgba(159,18,57,0.09);--wk-d:#FF8FB0;--wk-soft-d:rgba(255,143,176,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/concept.js?v=202610231305"></script>
+<script src="assets/decode.js?v=202610231305"></script>
+<script src="assets/professor.js?v=202610231305"></script>
+<script src="assets/keywords.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202610231305"></script>
+<script src="assets/pad.js?v=202610231305"></script>
+<script src="assets/calc.js?v=202610231305"></script>
+<script src="assets/casio.js?v=202610231305"></script>
+<script src="assets/board.js?v=202610231305"></script>
+<script src="assets/board-answers.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202611090905"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
+<script>
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice model answers: formula calculations written on the board (assets/board.js), everything else typed */
+const BD=Board, XBd=BA.XB, LCD=BA.lcd, bL=BD.line, bA=h=>BD.line(h,'ans'), bF=BD.frac;
+const bX=(pre,top,bot,o={})=>`<div class="bfx">${pre?`<span>${pre}</span>`:''}${bF(o.plain?top:`<span class="g">${top}</span>`,o.plain?bot:`<span class="r">${bot}</span>`)}${o.after?`<span>${o.after}</span>`:''}${o.n||o.d?`<span class="bnote"><span class="g">${o.n?'⟶ '+o.n:''}</span><span class="r">${o.d?'⟶ '+o.d:''}</span></span>`:''}</div>`;
+/* long calculator entries with no + to break on: wrap them on × ÷ − so the whole entry stays on the screen */
+const bWrap=e=>{ const tk=e.split(/(?<=\+)/).flatMap(s=>s.length>21?s.split(/(?<=[×÷−])/):[s]), out=[]; let c='';
+  tk.forEach(t=>{ if((c+t).length>21&&c){ out.push(c); c=t; } else c+=t; }); if(c) out.push(c); return out; };
+let bK=0;
+const bMake=gs=>{ const rep=[]; const g2=gs.map(g=>{ if(!g.calc||!g.calc[0].split(/(?<=\+)/).some(s=>s.length>22)) return g;
+    const ch=bWrap(g.calc[0]), id=bK++, ph=ch.map((c,i)=>`Q${id}Z${i}`.padEnd(21,'Z')); rep.push([ph,ch,g.calc[0],ph.join('+')]); return Object.assign({},g,{calc:[ph.join('+'),g.calc[1]]}); });
+  let h=BD.make(g2); rep.forEach(([ph,ch,real,fake])=>{ h=h.replace(`Calculator: ${fake} =`,`Calculator: ${real} =`); ph.forEach((p,i)=>{ h=h.replace(p+(i<ph.length-1?'+':''),ch[i]); }); }); return h; };
+const bT=BA.steps, bM=(...ps)=>ps.map(p=>Array.isArray(p)?bMake(p):p).join('')+`<p class="bd-foot">${BA.HOW}</p>`;
+/* sums table and r from the sums, written like the board */
+const gSums=(x,y,o={})=>{ const c=[['x',x],['y',y],['xy',x.map((v,i)=>v*y[i])],['x²',x.map(v=>v*v)]].concat(o.y2===false?[]:[['y²',y.map(v=>v*v)]]);
+  return {t:'Sums table',lines:[BD.tb([''].concat(c.map(k=>k[0])),x.map((_,i)=>[''].concat(c.map(k=>String(k[1][i])))),['Σ'].concat(c.map(k=>String(k[1].reduce((a,b)=>a+b,0)))))]}; };
+const gR=(n,Sx,Sy,Sxy,Sx2,Sy2,o={})=>{ const top=n*Sxy-Sx*Sy, bx=n*Sx2-Sx*Sx, by=n*Sy2-Sy*Sy, r=top/Math.sqrt(bx*by);
+  return {t:o.t||'Correlation (r)',lines:[bX('r =','nΣxy − ΣxΣy','√[(nΣx² − (Σx)²) ×<br>(nΣy² − (Σy)²)]')]
+    .concat(o.dec?[bL(`<span class="g">n = ${n}, Σx = ${Sx}, Σy = ${Sy}, Σxy = ${Sxy}</span>`),bL(`<span class="r">Σx² = ${Sx2}, Σy² = ${Sy2}</span>`)]:[])
+    .concat([bL(`<span class="g">top</span> = ${n}(${Sxy}) − ${Sx}(${Sy}) = ${BA.num(top)}`),bL(`<span class="r">x part</span> = ${n}(${Sx2}) − ${Sx}² = ${bx}`),bL(`<span class="r">y part</span> = ${n}(${Sy2}) − ${Sy}² = ${by}`),
+      bA(`r = ${bF(BA.num(top),`√(${bx} × ${by})`)} ${o.eq||'≈'} <b>${o.ans}</b>`)]),
+    calc:[`(${n}×${Sxy}−${Sx}×${Sy})÷√((${n}×${Sx2}−${Sx}²)×(${n}×${Sy2}−${Sy}²))`,LCD(r)]}; };
+/* scatterplot: points, optional fitted line ŷ = a + bx, optional residual segments, extra marks */
+function scat(o){
+  const Wd=o.w||480,Hd=o.h||270,L=48,R=14,Tp=14,B=42,[x0,x1]=o.xr,[y0,y1]=o.yr;
+  const X=v=>L+(Wd-L-R)*(v-x0)/(x1-x0), Y=v=>Tp+(Hd-Tp-B)*(1-(v-y0)/(y1-y0));
+  let s=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="${o.label||'Scatterplot'}">`;
+  (o.yt||[]).forEach(t=>{ s+=`<line x1="${L}" x2="${Wd-R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(t)+4}" text-anchor="end" ${MONO} font-size="11" fill="var(--muted)">${t}</text>`; });
+  (o.xt||[]).forEach(t=>{ s+=`<text x="${X(t)}" y="${Hd-B+16}" text-anchor="middle" ${MONO} font-size="11" fill="var(--muted)">${t}</text>`; });
+  s+=`<line x1="${L}" x2="${L}" y1="${Tp}" y2="${Hd-B}" stroke="var(--ink)"/><line x1="${L}" x2="${Wd-R}" y1="${Hd-B}" y2="${Hd-B}" stroke="var(--ink)"/>`;
+  s+=`<text x="${(L+Wd-R)/2}" y="${Hd-6}" text-anchor="middle" ${FT} font-size="12" fill="var(--ink)">${o.xl}</text><text transform="translate(13 ${(Tp+Hd-B)/2}) rotate(-90)" text-anchor="middle" ${FT} font-size="12" fill="var(--ink)">${o.yl}</text>`;
+  if(o.line){ const [a,b]=o.line, lx=o.lx||[x0,x1];
+    if(o.resid) o.x.forEach((x,i)=>{ s+=`<line x1="${X(x)}" x2="${X(x)}" y1="${Y(o.y[i])}" y2="${Y(a+b*x)}" stroke="var(--c3)" stroke-width="2" stroke-dasharray="4 3"/>`; });
+    s+=`<line x1="${X(lx[0])}" y1="${Y(a+b*lx[0])}" x2="${X(lx[1])}" y2="${Y(a+b*lx[1])}" stroke="var(--wk)" stroke-width="2.4"/>`; }
+  if(o.extra) s+=o.extra(X,Y);
+  o.x.forEach((x,i)=>{ s+=`<circle cx="${X(x)}" cy="${Y(o.y[i])}" r="5.5" fill="var(--c2)" stroke="var(--surface)" stroke-width="1.5"/>`; });
+  return s+'</svg>';
+}
+const tbl=(h,rows,foot)=>`<div class="tblwrap"><table class="tbl"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}${foot?`<tr>${foot.map(x=>`<th>${x}</th>`).join('')}</tr>`:''}</table></div>`;
+const MG=a=>`<div class="mg">${a.map(([l,t])=>l==='Calculator'?`<div><span>Calculator</span>${F.keys(t)}</div>`:`<div${l==='Answer'?' class="fin"':''}><span>${l}</span><span>${t}</span></div>`).join('')}</div>`;
+
+/* phone use (h/day) and sleep (h/night): Data: illustrative */
+const PX=[2,3,4,5,6], PY=[8,8,7,6,5];
+const phone=o=>scat(Object.assign({x:PX,y:PY,xr:[0,7],yr:[4,11],xt:[0,1,2,3,4,5,6,7],yt:[4,5,6,7,8,9,10,11],xl:'Phone use (hours per day)',yl:'Sleep (hours)',label:'Scatterplot of phone use and sleep'},o||{}));
+
+const pats=(()=>{ let seed=5; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  const plot=(x0,lab,f)=>{ let s=`<g transform="translate(${x0},10)"><rect width="150" height="130" rx="10" fill="var(--bg)" stroke="var(--line)"/>`; for(let i=0;i<18;i++){ const x=10+rnd()*130, y=f(x); s+=`<circle cx="${x}" cy="${Math.max(8,Math.min(122,y))}" r="4" fill="var(--wk)"/>`; } return s+`<text x="75" y="152" text-anchor="middle" ${FT} font-weight="700" font-size="13" fill="var(--ink)">${lab}</text></g>`; };
+  return `<svg viewBox="0 0 520 170" role="img" aria-label="Positive, negative and no relationship">${plot(10,'Positive',x=>120-x*.8+(rnd()-.5)*30)}${plot(185,'Negative',x=>15+x*.8+(rnd()-.5)*30)}${plot(360,'No relationship',()=>10+rnd()*110)}</svg>`; })();
+
+const SCALE=`<svg viewBox="0 0 520 96" role="img" aria-label="Strength of r from −1 to +1"><defs><linearGradient id="rg13" x1="0" x2="1"><stop offset="0" stop-color="var(--c2)"/><stop offset=".5" stop-color="var(--line)"/><stop offset="1" stop-color="var(--wk)"/></linearGradient></defs><rect x="20" y="34" width="480" height="12" rx="6" fill="url(#rg13)"/>${[[-1,'−1'],[-.7,'−0.7'],[-.4,'−0.4'],[0,'0'],[.4,'0.4'],[.7,'0.7'],[1,'+1']].map(([r,t])=>`<text x="${260+240*r}" y="26" text-anchor="middle" ${MONO} font-size="11" fill="var(--ink)">${t}</text>`).join('')}${[[-.85,'strong −'],[-.55,'moderate −'],[-.2,'weak −'],[.2,'weak +'],[.55,'moderate +'],[.85,'strong +']].map(([r,t])=>`<text x="${260+240*r}" y="66" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">${t}</text>`).join('')}<path d="M${260-240*.970} 50 l-6 10 h12 z" fill="var(--ink)"/><text x="${260-240*.970+10}" y="88" ${MONO} font-size="11" font-weight="600" fill="var(--ink)">r = −0.970</text></svg>`;
+
+/* choose r: points built so that their correlation is exactly r */
+function rTool(el){
+  const RS=[-0.9,-0.5,0,0.5,0.9];
+  el.innerHTML=`<div class="tool"><div class="seg2">${RS.map((r,i)=>`<button type="button" aria-pressed="${i===4}">r = ${r}</button>`).join('')}</div><div class="pic"></div><div class="feedback"></div></div>`;
+  let seed=11; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  const n=24, xs=[...Array(n)].map(()=>rnd()), zs=[...Array(n)].map(()=>rnd()+rnd()+rnd());
+  const std=a=>{ const m=a.reduce((s,v)=>s+v,0)/a.length, sd=Math.sqrt(a.reduce((s,v)=>s+(v-m)**2,0)/a.length); return a.map(v=>(v-m)/sd); };
+  const zx=std(xs), z0=std(zs), c=zx.reduce((s,v,i)=>s+v*z0[i],0)/n, zn=std(z0.map((v,i)=>v-c*zx[i]));
+  const word=r=>r===0?'no linear relationship':(Math.abs(r)>=.7?'strong ':Math.abs(r)>=.4?'moderate ':'weak ')+(r>0?'positive':'negative');
+  const draw=r=>{ const y=zx.map((v,i)=>r*v+Math.sqrt(1-r*r)*zn[i]);
+    el.querySelector('.pic').innerHTML=scat({x:zx,y,xr:[-2.6,2.6],yr:[-3,3],xl:'x',yl:'y',w:420,h:240,label:'Scatterplot with r = '+r});
+    el.querySelector('.feedback').innerHTML=`r = <b>${r}</b>: ${word(r)}.`; };
+  el.querySelectorAll('.seg2 button').forEach((b,i)=>b.addEventListener('click',()=>{ el.querySelectorAll('.seg2 button').forEach(x=>x.setAttribute('aria-pressed',x===b)); draw(RS[i]); }));
+  draw(0.9);
+}
+
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G13=(()=>{ const {svg,card,text,arrow,curveArrow,pill}=CG;
+  const dot=(x,y,c='var(--c2)',r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+  const ax=(x0,y0,x1,y1)=>`<path d="M${x0},${y1} L${x0},${y0} L${x1},${y0}" fill="none" stroke="var(--ink)" stroke-width="1.5"/>`;
+  /* scatterplot: one pair (x, y) becomes one point */
+  const sp=svg(520,250,
+    card(16,62,190,124)+text(111,92,'ONE INDIVIDUAL',{a:'middle',s:12,w:700,mono:true,c:'var(--wk)'})+text(111,132,'(x, y)',{a:'middle',s:30,w:800,mono:true})+text(111,164,'one pair of values',{a:'middle',s:13,c:'var(--muted)'})+
+    arrow(214,124,262,124,'var(--wk)',2.4)+
+    ax(286,206,504,22)+[[318,170],[340,150],[356,166],[420,96],[446,80],[466,104],[398,140]].map(([x,y])=>dot(x,y,'var(--c2)',4.5)).join('')+
+    `<line x1="380" x2="380" y1="112" y2="206" stroke="var(--wk)" stroke-dasharray="5 4" stroke-width="1.6"/><line x1="286" x2="380" y1="112" y2="112" stroke="var(--wk)" stroke-dasharray="5 4" stroke-width="1.6"/>`+dot(380,112,'var(--wk)',8)+
+    text(380,224,'x',{a:'middle',s:15,w:800,c:'var(--wk)',mono:true})+text(276,117,'y',{a:'end',s:15,w:800,c:'var(--wk)',mono:true})+
+    text(504,244,'x: explanatory →',{a:'end',s:12,c:'var(--muted)'})+text(296,24,'y: response',{s:12,c:'var(--muted)'}),
+    'Each individual gives one pair (x, y), drawn as one point: x across, y up');
+  /* r: from −1 to +1 */
+  const pnl=(cx,pts,c)=>`<rect x="${cx-62}" y="48" width="124" height="112" rx="10" fill="${c}" fill-opacity=".07" stroke="${c}" stroke-opacity=".45"/>`+pts.map(([x,y])=>dot(cx-62+x,48+y,c,4.5)).join('');
+  const L7=[...Array(7)].map((_,i)=>14+i*16), cloud=[[20,30],[34,82],[46,52],[58,96],[64,22],[78,70],[90,40],[100,90],[106,58],[30,60],[86,18]];
+  const r=svg(520,250,
+    pill(170,6,180,32,'−1 ≤ r ≤ +1')+
+    pnl(80,L7.map((x,i)=>[x,14+i*14]),RED)+pnl(260,cloud,'var(--muted)')+pnl(440,L7.map((x,i)=>[x,98-i*14]),'var(--wk)')+
+    `<line x1="30" x2="490" y1="186" y2="186" stroke="var(--ink)" stroke-width="1.5"/>`+[80,260,440].map(x=>`<line x1="${x}" x2="${x}" y1="180" y2="192" stroke="var(--ink)" stroke-width="1.5"/>`).join('')+
+    text(80,212,'−1',{a:'middle',s:16,w:800,mono:true,c:RED})+text(260,212,'0',{a:'middle',s:16,w:800,mono:true})+text(440,212,'+1',{a:'middle',s:16,w:800,mono:true,c:'var(--wk)'})+
+    text(80,234,'all on a line',{a:'middle',s:12,c:'var(--muted)'})+text(260,234,'no straight line',{a:'middle',s:12,c:'var(--muted)'})+text(440,234,'all on a line',{a:'middle',s:12,c:'var(--muted)'}),
+    'r runs from −1 to +1: at −1 or +1 every point is on a straight line; at 0 there is no straight-line pattern');
+  /* reading r: ignore the sign for the strength */
+  const tight=(x0,up)=>[0,1,2,3,4,5,6].map(i=>dot(x0+16+i*17,up?102-i*13+(i%2?6:-5):24+i*13+(i%2?-5:6),'var(--c2)',4.5)).join('');
+  const Z=v=>40+440*v;
+  const str=svg(520,250,
+    `<rect x="170" y="10" width="130" height="112" rx="10" fill="var(--c2)" fill-opacity=".07" stroke="var(--c2)" stroke-opacity=".45"/>`+tight(170,false)+text(235,142,'r = −0.9',{a:'middle',s:14,w:800,mono:true})+
+    `<rect x="330" y="10" width="130" height="112" rx="10" fill="var(--c2)" fill-opacity=".07" stroke="var(--c2)" stroke-opacity=".45"/>`+tight(330,true)+text(395,142,'r = +0.9',{a:'middle',s:14,w:800,mono:true})+
+    arrow(262,150,Z(.88)-12,166,'var(--wk)',2.2)+arrow(400,150,Z(.88)+2,166,'var(--wk)',2.2)+
+    `<rect x="${Z(0)}" y="170" width="${Z(.4)-Z(0)}" height="30" fill="var(--muted)" fill-opacity=".18"/><rect x="${Z(.4)}" y="170" width="${Z(.7)-Z(.4)}" height="30" fill="var(--c2)" fill-opacity=".22"/><rect x="${Z(.7)}" y="170" width="${Z(1)-Z(.7)}" height="30" fill="var(--wk)" fill-opacity=".3"/>`+
+    text(Z(.2),190,'weak',{a:'middle',s:13,w:700})+text(Z(.55),190,'moderate',{a:'middle',s:13,w:700})+text(Z(.85),190,'strong',{a:'middle',s:13,w:800,c:'var(--wk)'})+
+    [0,.4,.7,1].map(v=>text(Z(v),218,String(v),{a:'middle',s:12,mono:true})).join('')+
+    text(260,242,'size of r, ignoring the sign',{a:'middle',s:12,c:'var(--muted)'}),
+    'r = −0.9 and r = +0.9 are equally strong: ignore the sign, then 0.7 to 1 is strong, 0.4 to 0.7 moderate, below 0.4 weak');
+  /* the line ŷ = a + bx: intercept and one rise/run step */
+  const yl=x=>170-(x-60)*0.3;
+  const line=svg(520,250,
+    ax(60,210,496,16)+`<line x1="60" x2="486" y1="${yl(60)}" y2="${yl(486)}" stroke="var(--wk)" stroke-width="3"/>`+
+    `<path d="M230,${yl(230)} L350,${yl(230)} L350,${yl(350)}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6 4"/>`+
+    text(290,yl(230)+22,'run = 1',{a:'middle',s:13,w:700,mono:true})+text(360,(yl(230)+yl(350))/2+5,'rise = b',{s:13,w:700,mono:true,c:'var(--wk)'})+
+    dot(60,yl(60),'var(--wk)',7)+text(46,yl(60)+7,'a',{a:'end',s:20,w:800,it:true,c:'var(--wk)'})+text(72,yl(60)+28,'ŷ at x = 0',{s:12,c:'var(--muted)'})+
+    text(496,232,'x',{a:'end',s:14,w:700,mono:true})+text(48,24,'ŷ',{a:'end',s:14,w:700,mono:true})+
+    pill(86,20,180,36,'ŷ = a + bx'),
+    'The line starts at a when x = 0 and rises b for every 1 step to the right');
+  return {sp,r,str,line};
+})();
+
+Lesson.mount({
+  week:13, clo:'CLO 5', title:'Correlation and the Regression Line', chapter:'Ch 4: Regression Analysis: Exploring Associations between Variables · Gould, Ryan & Wong (2020)',
+  intro:'Two numerical variables measured on the same individuals. Do they move together, and how strongly?',
+  topics:[
+  { id:'scatterplot', demo:'Your professor plots the points on the board, one pair at a time.', title:'Two variables and the scatterplot',
+    def:'The <b>explanatory variable x</b> (independent, predictor) is used to predict the <b>response variable y</b> (dependent). A <b>scatterplot</b> shows each pair (x, y) as one point.',
+    defFig:{label:'One pair, one point', html:G13.sp},
+    life:{text:'Five students record their daily phone use and their sleep, in hours. Phone use is x, sleep is y. Data: illustrative.',
+      fig:{label:'Phone use and sleep', html:BA.side([['Data',tbl(['x (phone, h)','y (sleep, h)'],[[2,8],[3,8],[4,7],[5,6],[6,5]])],['Scatterplot',phone()]])}},
+    meaning:{text:'Read three things: <b>direction</b> (positive or negative), <b>form</b> (straight or curved) and <b>strength</b> (how close the points lie to a line). Phone and sleep: negative, straight, strong.',
+      fig:{label:'Three patterns', html:pats}} },
+
+  { id:'correlation', demo:'Your professor builds the x, y, x², xy, y² table on the board.', title:'The correlation coefficient r',
+    def:'The <b>correlation coefficient r</b> measures the direction and strength of a <b>linear</b> relationship between two numerical variables. It is always between −1 and +1.',
+    defFig:{label:'From −1 to +1', html:G13.r},
+    life:{text:'Same phone and sleep data. Build the table, then add each column.',
+      fig:{label:'Calculation table · n = 5', html:tbl(['x','y','x²','xy','y²'],[[2,8,4,16,64],[3,8,9,24,64],[4,7,16,28,49],[5,6,25,30,36],[6,5,36,30,25]],['Σx = 20','Σy = 34','Σx² = 90','Σxy = 128','Σy² = 238'])}},
+    formula:{f:`${T('r',v('r'))} = ${fr(T('top',v('n')+'Σ'+v('xy')+' − Σ'+v('x')+'Σ'+v('y')),sq(T('bx','('+v('n')+'Σ'+v('x')+'<sup>2</sup> − (Σ'+v('x')+')<sup>2</sup>)')+' × '+T('by','('+v('n')+'Σ'+v('y')+'<sup>2</sup> − (Σ'+v('y')+')<sup>2</sup>)')))}`,
+      parts:[['r','<b>r</b>: the correlation, between −1 and +1.'],['top','Top: n × Σxy minus Σx × Σy. Its sign gives the direction.'],['bx','x part: n × Σx² minus (Σx)². Square the total, not each value.'],['by','y part: n × Σy² minus (Σy)².']],
+      sub:`${v('r')} = ${fr('5(128) − 20(34)',sq('(5(90) − 20²) × (5(238) − 34²)'))}`, subNote:'n = 5, Σx = 20, Σy = 34, Σx² = 90, Σxy = 128, Σy² = 238.',
+      keys:'( 5 × 1 2 8 − 2 0 × 3 4 ) ÷ √ ( ( 5 × 9 0 − 2 0 x² ) × ( 5 × 2 3 8 − 3 4 x² ) ) =',
+      ans:`<div class="m">r = ${fr('640 − 680',sq('50 × 34'))} = −40 ÷ 41.23 ≈ <b>−0.970</b></div>`, ansRaw:true, ansNote:'Check: −1 ≤ r ≤ +1.'},
+    meaning:{text:'r = −0.970: negative and very close to −1. More phone time goes with less sleep, and the points lie close to a straight line.', fig:{label:'Where r = −0.970 sits', html:SCALE}} },
+
+  { id:'reading-r', title:'Reading r: direction and strength',
+    def:'The <b>sign</b> of r gives the direction. The <b>size</b> of r, ignoring the sign, gives the strength: 0.7 to 1 strong, 0.4 to 0.7 moderate, below 0.4 weak. r = 0: no linear relationship. r = ±1: all points on a line.',
+    defFig:{label:'Ignore the sign for strength', html:G13.str},
+    life:{text:'Choose a value of r and look at the points. The closer r is to −1 or +1, the tighter the points around a line.', fig:{label:'Choose r', build:rTool}},
+    meaning:{text:'r has no units and stays the same if x and y are swapped. r = −0.9 is as strong as r = 0.9; only the direction differs.'} },
+
+  { id:'line', title:'The regression line ŷ = a + bx',
+    def:'The <b>regression line</b> (line of best fit) predicts y from x: <b>ŷ = a + bx</b>. <b>b</b> is the slope; <b>a</b> is the intercept, the value of ŷ when x = 0.',
+    defFig:{label:'Intercept and slope', html:G13.line},
+    life:{text:'Phone and sleep: the regression line crosses the y-axis at 10 and passes through (5, 6).',
+      fig:{label:'Reading the line', html:phone({line:[10,-0.8],lx:[0,7],extra:(X,Y)=>`<line x1="${X(0)}" x2="${X(5)}" y1="${Y(10)}" y2="${Y(10)}" stroke="var(--ink)" stroke-dasharray="5 4"/><line x1="${X(5)}" x2="${X(5)}" y1="${Y(10)}" y2="${Y(6)}" stroke="var(--ink)" stroke-dasharray="5 4"/><text x="${X(2.5)}" y="${Y(10)-6}" text-anchor="middle" ${MONO} font-size="11" fill="var(--ink)">run = 5</text><text x="${X(5)+6}" y="${Y(8)}" ${MONO} font-size="11" fill="var(--ink)">rise = −4</text><circle cx="${X(0)}" cy="${Y(10)}" r="5" fill="var(--wk)"/><text x="${X(0)+8}" y="${Y(10)+16}" ${MONO} font-size="11" fill="var(--wk)">a = 10</text>`})}},
+    formula:{f:`${T('b',v('b'))} = ${fr(T('dy','change in '+v('ŷ')),T('dx','change in '+v('x')))} = ${fr(T('dy',v('ŷ')+'<sub>2</sub> − '+v('ŷ')+'<sub>1</sub>'),T('dx',v('x')+'<sub>2</sub> − '+v('x')+'<sub>1</sub>'))}`,
+      parts:[['b','<b>b</b>: the slope of the line.'],['dy','Rise: how much ŷ changes between two points on the line.'],['dx','Run: how much x changes between the same two points.']],
+      sub:`${v('b')} = ${fr('6 − 10','5 − 0')}`, subNote:'Two points on the line: (0, 10) and (5, 6).', keys:'( 6 − 1 0 ) ÷ ( 5 − 0 ) =',
+      ans:`<div class="m">b = <b>−0.8</b> → ŷ = 10 − 0.8x</div>`, ansRaw:true, ansNote:'Next week: find a and b from the data with formulas.'},
+    meaning:{text:'The regression line is the <b>least squares</b> line: it makes the sum of the squared vertical distances from the points to the line (dashed) as small as possible.',
+      fig:{label:'Vertical distances to the line', html:phone({line:[10,-0.8],lx:[1,7],resid:true,yr:[4,9],yt:[4,5,6,7,8,9]})}} }
+  ],
+  inClass:{intro:'We draw the scatterplot and build the table together on the board.', items:[
+    {q:'A typing app records practice per week (hours) x: 1, 2, 3, 5, 6 and typing speed (words per minute) y: 32, 34, 36, 41, 48. Draw the scatterplot. Describe the direction, form and strength. Data: illustrative.', draw:true, tips:['Label both axes with names and units.','One point per pair (x, y).','Direction, form, strength.']},
+    {q:'Same data. Build the x, y, x², xy, y² table and find r. Describe the relationship in one sentence.', tips:['Add each column: Σx, Σy, Σx², Σxy, Σy².','Top first, then each bracket under the root.','Check that r is between −1 and +1.']}]},
+  takeaways:{label:'Week 13 on one page', mindmap:{center:'Week 13', branches:[
+    {t:'Scatterplot',items:['x explanatory, y response','Direction, form, strength']},
+    {t:'r',items:['Table: x, y, x², xy, y²','−1 ≤ r ≤ +1']},
+    {t:'Strength',items:['0.7 to 1: strong','0.4 to 0.7: moderate','Below 0.4: weak']},
+    {t:'Line',items:['ŷ = a + bx','b = rise ÷ run','Least squares']}]}},
+  practice:[
+    {check:[{l:'r = 0.82',opts:['Strong positive','Moderate positive','Weak positive','Strong negative','Moderate negative','Weak negative','No linear relationship'],v:'Strong positive'},{l:'r = −0.35',opts:['Strong positive','Moderate positive','Weak positive','Strong negative','Moderate negative','Weak negative','No linear relationship'],v:'Weak negative'},{l:'r = −0.61',opts:['Strong positive','Moderate positive','Weak positive','Strong negative','Moderate negative','Weak negative','No linear relationship'],v:'Moderate negative'},{l:'r = 0',opts:['Strong positive','Moderate positive','Weak positive','Strong negative','Moderate negative','Weak negative','No linear relationship'],v:'No linear relationship'}],revise:'The sign of r gives the direction. Ignoring the sign: 0.7 to 1 strong, 0.4 to 0.7 moderate, below 0.4 weak.',see:{t:'Revise: Reading r: direction and strength',href:'#reading-r'},type:'Easy',q:'Describe each value of r: 0.82, −0.35, −0.61, 0.',hint:MG([['Rule','Sign = direction. Size: 0.7 to 1 strong, 0.4 to 0.7 moderate, below 0.4 weak.'],['Answer','0.82: <b>strong positive</b>. −0.35: <b>weak negative</b>. −0.61: <b>moderate negative</b>. 0: <b>no linear relationship</b>.']])},
+    {check:[{l:'x',opts:['Temperature','Visitors'],v:'Temperature'},{l:'y',opts:['Temperature','Visitors'],v:'Visitors'}],revise:'x is the explanatory variable; y is the response it explains.',see:{t:'Revise: Two variables and the scatterplot',href:'#scatterplot'},type:'Easy',q:'Daily temperature and the number of visitors to an indoor mall. Which is x and which is y?',hint:MG([['Rule','x explains or predicts; y responds.'],['Answer','<b>x = temperature</b> (explanatory). <b>y = visitors</b> (response).']])},
+    {check:[{l:'b',v:2},{l:'a',v:4}],revise:'b = change in y ÷ change in x. a is ŷ when x = 0.',see:{t:'Revise: The regression line ŷ = a + bx',href:'#line'},type:'Easy',q:'A line passes through (0, 4) and (5, 14). Find b and write ŷ = a + bx.',hint:bM([
+      {t:'Slope (b)',lines:[bX('b =','change in y','change in x',{n:'14 − 4',d:'5 − 0'}),bA(`b = ${bF('(14 − 4)','(5 − 0)')} = ${bF('10','5')} = <b>2</b>`)],calc:['(14−4)÷(5−0)',LCD((14-4)/(5-0))]},
+      {t:'Line',lines:[bL('a = ŷ at x = 0 = 4'),bA('<b>ŷ = 4 + 2x</b>')]}])},
+    {check:[{l:'r',v:150/Math.sqrt(30000)}],revise:'r = [nΣxy − ΣxΣy] ÷ √([nΣx² − (Σx)²][nΣy² − (Σy)²]). Keep every bracket on the calculator.',see:{t:'Revise: The correlation coefficient r',href:'#correlation'},type:'Medium',q:'n = 5, Σx = 20, Σy = 50, Σxy = 230, Σx² = 100, Σy² = 560. Find r.',hint:bM([gR(5,20,50,230,100,560,{dec:true,ans:'0.866'})],bT([['Meaning','<b>Strong positive</b>.']]))},
+    {check:[{l:'r',v:0.8}],revise:'Build the x, y, x², xy, y² table first, then use the r formula with n = 5.',see:{t:'Revise: The correlation coefficient r',href:'#correlation'},type:'Medium',q:'x: 1, 2, 3, 4, 5. y: 3, 5, 4, 7, 6. Find r.',hint:bM([gSums([1,2,3,4,5],[3,5,4,7,6]),gR(5,15,25,83,55,135,{eq:'=',ans:'0.8'})],bT([['Meaning','<b>Strong positive</b>.']]))},
+    {check:[{l:'r',v:-190/Math.sqrt(37500)},{l:'Description',opts:['Strong positive','Moderate positive','Weak positive','Strong negative','Moderate negative','Weak negative','No linear relationship'],v:'Strong negative'}],revise:'Build the x, y, x², xy, y² table, then find r. The sign gives the direction; the size gives the strength.',see:{t:'Revise: The correlation coefficient r',href:'#correlation'},type:'Medium',q:'Weekly gaming hours x: 2, 3, 5, 6, 9. Weekly reading hours y: 12, 10, 9, 6, 3. Find r and describe it. Data: illustrative.',hint:bM([gSums([2,3,5,6,9],[12,10,9,6,3]),gR(5,25,40,162,155,370,{ans:'−0.981'})],bT([['Meaning','<b>Strong negative</b>: more gaming goes with less reading.']]))},
+    {check:[{l:'r',v:0},{l:'Relationship?',opts:['No relationship at all','No linear relationship, but a curved pattern','Strong positive'],v:'No linear relationship, but a curved pattern'}],revise:'r measures only linear relationships. r = 0 can hide a curved pattern: always plot the points.',see:{t:'Revise: Reading r: direction and strength',href:'#reading-r'},type:'Hard',q:'x: 1, 2, 3, 4, 5. y: 2, 5, 6, 5, 2. Find r, then sketch the points. Is there no relationship?',hint:bM([gSums([1,2,3,4,5],[2,5,6,5,2]),gR(5,15,20,60,55,94,{eq:'=',ans:'0'})],bT([['Answer','r = 0: no <b>linear</b> relationship. The sketch shows a clear <b>curved</b> (arch) pattern. r only measures straight-line relationships: always plot first.']]))},
+    {check:[{l:'Stronger',opts:['A (r = −0.88)','B (r = 0.75)'],v:'A (r = −0.88)'},{l:'r = 1.3',opts:['Very strong positive','Impossible: an error'],v:'Impossible: an error'}],revise:'Strength depends on the size of r, not its sign. r is always between −1 and 1.',see:{t:'Revise: Reading r: direction and strength',href:'#reading-r'},type:'Hard',q:'Data set A has r = −0.88. Data set B has r = 0.75. Which relationship is stronger? A student finds r = 1.3: what went wrong?',hint:MG([['Rule','Strength = size of r, ignoring the sign. r is always between −1 and +1.'],['Answer','<b>A is stronger</b>: 0.88 &gt; 0.75. r = 1.3 is <b>impossible</b>: there is an error in the table or the calculation.']])}],
+  next:'Next: Week 14, finding the regression line from the data. <a href="week-14.html">Open Week 14 →</a>'
+});
+</script>
+</body>
+</html>

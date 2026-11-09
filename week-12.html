@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Week 12 · Contingency Tables and the Chi-square Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202610231305">
+<style>
+:root{--wk:#2E7D32;--wk-soft:rgba(46,125,50,0.09);--wk-d:#7FD884;--wk-soft-d:rgba(127,216,132,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/concept.js?v=202610231305"></script>
+<script src="assets/decode.js?v=202610231305"></script>
+<script src="assets/professor.js?v=202610231305"></script>
+<script src="assets/keywords.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202610231305"></script>
+<script src="assets/pad.js?v=202610231305"></script>
+<script src="assets/calc.js?v=202610231305"></script>
+<script src="assets/casio.js?v=202610231305"></script>
+<script src="assets/board.js?v=202610231305"></script>
+<script src="assets/board-answers.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202611090905"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
+<script>
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice model answers: formula calculations written on the board (assets/board.js), everything else typed */
+const BD=Board, XBd=BA.XB, LCD=BA.lcd, bL=BD.line, bA=h=>BD.line(h,'ans'), bF=BD.frac;
+const bX=(pre,top,bot,o={})=>`<div class="bfx">${pre?`<span>${pre}</span>`:''}${bF(o.plain?top:`<span class="g">${top}</span>`,o.plain?bot:`<span class="r">${bot}</span>`)}${o.after?`<span>${o.after}</span>`:''}${o.n||o.d?`<span class="bnote"><span class="g">${o.n?'⟶ '+o.n:''}</span><span class="r">${o.d?'⟶ '+o.d:''}</span></span>`:''}</div>`;
+/* long calculator entries with no + to break on: wrap them on × ÷ − so the whole entry stays on the screen */
+const bWrap=e=>{ const tk=e.split(/(?<=\+)/).flatMap(s=>s.length>21?s.split(/(?<=[×÷−])/):[s]), out=[]; let c='';
+  tk.forEach(t=>{ if((c+t).length>21&&c){ out.push(c); c=t; } else c+=t; }); if(c) out.push(c); return out; };
+let bK=0;
+const bMake=gs=>{ const rep=[]; const g2=gs.map(g=>{ if(!g.calc||!g.calc[0].split(/(?<=\+)/).some(s=>s.length>22)) return g;
+    const ch=bWrap(g.calc[0]), id=bK++, ph=ch.map((c,i)=>`Q${id}Z${i}`.padEnd(21,'Z')); rep.push([ph,ch,g.calc[0],ph.join('+')]); return Object.assign({},g,{calc:[ph.join('+'),g.calc[1]]}); });
+  let h=BD.make(g2); rep.forEach(([ph,ch,real,fake])=>{ h=h.replace(`Calculator: ${fake} =`,`Calculator: ${real} =`); ph.forEach((p,i)=>{ h=h.replace(p+(i<ph.length-1?'+':''),ch[i]); }); }); return h; };
+const bT=BA.steps, bM=(...ps)=>ps.map(p=>Array.isArray(p)?bMake(p):p).join('')+`<p class="bd-foot">${BA.HOW}</p>`;
+/* df, expected count and χ² written like the board: each (O − E)² ÷ E in brackets */
+const gDf=(r,c)=>({t:'Degrees of freedom (df)',lines:[bL('df = (r − 1)(c − 1)'),BD.dec([['r (rows)',r],['c (columns)',c]]),bA(`df = (${r} − 1)(${c} − 1) = <b>${(r-1)*(c-1)}</b>`)],calc:[`(${r}−1)×(${c}−1)`,LCD((r-1)*(c-1))]});
+const gExp=(R,C,N,o={})=>({t:o.t||'Expected count (E)',lines:[bX('E =','row total × column total','grand total'),bA(`E = ${bF(`(${R}) × (${C})`,String(N))} = <b>${BA.num(R*C/N)}</b>`)].concat(o.more||[]),calc:[`(${R}×${C})÷${N}`,LCD(R*C/N)]});
+const gChi=(O,E,o={})=>{ const t=O.map((x,i)=>(x-E[i])**2/E[i]), S=t.reduce((a,b)=>a+b,0);
+  return {t:'Chi-square (χ²)',lines:[bX('χ² = Σ','(O − E)²','E',{n:'O = observed',d:'E = expected'}),
+    bL('χ² = '+O.map((x,i)=>`<span class="nw">[${bF(`(${x} − ${E[i]})²`,String(E[i]))}]</span>`).join(' + ')),
+    bL('χ² = '+t.map(BA.r4).join(' + ')),bA(`χ² ≈ <b>${o.ans}</b>`)],
+    calc:[O.map((x,i)=>`((${x}−${E[i]})²÷${E[i]})`).join('+'),LCD(S)]}; };
+const tbl=(head,rows)=>`<div class="tblwrap"><table class="tbl"><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map((c,i)=>i?`<td>${c}</td>`:`<th>${c}</th>`).join('')}</tr>`).join('')}</table></div>`;
+const OBS=tbl(['Observed','On time','Late','Row total'],[['Planner app',72,18,90],['No app',96,54,150],['Column total',168,72,'<b>240</b>']]);
+const EXP=tbl(['Expected','On time','Late','Row total'],[['Planner app',63,27,90],['No app',105,45,150],['Column total',168,72,'<b>240</b>']]);
+/* 100% bars: on time vs late, by group */
+const barsSVG=(()=>{ const rows=[['Planner app',80],['No app',64]], X=p=>130+3.4*p;
+  return `<svg viewBox="0 0 520 150" role="img" aria-label="Percent on time: 80 percent with a planner app, 64 percent without">${rows.map(([l,p],i)=>{ const y=20+i*52;
+    return `<text x="122" y="${y+24}" text-anchor="end" ${FT} font-weight="700" font-size="12" fill="var(--ink)">${l}</text><rect x="130" y="${y}" width="${3.4*p}" height="36" fill="var(--wk)"/><rect x="${X(p)}" y="${y}" width="${3.4*(100-p)}" height="36" fill="var(--c2)" opacity=".45"/><text x="138" y="${y+23}" ${MONO} font-size="12" fill="#fff">On time ${p}%</text><text x="${X(p)+8}" y="${y+23}" ${MONO} font-size="12" fill="var(--ink)">Late ${100-p}%</text>`; }).join('')}
+  <text x="300" y="142" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">Percent of each row</text></svg>`; })();
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G12=(()=>{ const {svg,card,text,arrow,curveArrow,pill,axis}=CG;
+  /* a grid of cells: xs = column edges, ys = row edges */
+  const grid=(xs,ys,fill)=>ys.slice(0,-1).map((y,j)=>xs.slice(0,-1).map((x,i)=>{ const f=fill(i,j); return `<rect x="${x}" y="${y}" width="${xs[i+1]-x}" height="${ys[j+1]-y}" fill="${f?f[0]:'var(--surface)'}" fill-opacity="${f?f[1]:0}" stroke="var(--line)" stroke-width="1.5"/>`; }).join('')).join('');
+  const put=(xs,ys,rows,o={})=>rows.map((r,j)=>r.map((c,i)=>c===''?'':text((xs[i]+xs[i+1])/2,(ys[j]+ys[j+1])/2+5,c,Object.assign({a:'middle',s:14,mono:true},(o.st&&o.st(i,j))||{}))).join('')).join('');
+  /* contingency table: one cell = one row category AND one column category */
+  const X1=[40,150,240,330,420], Y1=[52,90,128,166,204];
+  const tw=svg(520,250,
+    text(285,36,'column variable',{a:'middle',s:13,w:700,c:'var(--c3)'})+text(95,36,'row variable',{a:'middle',s:13,w:700,c:'var(--c2)'})+
+    grid(X1,Y1,(i,j)=>i===1&&j===1?['var(--wk)',.85]:(j===0&&i>0&&i<3)?['var(--c3)',.12]:(i===0&&j>0&&j<3)?['var(--c2)',.12]:(i===3||j===3)&&i&&j?['var(--muted)',.08]:null)+
+    put(X1,Y1,[['','Yes','No','Total'],['Group A','30','10','40'],['Group B','20','30','50'],['Total','50','40','90']],{st:(i,j)=>i===1&&j===1?{c:'var(--surface)',w:800}:(i===0||j===0||i===3||j===3)?{w:700,mono:i>0&&j>0}:null})+
+    text(230,234,'30 people are in Group A and answered Yes',{a:'middle',s:13,w:700,c:'var(--wk)'}),
+    'A contingency table counts people by two categorical variables; each cell holds the people in one row category and one column category');
+  /* H0 independent, H1 related */
+  const node=(x,y,l,c)=>`<circle cx="${x}" cy="${y}" r="26" fill="${c}" fill-opacity=".16" stroke="${c}" stroke-width="2"/>`+text(x,y+7,l,{a:'middle',s:20,w:800,it:true,c});
+  const hy=svg(520,250,
+    card(14,18,240,170,'var(--c2)',{op:.06,sop:.35})+text(134,52,'H₀',{a:'middle',s:22,w:800,c:'var(--c2)'})+
+    node(70,110,'A','var(--c2)')+node(198,110,'B','var(--c2)')+`<line x1="100" x2="168" y1="110" y2="110" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 6"/>`+
+    text(134,168,'independent',{a:'middle',s:15,w:700})+
+    card(266,18,240,170,'var(--wk)',{op:.06,sop:.35})+text(386,52,'H₁',{a:'middle',s:22,w:800,c:'var(--wk)'})+
+    node(322,110,'A','var(--wk)')+node(450,110,'B','var(--wk)')+arrow(352,110,418,110,'var(--wk)',3)+arrow(418,110,354,110,'var(--wk)',3)+
+    text(386,168,'related',{a:'middle',s:15,w:700})+
+    pill(110,206,300,34,'assume H₀ · reject only if very unlikely','var(--wk)',{s:13}),
+    'H0: the two variables are independent; H1: they are related. We assume H0 and reject it only with strong evidence');
+  /* expected count: row total × column total ÷ grand total */
+  const X2=[60,160,260,360], Y2=[30,70,110,150];
+  const ex=svg(520,250,
+    grid(X2,Y2,(i,j)=>i===0&&j===0?['var(--wk)',.85]:(j===0&&i===2)?['var(--c2)',.3]:(i===0&&j===2)?['var(--c3)',.3]:(i===2&&j===2)?['var(--muted)',.25]:null)+
+    put(X2,Y2,[['E','','40'],['','',' 60'],['50','50','100']],{st:(i,j)=>i===0&&j===0?{c:'var(--surface)',w:800,mono:false,s:18}:{w:700}})+
+    text(410,55,'row total',{s:13,w:700,c:'var(--c2)'})+text(110,174,'column total',{a:'middle',s:13,w:700,c:'var(--c3)'})+text(410,135,'grand total',{s:13,w:700,c:'var(--muted)'})+
+    curveArrow(256,44,200,24,164,40,'var(--c2)',2)+curveArrow(96,146,70,110,98,74,'var(--c3)',2)+
+    pill(40,196,440,36,'E = row total × column total ÷ grand total','var(--wk)',{s:14}),
+    'The expected count of a cell multiplies its row total by its column total and divides by the grand total');
+  /* χ²: gaps between observed and expected */
+  const OE=[[72,63],[18,27],[96,105],[54,45]], K=1.2, base=176;
+  const chi=svg(520,250,
+    `<rect x="40" y="16" width="16" height="16" rx="3" fill="var(--wk)"/>`+text(62,29,'O observed',{s:13,w:700})+`<rect x="180" y="16" width="16" height="16" rx="3" fill="none" stroke="var(--c2)" stroke-width="2" stroke-dasharray="4 3"/>`+text(202,29,'E expected',{s:13,w:700})+
+    `<rect x="320" y="20" width="16" height="8" fill="${RED}" fill-opacity=".5"/>`+text(342,29,'gap O − E',{s:13,w:700,c:RED})+
+    OE.map(([o,e],i)=>{ const x=50+i*118, hO=o*K, hE=e*K, t=Math.min(hO,hE), T=Math.max(hO,hE);
+      return `<rect x="${x}" y="${base-T}" width="82" height="${T-t}" fill="${RED}" fill-opacity=".4"/>`+
+        `<rect x="${x}" y="${base-hO}" width="38" height="${hO}" rx="3" fill="var(--wk)" fill-opacity=".8"/><rect x="${x+44}" y="${base-hE}" width="38" height="${hE}" rx="3" fill="var(--c2)" fill-opacity=".08" stroke="var(--c2)" stroke-width="2" stroke-dasharray="4 3"/>`+
+        text(x+19,base+18,'O',{a:'middle',s:14,w:800})+text(x+63,base+18,'E',{a:'middle',s:14,w:800}); }).join('')+
+    axis(36,486,base)+pill(110,206,300,34,'bigger gaps → bigger χ²'),
+    'Chi-square adds up the gaps between observed and expected counts in every cell: bigger gaps give a bigger chi-square');
+  /* decision: χ² beyond the critical value → reject H₀ */
+  const Xc=t=>40+t*31.4, f=t=>t*Math.exp(-t/2)/4, Yc=t=>186-130*f(t)/0.184, crit=9.49;
+  const pts=[...Array(141)].map((_,i)=>i/10), tail=pts.filter(t=>t>=crit);
+  const dec=svg(520,250,
+    `<path d="M${Xc(crit)},186 L${tail.map(t=>Xc(t)+','+Yc(t)).join(' L')} L${Xc(14)},186 Z" fill="${RED}" fill-opacity=".45"/>`+
+    `<path d="M${pts.map(t=>Xc(t)+','+Yc(t)).join(' L')}" fill="none" stroke="var(--wk)" stroke-width="2.6"/>`+axis(30,496,186)+
+    `<line x1="${Xc(crit)}" x2="${Xc(crit)}" y1="40" y2="186" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>`+text(Xc(crit),30,'critical value',{a:'middle',s:13,w:700})+
+    text(Xc(4.2),206,'fail to reject H₀',{a:'middle',s:13,w:700,c:'var(--wk)'})+text(Xc(11.8),206,'reject H₀',{a:'middle',s:13,w:700,c:RED})+
+    arrow(Xc(11.8),112,Xc(11.6),176,RED,2)+text(Xc(11.8),104,'α = 0.05',{a:'middle',s:13,w:700,mono:true,c:RED})+
+    pill(110,216,300,32,'χ² > critical value → reject H₀'),
+    'If chi-square lands beyond the critical value, in the right tail of area alpha, reject H0');
+  return {tw,hy,ex,chi,dec};
+})();
+const CRIT=`<div class="tblwrap"><table class="tbl"><tr><th>df</th><th>α = 0.10</th><th>α = 0.05</th><th>α = 0.01</th></tr>${Object.entries(ST.CHI).slice(0,6).map(([d,a])=>`<tr><td>${d}</td>${a.map((x,i)=>`<td>${d==='1'&&i===1?`<b>${x}</b>`:x}</td>`).join('')}</tr>`).join('')}</table></div>`;
+
+Lesson.mount({
+  week:12, clo:'CLO 4', title:'Contingency Tables and the Chi-square Test', chapter:'Ch 10: Associations between Categorical Variables · Gould, Ryan & Wong (2020)',
+  intro:'Are two categorical variables related? We count, compare with what we would expect by chance, and decide with one test.',
+  topics:[
+  { id:'two-way', title:'Contingency tables',
+    def:'A <b>contingency table</b> (two-way table) counts individuals by two categorical variables: one in the rows, one in the columns. Compare the groups with <b>row percentages</b>.',
+    defFig:{label:'Two variables, one table', html:G12.tw},
+    life:{text:'240 students: do they use a study-planner app, and did they submit the last assignment on time? Data: illustrative.', fig:{label:'Observed counts', html:OBS}},
+    formula:{f:`${T('rp','Row %')} = ${fr(T('c','cell count'),T('r','row total'))} × 100%`,
+      parts:[['rp','<b>Row %</b>: the share of that row in this cell.'],['c','<b>cell count</b>: the number in one cell.'],['r','<b>row total</b>: the total of the same row.']],
+      sub:BA.side([['On time, planner app',`${fr('72','90')} × 100%`],['On time, no app',`${fr('96','150')} × 100%`]]), keys:'7 2 ÷ 9 0 × 1 0 0 =',
+      ans:`<div class="m">80% vs 64%</div>`, ansRaw:true},
+    meaning:{text:'80% of app users were on time, against 64% of non-users. The rows differ. Is the gap bigger than chance? The chi-square test answers.', fig:{label:'On time or late, by group', html:barsSVG}} },
+
+  { id:'hypotheses', title:'The test of independence: hypotheses',
+    def:'<b>H₀</b>: the two variables are <b>independent</b> (not related). <b>H₁</b>: they are <b>related</b>. We assume H₀ and reject it only if the data are very unlikely under it. The significance level is usually <b>α = 0.05</b>.',
+    defFig:{label:'Independent or related', html:G12.hy},
+    life:{text:'H₀: using a planner app and submitting on time are independent. H₁: they are related.'},
+    meaning:{text:'Every chi-square test follows the same five steps.', fig:{label:'Five steps', flow:[{t:'Hypotheses',s:'H₀, H₁',d:'H₀: independent. H₁: related.'},{t:'Expected',s:'E for each cell',d:'The counts we would expect if H₀ were true.'},{t:'χ²',s:'compare O and E',d:'Add (O − E)² ÷ E over all cells.'},{t:'df and critical value',s:'α = 0.05',d:'df = (r − 1)(c − 1). Read the table.'},{t:'Decide',s:'in words',d:'χ² > critical → reject H₀. Write the conclusion in context.'}]}} },
+
+  { id:'expected', title:'Expected counts',
+    def:'The <b>expected count</b> E is the count each cell would have if the variables were independent. Every E should be at least 5 for the test to be valid.',
+    defFig:{label:'Row × column ÷ grand', html:G12.ex},
+    life:{text:'Same 240 students. If app use made no difference, how many app users would we expect on time?'},
+    formula:{f:`${T('e',v('E'))} = ${fr(T('r','row total')+' × '+T('c','column total'),T('g','grand total'))}`,
+      parts:[['e','<b>E</b>: expected count for one cell.'],['r','<b>row total</b>: total of that cell’s row.'],['c','<b>column total</b>: total of that cell’s column.'],['g','<b>grand total</b>: total of the whole table.']],
+      sub:`${v('E')} = ${fr('90 × 168','240')}`, keys:'( 9 0 × 1 6 8 ) ÷ 2 4 0 =',
+      ans:`<div class="m">E = <b>63</b></div><p class="calcnote">Other cells: 27, 105, 45. All ≥ 5.</p>`, ansRaw:true, ansNote:'Expected counts keep the same row and column totals.'},
+    meaning:{text:'Observed 72, expected 63: more app users were on time than independence predicts. The test measures all such gaps together.', fig:{label:'Expected counts', html:EXP}} },
+
+  { id:'chi-square', demo:'Your professor builds the O, E, (O − E)² ÷ E table on the board.', title:'The chi-square statistic',
+    def:'The <b>chi-square statistic</b> χ² adds up, over every cell, how far the observed count O is from the expected count E. Large χ² → the data do not fit independence.',
+    defFig:{label:'Gaps between O and E', html:G12.chi},
+    life:{text:'Observed: 72, 18, 96, 54. Expected: 63, 27, 105, 45.'},
+    formula:{f:`${T('x','χ<sup>2</sup>')} = ${T('S',SG)} ${fr(T('d','('+v('O')+' − '+v('E')+')<sup>2</sup>'),T('e',v('E')))}`,
+      parts:[['x','<b>χ²</b> (“chi-square”): the test statistic.'],['S','<b>Σ</b>: add over every cell.'],['d','<b>(O − E)²</b>: observed minus expected, squared.'],['e','<b>E</b>: divide by the expected count of the same cell.']],
+      sub:`χ² = ${fr('(72 − 63)²','63')} + ${fr('(18 − 27)²','27')} + ${fr('(96 − 105)²','105')} + ${fr('(54 − 45)²','45')}`,
+      keys:'( 7 2 − 6 3 ) x² ÷ 6 3 + ( 1 8 − 2 7 ) x² ÷ 2 7 + ( 9 6 − 1 0 5 ) x² ÷ 1 0 5 + ( 5 4 − 4 5 ) x² ÷ 4 5 =', keyNote:'Bracket every O − E before squaring.',
+      ans:`<div class="m">1.286 + 3 + 0.771 + 1.8 ≈ <b>6.857</b></div>`, ansRaw:true},
+    meaning:{text:'χ² is never negative. 0 means O = E in every cell. Type any table and the tool finds E, χ² and the decision.', fig:{label:'Test any table', build:el=>ST.chiTool(el,{rows:['Planner app','No app'],cols:['On time','Late'],O:[[72,18],[96,54]]})}} },
+
+  { id:'decision', title:'Degrees of freedom and the decision',
+    def:'Compare χ² with the <b>critical value</b> from the chi-square table, using α and the <b>degrees of freedom</b> df. If χ² &gt; critical value, reject H₀.',
+    defFig:{label:'Beyond the critical value', html:G12.dec},
+    life:{text:'Planner table: 2 rows, 2 columns, χ² = 6.857, α = 0.05.'},
+    formula:{f:`${T('df','df')} = (${T('r',v('r'))} − 1)(${T('c',v('c'))} − 1)`,
+      parts:[['df','<b>df</b>: degrees of freedom.'],['r','<b>r</b>: number of rows (categories, not the total row).'],['c','<b>c</b>: number of columns (not the total column).']],
+      sub:'df = (2 − 1)(2 − 1)', keys:'( 2 − 1 ) × ( 2 − 1 ) =',
+      ans:`<div class="m">df = <b>1</b> → critical value = <b>3.841</b></div><p class="calcnote">6.857 &gt; 3.841 → <b>reject H₀</b></p>`, ansRaw:true},
+    meaning:{text:'At α = 0.05, there is evidence that using a planner app and submitting on time are related. The test shows an association, not that the app causes on-time work.', fig:{label:'Chi-square critical values', html:CRIT}} }
+  ],
+  inClass:{intro:'We build the tables and run the test together on the board.', items:[
+    {q:'150 students give their year of study and preferred class time. Year 1: Morning 28, Afternoon 20, Evening 12. Year 2: Morning 22, Afternoon 40, Evening 28. At α = 0.05, is preferred class time related to year of study? Data: illustrative.', tips:['Write H₀ and H₁ first.','Add the row and column totals.','E = row total × column total ÷ grand total.','df = (r − 1)(c − 1).']},
+    {q:'Using the table in Exercise 1, find the row percentages and draw a bar chart comparing Year 1 and Year 2. Does the chart agree with your decision?', draw:true, tips:['Row % = cell ÷ row total × 100%.','One bar (or group of bars) per year.','Similar bars → no relationship; different bars → related.']}]},
+  takeaways:{label:'Week 12 on one page', mindmap:{center:'χ² test', branches:[
+    {t:'Table',items:['Two categorical variables','Row % = cell ÷ row total']},
+    {t:'Hypotheses',items:['H₀: independent','H₁: related']},
+    {t:'Expected',items:['E = row × column ÷ grand','Every E ≥ 5']},
+    {t:'Statistic',items:['χ² = Σ (O − E)² ÷ E']},
+    {t:'Decide',items:['df = (r − 1)(c − 1)','χ² > critical → reject H₀','Conclusion in words']}]}},
+  practice:[
+    {check:[{l:'df',v:6},{l:'Critical value',v:12.592}],revise:'df = (rows − 1) × (columns − 1). Read the critical value in the df row, α = 0.05 column.',see:{t:'Revise: Degrees of freedom and the decision',href:'#decision'},type:'Easy',q:'A table has 3 rows and 4 columns. Find df and the critical value at α = 0.05.',hint:bM([gDf(3,4)],bT([['Critical value','df = 6, α = 0.05 → <b>12.592</b> (table)']]))},
+    {check:[{l:'E',v:18}],revise:'Expected count = row total × column total ÷ grand total.',see:{t:'Revise: Expected counts',href:'#expected'},type:'Easy',q:'Row total 80, column total 45, grand total 200. Find the expected count.',hint:bM([gExp(80,45,200)])},
+    {check:[{l:'(O − E)² ÷ E',v:1.5}],revise:'Each cell adds (O − E)² ÷ E. Square the difference before dividing by E.',see:{t:'Revise: The chi-square statistic',href:'#chi-square'},type:'Easy',q:'One cell has O = 30 and E = 24. Find its contribution to χ².',hint:bM([{t:'One cell',lines:[bX('','(O − E)²','E',{n:'O = 30',d:'E = 24'}),bA(`${bF('(30 − 24)²','24')} = ${bF('36','24')} = <b>1.5</b>`)],calc:['(30−24)²÷24',LCD((30-24)**2/24)]}])},
+    {check:[{l:'E: Metro, late',v:15},{l:'E: Metro, on time',v:45},{l:'E: Car, late',v:25},{l:'E: Car, on time',v:75}],revise:'Find the row and column totals first. Each E = row total × column total ÷ grand total.',see:{t:'Revise: Expected counts',href:'#expected'},type:'Medium',q:'160 students. Metro users: 10 late, 50 on time. Car users: 30 late, 70 on time. Find the four expected counts. Data: illustrative.',hint:bM([
+      {t:'Totals',lines:[BD.tb(['','Late','On time','Total'],[['Metro','10','50','60'],['Car','30','70','100']],['Total','40','120','160'])]},
+      gExp(60,40,160,{t:'Expected counts (E)',more:[bL(`Metro, on time: ${bF('(60) × (120)','160')} = <b>45</b>`),bL(`Car, late: ${bF('(100) × (40)','160')} = <b>25</b>`),bL(`Car, on time: ${bF('(100) × (120)','160')} = <b>75</b>`)]})])},
+    {check:[{l:'χ²',v:32/9,tol:0.005},{l:'df',v:1},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Fail to reject H₀'}],revise:'Add (O − E)² ÷ E over all four cells. Reject H₀ only if χ² is greater than the critical value.',see:{t:'Revise: Degrees of freedom and the decision',href:'#decision'},type:'Medium',q:'Same table: find χ², df and the decision at α = 0.05.',hint:bM([gChi([10,50,30,70],[15,45,25,75],{ans:'3.556'}),gDf(2,2)],bT([['Critical value','df = 1, α = 0.05 → <b>3.841</b>'],['Answer','3.556 &lt; 3.841 → <b>fail to reject H₀</b>: no evidence that commute mode and lateness are related.']]))},
+    {check:[{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'df = (rows − 1) × (columns − 1). Reject H₀ when χ² is greater than the critical value.',see:{t:'Revise: Degrees of freedom and the decision',href:'#decision'},type:'Medium',q:'A 2 × 3 table gives χ² = 7.2. Decide at α = 0.05.',hint:bM([gDf(2,3)],bT([['Critical value','df = 2, α = 0.05 → <b>5.991</b>'],['Answer','7.2 &gt; 5.991 → <b>reject H₀</b>: the variables are related.']]))},
+    {check:[{l:'χ²',v:115/12,tol:0.005},{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'Find every E first, then add (O − E)² ÷ E over all six cells. Compare χ² with the critical value.',see:{t:'Revise: The chi-square statistic',href:'#chi-square'},type:'Hard',q:'Lunch choice on two campuses. Campus A: hot meal 40, salad 25, sandwich 35. Campus B: hot meal 20, salad 35, sandwich 45. Test at α = 0.05. Data: illustrative.',hint:bM(bT([['H₀','Lunch choice and campus are independent.']]),[
+      {t:'Totals',lines:[BD.tb(['','A','B','Total'],[['Hot meal','40','20','60'],['Salad','25','35','60'],['Sandwich','35','45','80']],['Total','100','100','200'])]},
+      gExp(100,60,200,{t:'Expected counts (E)',more:[bL(`Sandwich: ${bF('(100) × (80)','200')} = <b>40</b>`),bL('E = 30, 30, 40 for each campus')]}),
+      gChi([40,25,35,20,35,45],[30,30,40,30,30,40],{ans:'9.583'}),gDf(2,3)],bT([['Critical value','df = 2, α = 0.05 → <b>5.991</b>'],['Answer','9.583 &gt; 5.991 → <b>reject H₀</b>: lunch choice is related to campus.']]))},
+    {check:[{l:'χ²',v:2150/288,tol:0.005},{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'E = row total × column total ÷ grand total for each of the six cells. Then add (O − E)² ÷ E and compare.',see:{t:'Revise: The chi-square statistic',href:'#chi-square'},type:'Hard',q:'Car ownership by age. 18–20: yes 15, no 35. 21–23: yes 22, no 38. 24+: yes 23, no 17. Test at α = 0.05. Data: illustrative.',hint:bM(bT([['H₀','Car ownership and age group are independent.']]),[
+      {t:'Totals',lines:[BD.tb(['','Yes','No','Total'],[['18–20','15','35','50'],['21–23','22','38','60'],['24 or older','23','17','40']],['Total','60','90','150'])]},
+      gExp(50,60,150,{t:'Expected counts (E)',more:[BD.tb(['E','Yes','No'],[['18–20','20','30'],['21–23','24','36'],['24 or older','16','24']]),bL('All E ≥ 5 ✓')]}),
+      gChi([15,35,22,38,23,17],[20,30,24,36,16,24],{ans:'7.465'}),gDf(3,2)],bT([['Critical value','df = 2, α = 0.05 → <b>5.991</b>'],['Answer','7.465 &gt; 5.991 → <b>reject H₀</b>: car ownership is related to age group.']]))}],
+  next:'Quiz 2: end of Week 12, in class, on paper. Next: Week 13, correlation and the regression line. <a href="week-13.html">Open Week 13 →</a>'
+});
+</script>
+</body>
+</html>

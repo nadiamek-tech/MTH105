@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Week 14 · Simple Linear Regression</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202610231305">
+<style>
+:root{--wk:#0369A1;--wk-soft:rgba(3,105,161,0.09);--wk-d:#7CC8FF;--wk-soft-d:rgba(124,200,255,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/concept.js?v=202610231305"></script>
+<script src="assets/decode.js?v=202610231305"></script>
+<script src="assets/professor.js?v=202610231305"></script>
+<script src="assets/keywords.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202610231305"></script>
+<script src="assets/pad.js?v=202610231305"></script>
+<script src="assets/calc.js?v=202610231305"></script>
+<script src="assets/casio.js?v=202610231305"></script>
+<script src="assets/board.js?v=202610231305"></script>
+<script src="assets/board-answers.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202611090905"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
+<script>
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice model answers: formula calculations written on the board (assets/board.js), everything else typed */
+const BD=Board, XBd=BA.XB, LCD=BA.lcd, bL=BD.line, bA=h=>BD.line(h,'ans'), bF=BD.frac;
+const bX=(pre,top,bot,o={})=>`<div class="bfx">${pre?`<span>${pre}</span>`:''}${bF(o.plain?top:`<span class="g">${top}</span>`,o.plain?bot:`<span class="r">${bot}</span>`)}${o.after?`<span>${o.after}</span>`:''}${o.n||o.d?`<span class="bnote"><span class="g">${o.n?'⟶ '+o.n:''}</span><span class="r">${o.d?'⟶ '+o.d:''}</span></span>`:''}</div>`;
+/* long calculator entries with no + to break on: wrap them on × ÷ − so the whole entry stays on the screen */
+const bWrap=e=>{ const tk=e.split(/(?<=\+)/).flatMap(s=>s.length>21?s.split(/(?<=[×÷−])/):[s]), out=[]; let c='';
+  tk.forEach(t=>{ if((c+t).length>21&&c){ out.push(c); c=t; } else c+=t; }); if(c) out.push(c); return out; };
+let bK=0;
+const bMake=gs=>{ const rep=[]; const g2=gs.map(g=>{ if(!g.calc||!g.calc[0].split(/(?<=\+)/).some(s=>s.length>22)) return g;
+    const ch=bWrap(g.calc[0]), id=bK++, ph=ch.map((c,i)=>`Q${id}Z${i}`.padEnd(21,'Z')); rep.push([ph,ch,g.calc[0],ph.join('+')]); return Object.assign({},g,{calc:[ph.join('+'),g.calc[1]]}); });
+  let h=BD.make(g2); rep.forEach(([ph,ch,real,fake])=>{ h=h.replace(`Calculator: ${fake} =`,`Calculator: ${real} =`); ph.forEach((p,i)=>{ h=h.replace(p+(i<ph.length-1?'+':''),ch[i]); }); }); return h; };
+const bT=BA.steps, bM=(...ps)=>ps.map(p=>Array.isArray(p)?bMake(p):p).join('')+`<p class="bd-foot">${BA.HOW}</p>`;
+/* sums table, slope, intercept and prediction written like the board */
+const gSums=(x,y,o={})=>{ const c=[['x',x],['y',y],['xy',x.map((v,i)=>v*y[i])],['x²',x.map(v=>v*v)]].concat(o.y2!==true?[]:[['y²',y.map(v=>v*v)]]);
+  return {t:'Sums table',lines:[BD.tb([''].concat(c.map(k=>k[0])),x.map((_,i)=>[''].concat(c.map(k=>String(k[1][i])))),['Σ'].concat(c.map(k=>String(k[1].reduce((a,b)=>a+b,0)))))]}; };
+const gB=(n,Sx,Sy,Sxy,Sx2,o={})=>{ const top=n*Sxy-Sx*Sy, bot=n*Sx2-Sx*Sx, b=top/bot;
+  return {t:'Slope (b)',lines:[bX('b =','nΣxy − ΣxΣy','nΣx² − (Σx)²')].concat(o.dec?[bL(`<span class="g">n = ${n}, Σx = ${Sx}, Σy = ${Sy}, Σxy = ${Sxy}</span>`),bL(`<span class="r">Σx² = ${Sx2}</span>`)]:[])
+    .concat([bX('b =',`${n}(${Sxy}) − ${Sx}(${Sy})`,`${n}(${Sx2}) − ${Sx}²`,{plain:true}),bA(`b = ${bF(BA.num(top),BA.num(bot))} = <b>${BA.num(b)}</b>`)]),
+    calc:[`(${n}×${Sxy}−${Sx}×${Sy})÷(${n}×${Sx2}−${Sx}²)`,LCD(b)]}; };
+const gA=(n,Sx,Sy,b)=>{ const a=(Sy-b*Sx)/n, bs=b<0?`(${BA.num(b)})`:BA.num(b);
+  return {t:'Intercept (a)',lines:[bX('a =','Σy − bΣx','n'),bL(`<span class="g">Σy = ${Sy}, b = ${BA.num(b)}, Σx = ${Sx}</span>, <span class="r">n = ${n}</span>`),bA(`a = ${bF(`${Sy} − ${bs}(${Sx})`,String(n))} = ${bF(BA.num(Sy-b*Sx),String(n))} = <b>${BA.num(a)}</b>`)],
+    calc:[`(${Sy}−${bs}×${Sx})÷${n}`,LCD(a)]}; };
+const gY=(a,b,x,o={})=>{ const y=a+b*x, op=b<0?'−':'+', B=BA.num(Math.abs(b));
+  return {t:o.t||'Prediction (ŷ)',lines:[bL(`ŷ = a + bx &nbsp;<span class="g">⟶ x = ${x}</span>`),bL(`ŷ = ${BA.num(a)} ${op} ${B}(${x})`),bA(`ŷ = <b>${BA.num(y)}</b>${o.u?' '+o.u:''}`)],
+    calc:[`${BA.num(a)}${op}${B}×${x}`,LCD(y)]}; };
+/* scatterplot: points, optional fitted line ŷ = a + bx, optional residual segments, extra marks */
+function scat(o){
+  const Wd=o.w||480,Hd=o.h||270,L=48,R=14,Tp=14,B=42,[x0,x1]=o.xr,[y0,y1]=o.yr;
+  const X=v=>L+(Wd-L-R)*(v-x0)/(x1-x0), Y=v=>Tp+(Hd-Tp-B)*(1-(v-y0)/(y1-y0));
+  let s=`<svg viewBox="0 0 ${Wd} ${Hd}" role="img" aria-label="${o.label||'Scatterplot'}">`;
+  (o.yt||[]).forEach(t=>{ s+=`<line x1="${L}" x2="${Wd-R}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--line)"/><text x="${L-6}" y="${Y(t)+4}" text-anchor="end" ${MONO} font-size="11" fill="var(--muted)">${t}</text>`; });
+  (o.xt||[]).forEach(t=>{ s+=`<text x="${X(t)}" y="${Hd-B+16}" text-anchor="middle" ${MONO} font-size="11" fill="var(--muted)">${t}</text>`; });
+  s+=`<line x1="${L}" x2="${L}" y1="${Tp}" y2="${Hd-B}" stroke="var(--ink)"/><line x1="${L}" x2="${Wd-R}" y1="${Hd-B}" y2="${Hd-B}" stroke="var(--ink)"/>`;
+  s+=`<text x="${(L+Wd-R)/2}" y="${Hd-6}" text-anchor="middle" ${FT} font-size="12" fill="var(--ink)">${o.xl}</text><text transform="translate(13 ${(Tp+Hd-B)/2}) rotate(-90)" text-anchor="middle" ${FT} font-size="12" fill="var(--ink)">${o.yl}</text>`;
+  if(o.line){ const [a,b]=o.line, lx=o.lx||[x0,x1];
+    if(o.resid) o.x.forEach((x,i)=>{ s+=`<line x1="${X(x)}" x2="${X(x)}" y1="${Y(o.y[i])}" y2="${Y(a+b*x)}" stroke="var(--c3)" stroke-width="2" stroke-dasharray="4 3"/>`; });
+    s+=`<line x1="${X(lx[0])}" y1="${Y(a+b*lx[0])}" x2="${X(lx[1])}" y2="${Y(a+b*lx[1])}" stroke="var(--wk)" stroke-width="2.4"/>`; }
+  if(o.extra) s+=o.extra(X,Y);
+  o.x.forEach((x,i)=>{ s+=`<circle cx="${X(x)}" cy="${Y(o.y[i])}" r="5.5" fill="var(--c2)" stroke="var(--surface)" stroke-width="1.5"/>`; });
+  return s+'</svg>';
+}
+const tbl=(h,rows,foot)=>`<div class="tblwrap"><table class="tbl"><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}${foot?`<tr>${foot.map(x=>`<th>${x}</th>`).join('')}</tr>`:''}</table></div>`;
+const MG=a=>`<div class="mg">${a.map(([l,t])=>l==='Calculator'?`<div><span>Calculator</span>${F.keys(t)}</div>`:`<div${l==='Answer'?' class="fin"':''}><span>${l}</span><span>${t}</span></div>`).join('')}</div>`;
+
+/* deliveries: distance (km) and delivery time (min). Data: illustrative */
+const DX=[2,4,5,7,8], DY=[16,19,21,27,35];
+const deliv=o=>scat(Object.assign({x:DX,y:DY,xr:[0,9],yr:[5,40],xt:[0,1,2,3,4,5,6,7,8,9],yt:[5,10,15,20,25,30,35,40],xl:'Distance (km)',yl:'Delivery time (min)',label:'Scatterplot of distance and delivery time'},o||{}));
+const lab=(X,Y,x,y,t,dx,dy,c)=>`<text x="${X(x)+(dx||0)}" y="${Y(y)+(dy||0)}" ${MONO} font-size="11" font-weight="600" fill="${c||'var(--ink)'}">${t}</text>`;
+
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const G14=(()=>{ const {svg,card,text,arrow,pill}=CG;
+  const dot=(x,y,c='var(--c2)',r=5)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+  const ax=(x0,y0,x1,y1,c='var(--ink)',w=1.5)=>`<path d="M${x0},${y1} L${x0},${y0} L${x1},${y0}" fill="none" stroke="${c}" stroke-width="${w}"/>`;
+  /* slope: the sign of b gives the direction of the line */
+  const pan=(x,y1,y2,lab,sub,c)=>card(x,14,150,160,c,{op:.06,sop:.4})+ax(x+18,156,x+138,30)+`<line x1="${x+24}" x2="${x+132}" y1="${y1}" y2="${y2}" stroke="${c}" stroke-width="3.2"/>`+
+    text(x+75,204,lab,{a:'middle',s:17,w:800,mono:true,c})+text(x+75,228,sub,{a:'middle',s:13,c:'var(--muted)'});
+  const slope=svg(520,250,pan(16,140,46,'b > 0','line rises','var(--wk)')+pan(185,94,94,'b = 0','flat line','var(--muted)')+pan(354,46,140,'b < 0','line falls','#C62828'),
+    'Positive b: the line rises. b = 0: the line is flat. Negative b: the line falls');
+  /* intercept: the height where the line meets the y-axis (x = 0) */
+  const yl=x=>132-(x-74)*0.21;
+  const inter=svg(520,250,
+    ax(74,212,500,20)+`<line x1="74" x2="74" y1="20" y2="212" stroke="var(--wk)" stroke-width="5" stroke-opacity=".35"/>`+text(84,30,'y-axis: x = 0',{s:12,w:700,c:'var(--wk)'})+
+    `<line x1="74" x2="494" y1="${yl(74)}" y2="${yl(494)}" stroke="var(--wk)" stroke-width="3"/>`+
+    arrow(50,172,50,yl(74)+6,'var(--wk)',2)+arrow(50,172,50,206,'var(--wk)',2)+text(38,178,'a',{a:'end',s:22,w:800,it:true,c:'var(--wk)'})+
+    dot(74,yl(74),'var(--wk)',8)+
+    pill(250,150,230,36,'a = ŷ when x = 0')+text(500,236,'x',{a:'end',s:14,w:700,mono:true}),
+    'The intercept a is the height of the line where it crosses the y-axis, at x = 0');
+  /* prediction: put x in, the line gives ŷ */
+  const box=(x,w,top,big,c)=>card(x,56,w,104,c)+text(x+w/2,82,top,{a:'middle',s:12,w:700,mono:true,c})+text(x+w/2,130,big,{a:'middle',s:26,w:800,mono:true});
+  const pred=svg(520,250,
+    box(16,116,'IN','x','var(--c2)')+arrow(138,108,180,108,'var(--muted)',2.4)+box(184,170,'THE LINE','a + b·x','var(--wk)')+arrow(360,108,400,108,'var(--muted)',2.4)+box(404,100,'OUT','ŷ','var(--c3)')+
+    text(74,200,'6 km',{a:'middle',s:15,mono:true,c:'var(--muted)'})+text(269,200,'8 + 3(6)',{a:'middle',s:15,mono:true,c:'var(--muted)'})+text(454,200,'26 min',{a:'middle',s:15,mono:true,c:'var(--muted)'})+
+    arrow(124,195,176,195,'var(--muted)',1.6)+arrow(346,195,398,195,'var(--muted)',1.6)+
+    text(260,236,'ŷ is a prediction, not a measured value',{a:'middle',s:12,c:'var(--muted)'}),
+    'Put a value of x into a + b times x; the result y-hat is the predicted y');
+  /* from r and the SDs: one SD of x across gives r SDs of y up, from the point of means */
+  const yr=x=>142-(x-226)*0.42;
+  const fromr=svg(520,250,
+    ax(50,216,504,18)+`<line x1="70" x2="496" y1="${yr(70)}" y2="${yr(496)}" stroke="var(--wk)" stroke-width="3"/>`+
+    `<path d="M226,${yr(226)} L366,${yr(226)} L366,${yr(366)}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="6 4"/>`+
+    text(296,yr(226)+22,'1 SD of x',{a:'middle',s:13,w:700,mono:true})+text(376,(yr(226)+yr(366))/2+5,'r × SD of y',{s:13,w:700,mono:true,c:'var(--wk)'})+
+    dot(226,yr(226),'var(--wk)',8)+text(212,yr(226)-12,'(x̄, ȳ)',{a:'end',s:14,w:800,mono:true})+
+    pill(60,18,300,34,'b = r × SD of y ÷ SD of x','var(--wk)',{s:13})+text(504,238,'x',{a:'end',s:14,w:700,mono:true}),
+    'From the point of means, one SD of x across gives r times the SD of y up: that is the slope');
+  return {slope,inter,pred,fromr};
+})();
+
+Lesson.mount({
+  week:14, clo:'CLO 5', title:'Simple Linear Regression: Finding and Using the Line', chapter:'Ch 4: Regression Analysis: Exploring Associations between Variables · Gould, Ryan & Wong (2020)',
+  intro:'Last week we read the line from a graph. This week we find ŷ = a + bx from the data, then use it to predict.',
+  topics:[
+  { id:'slope', demo:'Your professor builds the x, y, x², xy table on the board.', title:'The slope b',
+    def:'The <b>slope b</b> is the change in ŷ for each 1-unit increase in x. Always calculate b first.',
+    defFig:{label:'The sign of b', html:G14.slope},
+    life:{text:'A café records the distance of five deliveries (km) and the delivery time (min). Data: illustrative.',
+      fig:{label:'Calculation table · n = 5', html:tbl(['x (km)','y (min)','x²','xy'],[[2,16,4,32],[4,19,16,76],[5,21,25,105],[7,27,49,189],[8,35,64,280]],['Σx = 26','Σy = 118','Σx² = 158','Σxy = 682'])}},
+    formula:{f:`${T('b',v('b'))} = ${fr(T('top',v('n')+'Σ'+v('xy')+' − Σ'+v('x')+'Σ'+v('y')),T('bot',v('n')+'Σ'+v('x')+'<sup>2</sup> − (Σ'+v('x')+')<sup>2</sup>'))}`,
+      parts:[['b','<b>b</b>: the slope.'],['top','Top: n × Σxy minus Σx × Σy. The same top as r.'],['bot','Bottom: n × Σx² minus (Σx)². Square the total, not each value.']],
+      sub:`${v('b')} = ${fr('5(682) − 26(118)','5(158) − 26²')}`, subNote:'n = 5, Σx = 26, Σy = 118, Σx² = 158, Σxy = 682.',
+      keys:'( 5 × 6 8 2 − 2 6 × 1 1 8 ) ÷ ( 5 × 1 5 8 − 2 6 x² ) =',
+      ans:`<div class="m">b = 342 ÷ 114 = <b>3</b></div>`, ansRaw:true, ansNote:'b and r share the same top, so they always have the same sign.'},
+    meaning:{text:'b = 3 is positive, so the line rises: for every 1 km more, the line goes up 3 minutes.',
+      fig:{label:'Slope = 3 minutes per km', html:deliv({line:[8,3],lx:[1,9],extra:(X,Y)=>`<line x1="${X(5)}" x2="${X(6)}" y1="${Y(23)}" y2="${Y(23)}" stroke="var(--ink)" stroke-dasharray="4 3"/><line x1="${X(6)}" x2="${X(6)}" y1="${Y(23)}" y2="${Y(26)}" stroke="var(--ink)" stroke-dasharray="4 3"/>${lab(X,Y,5.1,23,'1 km',0,16)}${lab(X,Y,6,24.5,'+3 min',6,4)}`})}} },
+
+  { id:'intercept', title:'The intercept a',
+    def:'The <b>intercept a</b> is the value of ŷ when x = 0: where the line crosses the y-axis. Calculate it after b.',
+    defFig:{label:'Where the line meets x = 0', html:G14.inter},
+    life:{text:'Same deliveries: n = 5, Σx = 26, Σy = 118 and b = 3.'},
+    formula:{f:`${T('a',v('a'))} = ${fr(T('top','Σ'+v('y')+' − '+v('b')+'Σ'+v('x')),T('n',v('n')))}`,
+      parts:[['a','<b>a</b>: the intercept.'],['top','Σy minus b × Σx. Use the b you just found.'],['n','<b>n</b>: the number of pairs.']],
+      sub:`${v('a')} = ${fr('118 − 3(26)','5')}`, keys:'( 1 1 8 − 3 × 2 6 ) ÷ 5 =',
+      ans:`<div class="m">a = 40 ÷ 5 = <b>8</b> → ŷ = 8 + 3x</div>`, ansRaw:true, ansNote:'Textbook form, same result: a = ȳ − b·x̄ = 23.6 − 3(5.2) = 8.'},
+    meaning:{text:'The line crosses the y-axis at 8. It always passes through the point of means (x̄, ȳ) = (5.2, 23.6).',
+      fig:{label:'ŷ = 8 + 3x', html:deliv({line:[8,3],lx:[0,9],extra:(X,Y)=>`<circle cx="${X(0)}" cy="${Y(8)}" r="5" fill="var(--wk)"/>${lab(X,Y,0,8,'a = 8',8,-8,'var(--wk)')}<rect x="${X(5.2)-6}" y="${Y(23.6)-6}" width="12" height="12" transform="rotate(45 ${X(5.2)} ${Y(23.6)})" fill="var(--wk)"/>${lab(X,Y,5.2,23.6,'(x̄, ȳ) = (5.2, 23.6)',-150,-12)}`})}} },
+
+  { id:'predict', demo:'Your professor draws the line on the board through two predicted points.', title:'Predicting with the line',
+    def:'Substitute a value of x into ŷ = a + bx. The result <b>ŷ</b> (y-hat) is the <b>predicted</b> value of y for that x.',
+    defFig:{label:'x in, ŷ out', html:G14.pred},
+    life:{text:'A new order is 6 km away. How long should it take?',
+      fig:{label:'Prediction at x = 6', html:deliv({line:[8,3],lx:[1,9],extra:(X,Y)=>`<line x1="${X(6)}" x2="${X(6)}" y1="${Y(5)}" y2="${Y(26)}" stroke="var(--wk)" stroke-dasharray="5 4"/><line x1="${X(0)}" x2="${X(6)}" y1="${Y(26)}" y2="${Y(26)}" stroke="var(--wk)" stroke-dasharray="5 4"/><circle cx="${X(6)}" cy="${Y(26)}" r="6" fill="none" stroke="var(--wk)" stroke-width="2.4"/>${lab(X,Y,0,26,'ŷ = 26',6,-6,'var(--wk)')}`})}},
+    formula:{f:`${T('yh',v('ŷ'))} = ${T('a',v('a'))} + ${T('b',v('b'))} · ${T('x',v('x'))}`,
+      parts:[['yh','<b>ŷ</b>: the predicted y.'],['a','<b>a</b> = 8: the intercept.'],['b','<b>b</b> = 3: the slope.'],['x','<b>x</b>: the value you predict for, here 6 km.']],
+      sub:`${v('ŷ')} = 8 + 3(6)`, keys:'8 + 3 × 6 =',
+      ans:`<div class="m">ŷ = <b>26</b> minutes</div>`, ansRaw:true, ansNote:'Predict for x inside the data range, here 2 to 8 km.'},
+    meaning:{text:'To draw the line by hand, predict two values and join them, e.g. (3, 17) and (6, 26). Edit the pairs below: the tool rebuilds the table, the line and the prediction.',
+      fig:{label:'Fit and predict', build:el=>ST.regTool(el,'2, 16\n4, 19\n5, 21\n7, 27\n8, 35')}} },
+
+  { id:'from-r', title:'The line from r and the SDs',
+    def:'The textbook also finds the line from summary statistics: <b>b = r × s<sub>y</sub> ÷ s<sub>x</sub></b>, then <b>a = ȳ − b·x̄</b>. Use it when you have r, the means and the SDs instead of the raw data.',
+    defFig:{label:'One SD across, r SDs up', html:G14.fromr},
+    life:{text:'A campus kiosk records the daily high temperature x (°C) and the bottles of water sold y. x̄ = 30, SD of x = 4; ȳ = 130, SD of y = 20; r = 0.8. Data: illustrative.'},
+    formula:[
+      {name:'Slope b from r', f:`${T('b',v('b'))} = ${T('r',v('r'))} × ${fr(T('sy',v('s')+'<sub>y</sub>'),T('sx',v('s')+'<sub>x</sub>'))}`,
+      parts:[['b','<b>b</b>: the slope.'],['r','<b>r</b>: the correlation.'],['sy','<b>s<sub>y</sub></b>: SD of y.'],['sx','<b>s<sub>x</sub></b>: SD of x.']],
+      sub:`${v('b')} = 0.8 × ${fr('20','4')}`, keys:'0 . 8 × 2 0 ÷ 4 =',
+      ans:`<div class="m">b = <b>4</b></div>`, ansRaw:true},
+      {name:'Intercept a from the means', f:`${T('a',v('a'))} = ${T('yb','<span class="xb">y</span>')} − ${T('b',v('b'))} · ${T('xb',XB)}`,
+      parts:[['a','<b>a</b>: the intercept, found after b.'],['yb','<b>ȳ</b>: mean of y.'],['b','<b>b</b> = 4: the slope from box 1.'],['xb','<b>x̄</b>: mean of x.']],
+      sub:`${v('a')} = 130 − 4(30)`, keys:'1 3 0 − 4 × 3 0 =',
+      ans:`<div class="m">a = <b>10</b> → ŷ = 10 + 4x</div>`, ansRaw:true}],
+    meaning:{text:'SDs are always positive, so b has the same sign as r; r = 0 gives a flat line. At 35 °C: ŷ = 10 + 4(35) = 150 bottles.'} }
+  ],
+  inClass:{intro:'We build the table and draw the line together on the board.', items:[
+    {q:'An online shop records the number of items in an order x: 1, 3, 4, 6, 8, 9 and the packing time y (min): 8, 11, 16, 17, 21, 25. Build the table and find ŷ = a + bx. Data: illustrative.', tips:['Columns: x, y, x², xy. Add each column.','n = 6. Find b first.','a = (Σy − bΣx) ÷ n.']},
+    {q:'Draw the scatterplot of Exercise 1. Predict the packing time for 2 items and for 7 items, plot both predictions and join them to draw the line. Then predict the time for 5 items.', draw:true, tips:['Substitute x into ŷ = a + bx.','Join the two predicted points with a ruler.','Check: the line passes through (x̄, ȳ).']}]},
+  takeaways:{label:'Week 14 on one page', mindmap:{center:'ŷ = a + bx', branches:[
+    {t:'Table',items:['x, y, x², xy','Add each column']},
+    {t:'Slope b',items:['(nΣxy − ΣxΣy) ÷ (nΣx² − (Σx)²)','Same sign as r']},
+    {t:'Intercept a',items:['(Σy − bΣx) ÷ n','= ȳ − b·x̄']},
+    {t:'Predict',items:['ŷ = a + b·x','Inside the data range']},
+    {t:'From r',items:['b = r × SD of y ÷ SD of x','a = ȳ − b·x̄']}]}},
+  practice:[
+    {check:[{l:'ŷ',v:21}],revise:'Substitute x into ŷ = a + bx: multiply b by x first, then add a.',see:{t:'Revise: Predicting with the line',href:'#predict'},type:'Easy',q:'ŷ = 12 + 1.5x. Predict y at x = 6.',hint:bM([gY(12,1.5,6)])},
+    {check:[{l:'a',v:4}],revise:'a = ȳ − b x̄, with x̄ = Σx ÷ n and ȳ = Σy ÷ n.',see:{t:'Revise: The intercept a',href:'#intercept'},type:'Easy',q:'n = 5, Σx = 20, Σy = 60, b = 2. Find a.',hint:bM([gA(5,20,60,2)])},
+    {check:[{l:'b',v:1.8}],revise:'b = r × (SD of y ÷ SD of x). The SD of y goes on top.',see:{t:'Revise: The line from r and the SDs',href:'#from-r'},type:'Easy',q:'r = 0.6, SD of x = 3, SD of y = 9. Find b.',hint:bM([{t:'Slope (b)',lines:[bX('b = r ×','s<sub>y</sub>','s<sub>x</sub>',{n:'SD of y = 9',d:'SD of x = 3'}),bX('b = (0.6) ×','(9)','(3)',{plain:true}),bA('b = <b>1.8</b>')],calc:['0.6×(9÷3)',LCD(0.6*(9/3))]}])},
+    {check:[{l:'b',v:1.5},{l:'a',v:9}],revise:'b = [nΣxy − ΣxΣy] ÷ [nΣx² − (Σx)²]. Then a = ȳ − b x̄.',see:{t:'Revise: The slope b',href:'#slope'},type:'Medium',q:'n = 5, Σx = 30, Σy = 90, Σxy = 600, Σx² = 220. Find ŷ = a + bx.',hint:bM([gB(5,30,90,600,220,{dec:true}),gA(5,30,90,1.5),{lines:[bA('<b>ŷ = 9 + 1.5x</b>')]}])},
+    {check:[{l:'b',v:-3},{l:'a',v:40}],revise:'Build the x, y, x², xy table first. Find b, then a = ȳ − b x̄.',see:{t:'Revise: The slope b',href:'#slope'},type:'Medium',q:'Age of a used car x (years): 2, 3, 5, 7, 8. Price y (AED thousand): 35, 28, 28, 19, 15. Find ŷ = a + bx. Data: illustrative.',hint:bM([gSums([2,3,5,7,8],[35,28,28,19,15]),gB(5,25,125,547,151),gA(5,25,125,-3),{lines:[bA('<b>ŷ = 40 − 3x</b>')]}])},
+    {check:[{l:'ŷ at x = 4',v:28,u:'AED thousand'},{l:'ŷ at x = 6',v:22,u:'AED thousand'}],revise:'Substitute each x into ŷ = a + bx. With a negative b, ŷ falls as x rises.',see:{t:'Revise: Predicting with the line',href:'#predict'},type:'Medium',q:'Use the used-car line ŷ = 40 − 3x. Predict the price of a 4-year-old and of a 6-year-old car.',hint:bM([gY(40,-3,4,{t:'4-year-old car',u:'AED thousand'}),gY(40,-3,6,{t:'6-year-old car',u:'AED thousand'})],bT([['Answer','AED <b>28,000</b> and AED <b>22,000</b>.']]))},
+    {check:[{l:'b',v:2.4},{l:'a',v:9.6},{l:'ŷ at x = 4',v:19.2}],revise:'Find b from the table, then a = ȳ − b x̄, then substitute x = 4.',see:{t:'Revise: The slope b',href:'#slope'},type:'Hard',q:'Workers on a shift x: 1, 2, 3, 4, 5, 6. Orders packed per hour y: 12, 16, 16, 18, 20, 26. Find the line and predict y for 4 workers. Data: illustrative.',hint:bM([gSums([1,2,3,4,5,6],[12,16,16,18,20,26]),gB(6,21,108,420,91),gA(6,21,108,2.4),{lines:[bA('<b>ŷ = 9.6 + 2.4x</b>')]},gY(9.6,2.4,4,{t:'Prediction at x = 4',u:'orders per hour'})])},
+    {check:[{l:'b',v:-1.2},{l:'a',v:90},{l:'ŷ at x = 30',v:54}],revise:'b = r × (SD of y ÷ SD of x) and a = ȳ − b x̄. Keep the sign of r in b.',see:{t:'Revise: The line from r and the SDs',href:'#from-r'},type:'Hard',q:'x̄ = 25, ȳ = 60, SD of x = 5, SD of y = 8, r = −0.75. Find the line and predict y at x = 30.',hint:bM([
+      {t:'Slope (b)',lines:[bX('b = r ×','s<sub>y</sub>','s<sub>x</sub>',{n:'SD of y = 8',d:'SD of x = 5'}),bX('b = (−0.75) ×','(8)','(5)',{plain:true}),bA('b = <b>−1.2</b>')],calc:['(−0.75)×(8÷5)',LCD(-0.75*(8/5))]},
+      {t:'Intercept (a)',lines:[bL(`a = ȳ − b${XBd} &nbsp;<span class="g">⟶ ȳ = 60, b = −1.2, ${XBd} = 25</span>`),bL('a = 60 − (−1.2)(25)'),bA('a = <b>90</b>')],calc:['60−(−1.2)×25',LCD(60-(-1.2)*25)]},
+      {lines:[bA('<b>ŷ = 90 − 1.2x</b>')]},gY(90,-1.2,30,{t:'Prediction at x = 30'})])}],
+  next:'Next: Week 15, interpreting the regression line. <a href="week-15.html">Open Week 15 →</a>'
+});
+</script>
+</body>
+</html>

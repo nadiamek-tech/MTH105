@@ -21,7 +21,6 @@
   <h1 class="pg">Lectures</h1>
   <p class="lead">One page per lecture. Every topic: definition, an example around us, the formula step by step, and what it means.</p>
   <div class="cards" id="lec"></div>
-  <p class="soonline">Week 9 onwards is in preparation. <a href="index.html#calendar">See the plan in the semester calendar →</a></p>
   <h2 class="sec" id="tools">Tools</h2>
   <div class="cards">
     <a class="card" href="tools.html"><span class="no">Tools</span><h3>Calculator and statistics checkers</h3><p>Scientific calculator, mean and SD, boxplot, frequency table, Venn, tree, discrete distributions.</p></a>
@@ -32,7 +31,7 @@
 <script src="assets/supports.js?v=202611021159"></script>
 <script src="assets/course.js?v=20261103p"></script>
 <script src="assets/site.js?v=202611021159"></script>
-<script src="assets/kb.js?v=202611021159"></script>
+<script src="assets/kb.js?v=202611090905"></script>
 <script src="assets/search-index.js?v=202611021159"></script>
 <script src="assets/assistant.js?v=202611021159"></script>
 <script>
@@ -45,7 +44,14 @@ const WEEKS=[
  ['week-05.html','Week 5','Probability Theory',['Definitions of events and sample space','Operations on probabilities'],'CLO 2','Ch 5: Modeling Variation with Probability','Quiz 1 · End of Week 5',8],
  ['week-06.html','Week 6','Discrete Probability Distributions',['Definition of discrete random variables','Expected value, variance and standard deviation of discrete random variables'],'CLO 2','Ch 6: Modelling Random Events: The Normal and Binomial Models','',4],
  ['week-07.html','Week 7','Bernoulli and Binomial Distributions',['The Bernoulli distribution','The binomial formula and its conditions','Mean and standard deviation of a binomial'],'CLO 2','Ch 6: Modeling Random Events: The Normal and Binomial Models','',8],
- ['week-08.html','Week 8','The Normal Distribution',['From histogram to density curve','The normal distribution N(μ, σ)','The 68–95–99.7 rule'],'CLO 2','Ch 6: Modeling Random Events: The Normal and Binomial Models','Midterm · Week 8',8]];
+ ['week-08.html','Week 8','The Normal Distribution',['From histogram to density curve','The normal distribution N(μ, σ)','The 68–95–99.7 rule'],'CLO 2','Ch 6: Modeling Random Events: The Normal and Binomial Models','Midterm · Week 8',8],
+ ["week-09.html", "Week 9", "The Standard Normal Distribution and z-Scores", ["The z-score", "The standard normal distribution Z ~ N(0, 1)", "Reading the z-table: area to the left", "Greater than, and between two values", "From an area back to a value"], "CLO 2", "Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)", "", 8],
+ ["week-10.html", "Week 10", "Sampling Distribution of the Mean", ["Parameters, statistics and sampling variability", "Centre and spread of x̄: the standard error", "The Central Limit Theorem", "Probabilities for a sample mean"], "CLO 3", "Ch 7: Survey Sampling and Inference · Ch 9: Inferring Population Means · Gould, Ryan & Wong (2020)", "", 8],
+ ["week-11.html", "Week 11", "Confidence Intervals", ["Point estimates and interval estimates", "Confidence level and margin of error", "Confidence interval for a mean", "Confidence interval for a proportion"], "CLO 3", "Ch 7: Survey Sampling and Inference · Ch 9: Inferring Population Means · Gould, Ryan & Wong (2020)", "", 8],
+ ["week-12.html", "Week 12", "Contingency Tables and the Chi-square Test", ["Contingency tables", "The test of independence: hypotheses", "Expected counts", "The chi-square statistic", "Degrees of freedom and the decision"], "CLO 4", "Ch 10: Associations between Categorical Variables · Gould, Ryan & Wong (2020)", "", 8],
+ ["week-13.html", "Week 13", "Correlation and the Regression Line", ["Two variables and the scatterplot", "The correlation coefficient r", "Reading r: direction and strength", "The regression line ŷ = a + bx"], "CLO 5", "Ch 4: Regression Analysis: Exploring Associations between Variables · Gould, Ryan & Wong (2020)", "", 8],
+ ["week-14.html", "Week 14", "Simple Linear Regression: Finding and Using the Line", ["The slope b", "The intercept a", "Predicting with the line", "The line from r and the SDs"], "CLO 5", "Ch 4: Regression Analysis: Exploring Associations between Variables · Gould, Ryan & Wong (2020)", "", 8],
+ ["week-15.html", "Week 15", "Interpreting Regression", ["Interpreting the slope and the intercept", "Coefficient of determination r²", "Residuals", "Cautions: when not to trust the line"], "CLO 5", "Ch 4: Regression Analysis: Exploring Associations between Variables · Gould, Ryan & Wong (2020)", "", 8]];
 document.getElementById('lec').innerHTML=WEEKS.map(([f,wk,t,subs,clo,ch,as,pr])=>'<div class="card lc" data-href="'+f+'"><span class="no">'+wk+' · '+clo+'</span><h3><a href="'+f+'">'+esc(t)+'</a></h3><ul>'+subs.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul><div class="meta"><span>'+esc(ch)+'</span></div><div class="flags"><a class="pt-flag" href="'+f+'#practice">Practice →</a></div></div>').join('');
 document.querySelectorAll('.lc').forEach(c=>c.addEventListener('click',e=>{ if(!e.target.closest('a')) location.href=c.dataset.href; }));
 </script>

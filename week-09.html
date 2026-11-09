@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Week 9 · The Standard Normal Distribution and z-Scores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202610231305">
+<style>
+:root{--wk:#0369A1;--wk-soft:rgba(3,105,161,0.09);--wk-d:#7DD3FC;--wk-soft-d:rgba(125,211,252,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/concept.js?v=202610231305"></script>
+<script src="assets/decode.js?v=202610231305"></script>
+<script src="assets/professor.js?v=202610231305"></script>
+<script src="assets/keywords.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202610231305"></script>
+<script src="assets/pad.js?v=202610231305"></script>
+<script src="assets/calc.js?v=202610231305"></script>
+<script src="assets/casio.js?v=202610231305"></script>
+<script src="assets/board.js?v=202610231305"></script>
+<script src="assets/board-answers.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202611090905"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
+<script>
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* board model answers for practice: BA / Board from assets/board-answers.js and assets/board.js */
+const Bd=Board, MA=(...p)=>{ const li=p.map(x=>!!x.b).lastIndexOf(true); return p.map((x,i)=>x.b?(i===li?BA.board(x.b):Bd.make(x.b)):BA.steps(x.s)).join(''); };
+const z2=z=>z.toFixed(2).replace('-','−'), ok2=z=>Math.abs(z*100-Math.round(z*100))<1e-9;
+/* z = (x − μ) / σ */
+function gZ(x,mu,s,o={}){ const z=(x-mu)/s, L=o.lhs||'z';
+  return {t:o.t||'z-score',lines:[Bd.fr(L,'x − μ','σ',{n:`x = ${x}, μ = ${mu}`,d:`σ = ${s}`}),Bd.fr(L,`(${x} − ${mu})`,String(s),{plain:true}),
+    Bd.line(`${L} = ${Bd.frac(BA.num(x-mu),String(s))} ${ok2(z)?'=':'≈'} <b>${z2(z)}</b>`,'ans')],calc:[`(${x}−${mu})÷${s}`,BA.lcd(z)]}; }
+/* P(Z > z) = 1 − Φ(z) */
+function gRight(z,phi,o={}){ const v=1-phi;
+  return {t:o.t||'Right tail',lines:[Bd.line(`P(Z > z) = 1 − Φ(<span class="g">z</span>)`),Bd.dec([[`Φ(${z})`,`${phi} (table)`]]),Bd.line(`P(Z > ${z}) = 1 − ${phi} = <b>${BA.r4(v).padEnd(6,'0')}</b>`,'ans')],calc:[`1−${phi}`,BA.lcd(v)]}; }
+/* P(a < Z < b) = Φ(b) − Φ(a) */
+function gBetween(za,zb,pa,pb,o={}){ const v=pb-pa;
+  return {t:o.t||'Between',lines:[Bd.line(`P(a < X < b) = Φ(<span class="g">z<sub>b</sub></span>) − Φ(<span class="r">z<sub>a</sub></span>)`),Bd.dec([[`Φ(${zb})`,pb],[`Φ(${za})`,pa]]),Bd.line(`P = ${pb} − ${pa} = <b>${BA.r4(v).padEnd(6,'0')}</b>`,'ans')],calc:[`${pb}−${pa}`,BA.lcd(v)]}; }
+/* two results on one z-scale */
+const zLine=(()=>{ const X=z=>40+440*(z+3)/6;
+  let s=`<svg viewBox="0 0 520 120" role="img" aria-label="Two z-scores on one scale"><line x1="30" x2="490" y1="70" y2="70" stroke="var(--ink)"/>`;
+  for(let k=-3;k<=3;k++) s+=`<line x1="${X(k)}" x2="${X(k)}" y1="64" y2="76" stroke="var(--muted)"/><text x="${X(k)}" y="94" text-anchor="middle" ${MONO} font-size="12" fill="var(--muted)">${k}</text>`;
+  [[1.17,'Arabic 1.17','var(--c2)',30],[1.5,'Physics 1.5','var(--wk)',50]].forEach(([z,t,c,y])=>{ s+=`<circle cx="${X(z)}" cy="70" r="7" fill="${c}"/><line x1="${X(z)}" x2="${X(z)}" y1="${y+4}" y2="62" stroke="${c}"/><text x="${X(z)+(z>1.3?6:-6)}" y="${y}" text-anchor="${z>1.3?'start':'end'}" ${FT} font-size="12" font-weight="700" fill="${c}">${t}</text>`; });
+  return s+`<text x="260" y="114" text-anchor="middle" ${FT} font-size="11" fill="var(--muted)">z (standard deviations from the mean)</text></svg>`; })();
+
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G9=(()=>{ const {svg,card,text,arrow,curveArrow,pill,bell,bellArea,zx,axis}=CG;
+  /* z-score: a ruler whose step is σ */
+  const P=k=>200+80*k;
+  const zs=svg(520,250,
+    axis(24,496,160)+`<line x1="${P(0)}" x2="${P(0)}" y1="70" y2="160" stroke="var(--ink)" stroke-dasharray="5 4"/>`+text(P(0),60,'μ',{a:'middle',s:18,w:800,it:true})+
+    [-2,-1,0,1,2,3].map(k=>`<line x1="${P(k)}" x2="${P(k)}" y1="154" y2="166" stroke="var(--ink)" stroke-width="1.5"/>`+text(P(k),186,k>0?'+'+k:String(k).replace('-','−'),{a:'middle',s:13,mono:true,c:'var(--muted)'})).join('')+
+    text(14,186,'z',{s:13,w:700,it:true,c:'var(--muted)'})+
+    curveArrow(P(0),146,P(.5),100,P(1),146,'var(--c3)',2.2)+curveArrow(P(1),146,P(1.5),100,P(2),146,'var(--c3)',2.2)+curveArrow(P(0),146,P(-.5),100,P(-1),146,RED,2.2)+
+    [[.5,'var(--c3)'],[1.5,'var(--c3)'],[-.5,RED]].map(([k,c])=>text(P(k),106,'σ',{a:'middle',s:16,w:800,it:true,c})).join('')+
+    `<circle cx="${P(2)}" cy="160" r="8" fill="var(--c3)"/><circle cx="${P(-1)}" cy="160" r="8" fill="${RED}"/>`+
+    text(P(2),76,'x above μ',{a:'middle',s:13,w:700,c:'var(--c3)'})+text(P(-1),76,'x below μ',{a:'middle',s:13,w:700,c:RED})+
+    pill(P(2)-48,204,96,32,'z = +2','var(--c3)')+pill(P(-1)-48,204,96,32,'z = −1',RED),
+    'A z-score counts steps of sigma from the mean: two steps above gives z = +2, one step below gives z = −1');
+  /* standard normal: every normal curve maps onto one curve */
+  const Zs=z=>zx(290,506,z);
+  const sn=svg(520,250,
+    bellArea(14,124,130,64,-3.6,3.6,'var(--c2)',.18)+bell(14,124,130,64,{col:'var(--c2)',w:2})+axis(14,124,130)+text(69,150,'μ = 66, σ = 8',{a:'middle',s:11.5,mono:true,c:'var(--muted)'})+
+    bellArea(138,248,130,84,-3.6,3.6,'var(--c4)',.18)+bell(138,248,130,84,{col:'var(--c4)',w:2})+axis(138,248,130)+text(193,150,'μ = 75, σ = 6',{a:'middle',s:11.5,mono:true,c:'var(--muted)'})+
+    text(131,186,'different scales',{a:'middle',s:13,w:700})+
+    arrow(250,100,284,100,'var(--wk)',2.4)+text(267,88,'z',{a:'middle',s:15,w:800,it:true,c:'var(--wk)'})+
+    bellArea(290,506,180,126,-3.6,3.6,'var(--wk)',.2)+bell(290,506,180,126)+axis(286,510,180)+
+    [-3,-2,-1,0,1,2,3].map(k=>`<line x1="${Zs(k)}" x2="${Zs(k)}" y1="180" y2="186" stroke="var(--ink)"/>`+text(Zs(k),202,String(k).replace('-','−'),{a:'middle',s:12,mono:true,w:k===0?800:400,c:k===0?'var(--ink)':'var(--muted)'})).join('')+
+    `<line x1="${Zs(0)}" x2="${Zs(0)}" y1="54" y2="180" stroke="var(--ink)" stroke-dasharray="5 4"/>`+arrow(Zs(0),132,Zs(1),132,'var(--wk)',2.2)+text((Zs(0)+Zs(1))/2,124,'1',{a:'middle',s:14,w:800,c:'var(--wk)',mono:true})+
+    pill(330,214,136,32,'Z ~ N(0, 1)'),'Normal curves with different means and SDs all become one standard normal curve with mean 0 and SD 1');
+  /* z-table: row + column → area to the left */
+  const cx=[20,72,124,176,228], ry=[34,66,98,130,162];
+  const cell=(i,j,fill,op)=>`<rect x="${cx[i]}" y="${ry[j]}" width="52" height="32" fill="${fill}" fill-opacity="${op}" stroke="var(--line)"/>`;
+  const Zt=z=>zx(280,506,z);
+  const tb=svg(520,250,
+    [0,1,2,3].map(i=>[0,1,2,3].map(j=>cell(i,j,i===2&&j===2?'var(--wk)':(j===2||i===2)&&i&&j?'var(--wk)':'var(--surface)',i===2&&j===2?.9:(j===2||i===2)&&i&&j?.14:0)).join('')).join('')+
+    ['z','.00','.01','.02'].map((s,i)=>text(cx[i]+26,ry[0]+21,s,{a:'middle',s:13,w:700,mono:true,c:i===2?'var(--wk)':'var(--ink)'})).join('')+
+    ['0.9','1.0','1.1'].map((s,j)=>text(cx[0]+26,ry[j+1]+21,s,{a:'middle',s:13,w:700,mono:true,c:j===1?'var(--wk)':'var(--ink)'})).join('')+
+    text(cx[2]+26,ry[2]+21,'0.8438',{a:'middle',s:12,w:700,mono:true,c:'var(--surface)'})+
+    text(124,190,'row 1.0 · column .01',{a:'middle',s:12,mono:true,c:'var(--muted)'})+
+    curveArrow(178,114,236,70,Zt(-.2),132,'var(--wk)',2.2)+
+    bellArea(280,506,180,126,-3.6,1.01,'var(--wk)',.35)+bell(280,506,180,126)+axis(276,510,180)+
+    `<line x1="${Zt(1.01)}" x2="${Zt(1.01)}" y1="${180-126*Math.exp(-1.01*1.01/2)}" y2="186" stroke="var(--ink)" stroke-width="1.5"/>`+text(Zt(1.01),204,'z = 1.01',{a:'middle',s:12,mono:true})+
+    text(Zt(-.55),160,'0.8438',{a:'middle',s:15,w:800,mono:true})+
+    pill(300,214,206,32,'Φ(z) = area to the left'),'Row 1.0 and column .01 give the table value 0.8438: the area to the left of z = 1.01');
+  /* between = big area − small area */
+  const B3=[[10,160],[185,335],[360,510]], A=-0.8, Bz=1;
+  const mini=([x0,x1],a,b,col)=>bellArea(x0,x1,150,92,a,b,col,.4)+bell(x0,x1,150,92,{w:2})+axis(x0,x1,150)+
+    [[A,'a'],[Bz,'b']].map(([z,l])=>`<line x1="${zx(x0,x1,z)}" x2="${zx(x0,x1,z)}" y1="150" y2="156" stroke="var(--ink)"/>`+text(zx(x0,x1,z),172,l,{a:'middle',s:13,w:700,it:true})).join('');
+  const btw=svg(520,250,
+    mini(B3[0],-3.6,Bz,'var(--wk)')+mini(B3[1],-3.6,A,'var(--c2)')+mini(B3[2],A,Bz,'var(--c3)')+
+    text(172,112,'−',{a:'middle',s:30,w:800})+text(347,112,'=',{a:'middle',s:30,w:800})+
+    text(85,40,'big area',{a:'middle',s:14,w:700,c:'var(--wk)'})+text(260,40,'small area',{a:'middle',s:14,w:700,c:'var(--c2)'})+text(435,40,'between',{a:'middle',s:14,w:700,c:'var(--c3)'})+
+    text(85,198,'Φ(z<tspan baseline-shift="sub" font-size="11">b</tspan>)',{a:'middle',s:13,mono:true})+text(260,198,'Φ(z<tspan baseline-shift="sub" font-size="11">a</tspan>)',{a:'middle',s:13,mono:true})+text(435,198,'Φ(z<tspan baseline-shift="sub" font-size="11">b</tspan>) − Φ(z<tspan baseline-shift="sub" font-size="11">a</tspan>)',{a:'middle',s:13,mono:true})+
+    text(260,236,'greater than: the big area is the whole curve, 1',{a:'middle',s:12.5,c:'var(--muted)'}),
+    'The area between a and b is the big area to the left of b minus the small area to the left of a');
+  /* area → z → x: the table read backwards */
+  const Zp=z=>zx(16,300,z);
+  const pct=svg(520,250,
+    bellArea(16,300,180,130,-3.6,.84,'var(--wk)',.35)+bell(16,300,180,130)+axis(12,304,180)+
+    text(Zp(-.6),156,'0.80',{a:'middle',s:20,w:800,mono:true})+text(Zp(-.6),36,'area known',{a:'middle',s:13,w:700,c:'var(--wk)'})+
+    `<line x1="${Zp(.84)}" x2="${Zp(.84)}" y1="${180-130*Math.exp(-.84*.84/2)}" y2="186" stroke="var(--ink)" stroke-width="2"/>`+text(Zp(.84),206,'x = ?',{a:'middle',s:14,w:800,c:RED})+
+    pill(334,24,140,34,'area','var(--wk)')+arrow(404,62,404,100,'var(--muted)')+text(414,86,'inside the table',{s:12,c:'var(--muted)'})+
+    pill(334,104,140,34,'z','var(--c2)')+arrow(404,142,404,180,'var(--muted)')+text(414,166,'x = μ + zσ',{s:12,mono:true,c:'var(--muted)'})+
+    pill(334,184,140,34,'x','var(--c3)'),
+    'Backwards: start from a known area, find z inside the table, then turn z into x with x = mu + z sigma');
+  return {zs,sn,tb,btw,pct};
+})();
+
+Lesson.mount({
+  week:9, clo:'CLO 2', title:'The Standard Normal Distribution and z-Scores', chapter:'Ch 6: Modeling Random Events: The Normal and Binomial Models · Gould, Ryan & Wong (2020)',
+  intro:'Every normal curve becomes one curve, N(0, 1), once values are turned into z-scores. One table then gives every probability.',
+  topics:[
+  { id:'z-score', title:'The z-score',
+    def:'A <b>z-score</b> counts how many standard deviations a value is from the mean. Positive: above the mean. Negative: below. z = 0: at the mean.',
+    defFig:{label:'Steps from the mean', html:G9.zs},
+    life:{text:'Daily phone screen time of students: μ = 5.2 h, σ = 1.5 h. A student uses the phone 7.3 h. Data: illustrative.'},
+    formula:{f:`${T('z',v('z'))} = ${fr(T('x',v('x'))+' − '+T('mu','μ'),T('s','σ'))}`,
+      parts:[['z','<b>z</b>: the standard score, no units.'],['x','<b>x</b>: the value you are looking at.'],['mu','<b>μ</b>: the mean. x − μ is the distance from the centre.'],['s','<b>σ</b>: the standard deviation, used as the ruler.']],
+      sub:`${v('z')} = ${fr('7.3 − 5.2','1.5')}`, keys:'( 7 . 3 − 5 . 2 ) ÷ 1 . 5 =', keyNote:'Subtract first: without brackets the calculator divides 5.2 by 1.5 first.',
+      ans:`<div class="m">z = <b>1.40</b></div>`, ansRaw:true},
+    meaning:{text:'7.3 h is 1.4 standard deviations above the mean. Each value on the x-axis has a z-value below it.', fig:{label:'Screen time · x = 7.3 h', html:ST.normalCurve(5.2,1.5,0,0,[7.3])}} },
+
+  { id:'standard-normal', title:'The standard normal distribution Z ~ N(0, 1)',
+    def:'Turning every x into z gives the <b>standard normal distribution</b>: mean 0, SD 1. The axis now shows z, not hours or marks.',
+    defFig:{label:'One curve for every scale', html:G9.sn},
+    life:{text:'A student scores 78 in Physics (μ = 66, σ = 8) and 82 in Arabic (μ = 75, σ = 6). Which result is better, relative to the class? Data: illustrative.'},
+    formula:[{name:'z for Physics', f:`${T('z',v('z')+'<sub>Phys</sub>')} = ${fr(T('x',v('x'))+' − '+T('mu','μ'),T('s','σ'))}`,
+      parts:[['z','<b>z</b>: one z for each subject.'],['x','<b>x</b>: the student’s mark, 78.'],['mu','<b>μ</b>: the Physics class mean, 66.'],['s','<b>σ</b>: the Physics class SD, 8.']],
+      sub:`${v('z')}<sub>Phys</sub> = ${fr('78 − 66','8')}`, keys:'( 7 8 − 6 6 ) ÷ 8 =',
+      ans:`<div class="m">z<sub>Phys</sub> = <b>1.50</b></div>`, ansRaw:true},
+     {name:'z for Arabic', f:`${T('z',v('z')+'<sub>Arab</sub>')} = ${fr(T('x',v('x'))+' − '+T('mu','μ'),T('s','σ'))}`,
+      parts:[['z','<b>z</b>: one z for each subject.'],['x','<b>x</b>: the student’s mark, 82.'],['mu','<b>μ</b>: the Arabic class mean, 75.'],['s','<b>σ</b>: the Arabic class SD, 6.']],
+      sub:`${v('z')}<sub>Arab</sub> = ${fr('82 − 75','6')}`, keys:'( 8 2 − 7 5 ) ÷ 6 =',
+      ans:`<div class="m">z<sub>Arab</sub> ≈ <b>1.17</b></div>`, ansRaw:true, ansNote:'The higher z is the better relative result: Physics (1.50 &gt; 1.17).'}],
+    meaning:{text:'On the z-scale both marks are comparable, even with different means and SDs. Physics is further above its class mean.', fig:{label:'One common scale', html:zLine}} },
+
+  { id:'z-table', demo:'Your professor reads the z-table on the board: row, column, area.', title:'Reading the z-table: area to the left',
+    def:'The standard normal table gives the <b>area to the left</b> of z: <b>Φ(z) = P(Z &lt; z)</b>. Row: z to one decimal. Column: the second decimal.',
+    defFig:{label:'Row + column → area', html:G9.tb},
+    life:{text:'Same screen times, μ = 5.2 h, σ = 1.5 h. What proportion of students use the phone less than 7.3 h?'},
+    formula:{f:`${T('P','P('+v('X')+' &lt; '+v('x')+')')} = ${T('Z','P('+v('Z')+' &lt; '+v('z')+')')} = ${T('phi','Φ('+v('z')+')')}`,
+      parts:[['P','<b>P(X &lt; x)</b>: the question, in hours.'],['Z','<b>P(Z &lt; z)</b>: the same area on the z-scale.'],['phi','<b>Φ(z)</b>: the table value, area to the left.']],
+      sub:'P(X &lt; 7.3) = P(Z &lt; 1.40)', subNote:'z = 1.40 from topic 1. Row 1.4, column .00.',
+      ans:`<div class="m">P(X &lt; 7.3) = <b>0.9192</b></div>`, ansRaw:true, ansNote:'Check: z is positive, so the area is more than 0.5.'},
+    meaning:{text:'About 91.92% of students use the phone less than 7.3 h a day. Always sketch and shade before reading the table.',
+      fig:{label:'Row 1.4 · shaded: below 7.3 h', html:BA.side([['z-table · row 1.4',ST.zRow(1.40)],['Shaded: below 7.3 h',ST.normalCurve(5.2,1.5,-1e9,7.3,[7.3])]])}} },
+
+  { id:'right-between', title:'Greater than, and between two values',
+    def:'Total area = 1. <b>Greater than</b>: P(Z &gt; z) = 1 − Φ(z). <b>Between</b>: P(a &lt; X &lt; b) = Φ(z<sub>b</sub>) − Φ(z<sub>a</sub>), big area minus small area.',
+    defFig:{label:'Big area − small area', html:G9.btw},
+    life:{text:'Same screen times. What proportion use the phone between 4 h and 7.3 h?'},
+    formula:[{name:'Greater than', f:`${T('P','P('+v('X')+' &gt; '+v('x')+')')} = ${T('one','1')} − ${T('phi','Φ('+v('z')+')')}`,
+      parts:[['P','<b>P(X &gt; x)</b>: the area to the right of x.'],['one','<b>1</b>: the total area.'],['phi','<b>Φ(z)</b>: the table value, area to the left. z = 1.40 → 0.9192.']],
+      sub:'P(X &gt; 7.3) = 1 − 0.9192', keys:'1 − 0 . 9 1 9 2 =', ans:`<div class="m">P(X &gt; 7.3) = <b>0.0808</b></div>`, ansRaw:true},
+     {name:'Between', f:`${T('P','P('+v('a')+' &lt; '+v('X')+' &lt; '+v('b')+')')} = ${T('b','Φ('+v('z')+'<sub>b</sub>)')} − ${T('a','Φ('+v('z')+'<sub>a</sub>)')}`,
+      parts:[['P','<b>P(a &lt; X &lt; b)</b>: the area between a and b.'],['b','<b>Φ(z<sub>b</sub>)</b>: area left of the upper value. z<sub>b</sub> = 1.40 → 0.9192.'],['a','<b>Φ(z<sub>a</sub>)</b>: area left of the lower value. z<sub>a</sub> = (4 − 5.2) ÷ 1.5 = −0.80 → 0.2119.']],
+      sub:'P(4 &lt; X &lt; 7.3) = 0.9192 − 0.2119', keys:'0 . 9 1 9 2 − 0 . 2 1 1 9 =',
+      ans:`<div class="m">P(4 &lt; X &lt; 7.3) = <b>0.7073</b></div>`, ansRaw:true}],
+    meaning:{text:'About 70.73% of students use the phone between 4 and 7.3 hours. Choose a type of question and check your own answers.', fig:{label:'Change the mean, SD, a and b', build:ST.normalTool}} },
+
+  { id:'percentile', title:'From an area back to a value',
+    def:'To find the value with a given area, look <b>inside</b> the table for the closest area, read its z, then turn z back into x.',
+    defFig:{label:'The table read backwards', html:G9.pct},
+    life:{text:'Same screen times. Above how many hours are the top 20% of users?'},
+    formulaNote:'Top 20% → area to the left = 0.80. Closest table value: 0.7995 → z = 0.84.',
+    formula:{f:`${T('x',v('x'))} = ${T('mu','μ')} + ${T('z',v('z'))} · ${T('s','σ')}`,
+      parts:[['x','<b>x</b>: the cut-off value, in hours.'],['mu','<b>μ</b>: the mean.'],['z','<b>z</b>: read from inside the table.'],['s','<b>σ</b>: the standard deviation.']],
+      sub:'x = 5.2 + 0.84 × 1.5', keys:'5 . 2 + 0 . 8 4 × 1 . 5 =', ans:`<div class="m">x ≈ <b>6.46</b> hours</div>`, ansRaw:true},
+    meaning:{text:'Students above 6.46 h a day are the top 20% of users. 6.46 h is the 80th percentile.', fig:{label:'Shaded: top 20%', html:ST.normalCurve(5.2,1.5,6.46,1e9,[6.46])}} }
+  ],
+  inClass:{intro:'Sketch, shade, find z, read the table: we do each step together on the board.', items:[
+    {q:'Delivery times of a food app are normal with μ = 32 minutes and σ = 6 minutes. Sketch and shade, then find (a) P(X &lt; 40), (b) P(X &gt; 27), (c) P(29 &lt; X &lt; 41). Data: illustrative.', draw:true, tips:['Round z to 2 decimals.','Greater than: 1 − table value.','Between: big area − small area.']},
+    {q:'Leila scores 68 in a test with μ = 60, σ = 5. Omar scores 80 in a different test with μ = 72, σ = 6. Who did better relative to their class? What proportion of each class scored below them? Data: illustrative.', tips:['One z for each student.','Higher z = relatively better.','Proportion below = table value.']}]},
+  takeaways:{label:'Week 9 on one page', mindmap:{center:'z-scores', branches:[
+    {t:'z-score',items:['z = (x − μ) ÷ σ','+ above, − below the mean']},
+    {t:'Standard normal',items:['Z ~ N(0, 1)','Compare different scales']},
+    {t:'Table',items:['Φ(z) = area to the left','Row: 1 decimal, column: 2nd']},
+    {t:'Areas',items:['Less than: Φ(z)','Greater than: 1 − Φ(z)','Between: Φ(z_b) − Φ(z_a)']},
+    {t:'Back to x',items:['Area → z inside the table','x = μ + zσ']}]}},
+  practice:[
+    {check:[{l:'z',v:1.4,tol:0.006}],revise:'z = (x − μ) ÷ σ. Subtract in brackets first, then divide.',see:{t:'Revise: The z-score',href:'#z-score'},type:'Easy',q:'μ = 40, σ = 5. Find the z-score of x = 47.',hint:MA({b:[gZ(47,40,5)]},{s:[['Meaning','x = 47 is <b>1.4 SDs above</b> the mean.']]})},
+    {check:[{l:'P(Z &lt; 0.84)',v:0.7995}],revise:'Row 0.8, column 0.04. The table gives the area to the left directly.',see:{t:'Revise: Reading the z-table: area to the left',href:'#z-table'},type:'Easy',q:'Find P(Z &lt; 0.84).',hint:BA.steps([['Table','Row 0.8, column .04'],['Answer','P(Z &lt; 0.84) = <b>0.7995</b>']])},
+    {check:[{l:'P(Z &gt; 1.25)',v:0.1056}],revise:'For "greater than", subtract the table value from 1.',see:{t:'Revise: Greater than, and between two values',href:'#right-between'},type:'Easy',q:'Find P(Z &gt; 1.25).',hint:MA({s:[['Table','Row 1.2, column .05 → Φ(1.25) = 0.8944']]},{b:[gRight('1.25',0.8944)]})},
+    {check:[{l:'P(Z &lt; −1.12)',v:0.1314}],revise:'Use row −1.1, column 0.02. The area to the left of a negative z is less than 0.5.',see:{t:'Revise: Reading the z-table: area to the left',href:'#z-table'},type:'Medium',q:'Find P(Z &lt; −1.12).',hint:BA.steps([['Table','Row −1.1, column .02'],['Answer','P(Z &lt; −1.12) = <b>0.1314</b>. Check: z &lt; 0, so the area is &lt; 0.5.']])},
+    {check:[{l:'z',v:-1.75,tol:0.006},{l:'P(X &lt; 493)',v:0.0401}],revise:'Find z = (x − μ) ÷ σ and round it to 2 decimals before reading the table.',see:{t:'Revise: Reading the z-table: area to the left',href:'#z-table'},type:'Medium',q:'A machine fills bottles with μ = 500 ml, σ = 4 ml. What proportion contain less than 493 ml? Data: illustrative.',hint:MA({b:[gZ(493,500,4)]},{s:[['Table','Row −1.7, column .05'],['Answer','P(X &lt; 493) = Φ(−1.75) = <b>0.0401</b>']]})},
+    {check:[{l:'z<sub>a</sub>',v:-0.666667,tol:0.006},{l:'z<sub>b</sub>',v:1.333333,tol:0.006},{l:'P(6.5 &lt; X &lt; 8.3)',v:0.6568}],revise:'P(a &lt; X &lt; b) = area left of z<sub>b</sub> − area left of z<sub>a</sub>. Round each z to 2 decimals first.',see:{t:'Revise: Greater than, and between two values',href:'#right-between'},type:'Medium',q:'Students sleep μ = 7.1 h, σ = 0.9 h a night. Find P(6.5 &lt; X &lt; 8.3). Data: illustrative.',hint:MA({b:[gZ(6.5,7.1,0.9,{t:'z<sub>a</sub>',lhs:'z<sub>a</sub>'}),gZ(8.3,7.1,0.9,{t:'z<sub>b</sub>',lhs:'z<sub>b</sub>'})]},{s:[['Table','Φ(1.33) = 0.9082 and Φ(−0.67) = 0.2514']]},{b:[gBetween('−0.67','1.33',0.2514,0.9082)]})},
+    {check:[{l:'z (Ali)',v:-1.6,tol:0.006},{l:'z (Sara)',v:-1.5,tol:0.006},{l:'Relatively better',opts:['Ali','Sara','Equal'],v:'Ali'}],revise:'Compare z-scores, not raw times. When lower times are better, the more negative z is the better result.',see:{t:'Revise: The z-score',href:'#z-score'},type:'Hard',q:'Ali runs 5 km in 24 min (μ = 28, σ = 2.5). Sara swims 100 m in 95 s (μ = 104, σ = 6). Lower times are better. Who did relatively better?',hint:MA({b:[gZ(24,28,2.5,{t:'Ali'}),gZ(95,104,6,{t:'Sara'})]},{s:[['Compare','Lower time is better, so the more negative z wins: −1.60 &lt; −1.50.'],['Answer','<b>Ali</b> did relatively better.']]})},
+    {check:[{l:'z',v:-1.28,tol:0.006},{l:'x',v:211.6,u:'ms',tol:0.1}],revise:'Find the z with area 0.10 to its left, then x = μ + z × σ. The z is negative here.',see:{t:'Revise: From an area back to a value',href:'#percentile'},type:'Hard',q:'Reaction times: μ = 250 ms, σ = 30 ms. Below which time are the fastest 10%?',hint:MA({s:[['Table','Area to the left = 0.10. Closest table value 0.1003 → z = −1.28']]},{b:[{t:'x from z',lines:[Bd.line('x = <span class="g">μ</span> + <span class="r">z</span>·<span class="g">σ</span>'),Bd.dec([['μ','250'],['z','−1.28'],['σ','30']]),Bd.line('x = 250 + (−1.28)(30)'),Bd.line('x = 250 − 38.4 = <b>211.6 ms</b>','ans')],calc:['250+(−1.28)×30',BA.lcd(250-1.28*30)]}]})}],
+  next:'Next: Week 10, the sampling distribution of the mean. <a href="week-10.html">Open Week 10 →</a>'
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Week 11 · Confidence Intervals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202610231305">
+<link rel="stylesheet" href="assets/stats.css?v=202610231305">
+<link rel="stylesheet" href="assets/banner.css?v=202610231305">
+<link rel="stylesheet" href="assets/lesson.css?v=202610231305">
+<style>
+:root{--wk:#9C2A6B;--wk-soft:rgba(156,42,107,0.09);--wk-d:#FF8FCB;--wk-soft-d:rgba(255,143,203,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/supports.js?v=202610231305"></script>
+<script src="assets/course.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/concept.js?v=202610231305"></script>
+<script src="assets/decode.js?v=202610231305"></script>
+<script src="assets/professor.js?v=202610231305"></script>
+<script src="assets/keywords.js?v=202610231305"></script>
+<script src="assets/lesson.js?v=202610231305"></script>
+<script src="assets/pad.js?v=202610231305"></script>
+<script src="assets/calc.js?v=202610231305"></script>
+<script src="assets/casio.js?v=202610231305"></script>
+<script src="assets/board.js?v=202610231305"></script>
+<script src="assets/board-answers.js?v=202610231305"></script>
+<script src="assets/kb.js?v=202611090905"></script>
+<script src="assets/search-index.js?v=202610231305"></script>
+<script src="assets/assistant.js?v=202610231305"></script>
+<script src="assets/site.js?v=202610231305"></script>
+<script>
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+const FT='font-family="Schibsted Grotesk,Arial"', MONO='font-family="JetBrains Mono,monospace"';
+/* practice model answers: formula calculations written on the board (assets/board.js), everything else typed */
+const BD=Board, XBd=BA.XB, LCD=BA.lcd, bL=BD.line, bA=h=>BD.line(h,'ans'), bF=BD.frac;
+const bX=(pre,top,bot,o={})=>`<div class="bfx">${pre?`<span>${pre}</span>`:''}${bF(o.plain?top:`<span class="g">${top}</span>`,o.plain?bot:`<span class="r">${bot}</span>`)}${o.after?`<span>${o.after}</span>`:''}${o.n||o.d?`<span class="bnote"><span class="g">${o.n?'⟶ '+o.n:''}</span><span class="r">${o.d?'⟶ '+o.d:''}</span></span>`:''}</div>`;
+/* long calculator entries with no + to break on: wrap them on × ÷ − so the whole entry stays on the screen */
+const bWrap=e=>{ const tk=e.split(/(?<=\+)/).flatMap(s=>s.length>21?s.split(/(?<=[×÷−])/):[s]), out=[]; let c='';
+  tk.forEach(t=>{ if((c+t).length>21&&c){ out.push(c); c=t; } else c+=t; }); if(c) out.push(c); return out; };
+let bK=0;
+const bMake=gs=>{ const rep=[]; const g2=gs.map(g=>{ if(!g.calc||!g.calc[0].split(/(?<=\+)/).some(s=>s.length>22)) return g;
+    const ch=bWrap(g.calc[0]), id=bK++, ph=ch.map((c,i)=>`Q${id}Z${i}`.padEnd(21,'Z')); rep.push([ph,ch,g.calc[0],ph.join('+')]); return Object.assign({},g,{calc:[ph.join('+'),g.calc[1]]}); });
+  let h=BD.make(g2); rep.forEach(([ph,ch,real,fake])=>{ h=h.replace(`Calculator: ${fake} =`,`Calculator: ${real} =`); ph.forEach((p,i)=>{ h=h.replace(p+(i<ph.length-1?'+':''),ch[i]); }); }); return h; };
+const bT=BA.steps, bM=(...ps)=>ps.map(p=>Array.isArray(p)?bMake(p):p).join('')+`<p class="bd-foot">${BA.HOW}</p>`;
+/* E for a mean, E for a proportion, p̂, and the interval x̄ ± E (written like the board) */
+const gEm=(z,s,n,se,E,t)=>({t:t||'Margin of error (E)',lines:[bX('E = z* ×','σ','√n',{n:`σ = ${s}`,d:`n = ${n}`}),bX(`E = (${z}) ×`,`(${s})`,`√(${n})`,{plain:true}),bA(`E = ${z} × ${se} = <b>${E}</b>`)],calc:[`${z}×(${s}÷√(${n}))`,LCD(z*s/Math.sqrt(n))]});
+const gPh=(x,n,p)=>({t:'Sample proportion (p̂)',lines:[bX('p̂ =','x','n',{n:`x = ${x} (yes answers)`,d:`n = ${n}`}),bA(`p̂ = ${bF(String(x),String(n))} = <b>${p}</b>`)],calc:[`${x}÷${n}`,LCD(x/n)]});
+const gEp=(z,p,q,n,se,E,eq)=>({t:'Margin of error (E)',lines:[bX('E = z* × √(','p̂(1 − p̂)','n',{after:')',n:`p̂ = ${p}`,d:`n = ${n}`}),bL(`1 − p̂ = 1 − ${p} = ${q}`),bX(`E = (${z}) × √(`,`(${p})(${q})`,`${n}`,{after:')',plain:true}),bA(`E ${eq} ${z} × ${se} ${eq} <b>${E}</b>`)],calc:[`${z}×√(${p}×${q}÷${n})`,LCD(z*Math.sqrt(p*q/n))]});
+const gCI=(c,E,lo,hi,o={})=>({t:o.t||'Confidence interval',lines:[bL(`CI = ${o.p?'p̂':XBd} ± E`),bL(`lower = ${c} − ${E} = ${lo}`),bL(`upper = ${c} + ${E} = ${hi}`)].concat(o.w?[bL(`width = ${hi} − ${lo} = ${o.w}`)]:[]).concat([bA(`CI = (<b>${o.ab?o.ab[0]:lo}</b>, <b>${o.ab?o.ab[1]:hi}</b>)${o.u?' '+o.u:''}`)])});
+/* intervals on a number line: rows = [label, lo, mid, hi] */
+function ivSVG(rows, a, b, ticks, axis){
+  const X=x=>40+440*(x-a)/(b-a), H=40+rows.length*44;
+  return `<svg viewBox="0 0 520 ${H+10}" role="img" aria-label="${esc(axis)}">${rows.map(([lab,lo,mid,hi],i)=>{ const y=34+i*44;
+    return `<text x="${X(mid)}" y="${y-12}" text-anchor="middle" ${FT} font-weight="700" font-size="12" fill="var(--ink)">${lab}</text><line x1="${X(lo)}" x2="${X(hi)}" y1="${y}" y2="${y}" stroke="var(--wk)" stroke-width="6" stroke-linecap="round"/><circle cx="${X(mid)}" cy="${y}" r="5.5" fill="var(--ink)"/><text x="${X(lo)-6}" y="${y+4}" text-anchor="end" ${MONO} font-size="11" fill="var(--muted)">${lo}</text><text x="${X(hi)+6}" y="${y+4}" ${MONO} font-size="11" fill="var(--muted)">${hi}</text>`; }).join('')}
+    <line x1="40" x2="480" y1="${H-8}" y2="${H-8}" stroke="var(--ink)"/>${ticks.map(t=>`<line x1="${X(t)}" x2="${X(t)}" y1="${H-8}" y2="${H-3}" stroke="var(--muted)"/><text x="${X(t)}" y="${H+8}" text-anchor="middle" ${MONO} font-size="10" fill="var(--muted)">${t}</text>`).join('')}</svg>`;
+}
+/* ---------- concept graphics (one per topic, beside the definition) ---------- */
+const RED='#C62828';
+const G11=(()=>{ const {svg,card,text,arrow,tick,cross,pill,axis,brace}=CG;
+  /* a point is a dart, an interval is a net */
+  const mu=(x,y)=>`<path d="M${x},${y} l-7,-12 l14,0 z" fill="var(--c3)"/>`+text(x,y-18,'true value',{a:'middle',s:11.5,c:'var(--muted)'});
+  const est=svg(520,250,
+    card(14,20,236,190,'var(--c2)',{op:.06,sop:.35})+text(132,48,'Point estimate',{a:'middle',s:16,w:700})+text(132,70,'one number',{a:'middle',s:12.5,c:'var(--muted)'})+
+    axis(34,230,150)+mu(150,140)+`<circle cx="112" cy="150" r="8" fill="var(--c2)"/>`+text(112,176,'x̄ or p̂',{a:'middle',s:13,mono:true,w:700,c:'var(--c2)'})+cross(132,196,10,RED)+
+    card(270,20,236,190,'var(--wk)',{op:.06,sop:.35})+text(388,48,'Interval estimate',{a:'middle',s:16,w:700})+text(388,70,'estimate ± E',{a:'middle',s:13,mono:true,c:'var(--muted)'})+
+    axis(290,486,150)+`<rect x="310" y="142" width="156" height="16" rx="8" fill="var(--wk)" fill-opacity=".3" stroke="var(--wk)"/>`+mu(406,140)+`<circle cx="388" cy="150" r="8" fill="var(--wk)"/>`+
+    text(320,176,'− E',{a:'middle',s:13,mono:true,w:700,c:'var(--wk)'})+text(456,176,'+ E',{a:'middle',s:13,mono:true,w:700,c:'var(--wk)'})+tick(388,196,10)+
+    text(260,238,'the interval is a net around the estimate',{a:'middle',s:12.5,c:'var(--muted)'}),
+    'A single number usually misses the true value; an interval, estimate plus or minus E, is a net that can catch it');
+  /* E = z* × SE: more confidence, longer E */
+  const U=80, rows=[['90%',1.645,62],['95%',1.96,118],['99%',2.576,174]];
+  const me=svg(520,250,
+    pill(150,10,220,32,'E = z* × SE')+
+    rows.map(([l,z,y],i)=>text(64,y+22,l,{a:'end',s:15,w:800})+`<rect x="80" y="${y}" width="${z*U}" height="32" rx="6" fill="var(--wk)" fill-opacity="${.45+.2*i}"/>`+
+      [1,2].filter(k=>k<z).map(k=>`<line x1="${80+k*U}" x2="${80+k*U}" y1="${y}" y2="${y+32}" stroke="var(--surface)" stroke-width="2"/>`).join('')+
+      text(80+z*U+10,y+21,`z* = ${z}`,{s:13,mono:true,w:700})).join('')+
+    [0,1,2].map(k=>text(80+(k+.5)*U,228,'SE',{a:'middle',s:12,w:700,c:'var(--muted)'})).join('')+
+    `<line x1="80" x2="320" y1="212" y2="212" stroke="var(--muted)"/>`+[0,1,2,3].map(k=>`<line x1="${80+k*U}" x2="${80+k*U}" y1="207" y2="217" stroke="var(--muted)"/>`).join('')+
+    arrow(486,64,486,206,'var(--wk)',2.4)+text(474,232,'more confidence → larger E',{a:'end',s:12,w:700,c:'var(--wk)'}),
+    'The margin of error is z-star standard errors: 1.645 for 90%, 1.96 for 95%, 2.576 for 99%');
+  /* building the interval: x̄ − E and x̄ + E */
+  const ci=svg(520,190,'<g transform="translate(0,-62)">'+
+    axis(30,490,140)+`<rect x="140" y="130" width="240" height="20" rx="10" fill="var(--wk)" fill-opacity=".22"/>`+
+    `<circle cx="260" cy="140" r="9" fill="var(--ink)"/>`+text(260,176,'x̄',{a:'middle',s:18,w:800})+
+    arrow(250,104,146,104,'var(--wk)',2.4)+arrow(270,104,374,104,'var(--wk)',2.4)+text(200,94,'− E',{a:'middle',s:15,w:800,mono:true,c:'var(--wk)'})+text(320,94,'+ E',{a:'middle',s:15,w:800,mono:true,c:'var(--wk)'})+
+    text(140,152,'(',{a:'middle',s:36,w:400,c:'var(--wk)'})+text(380,152,')',{a:'middle',s:36,w:400,c:'var(--wk)'})+
+    text(140,180,'lower',{a:'middle',s:13,w:700})+text(140,198,'x̄ − E',{a:'middle',s:12.5,mono:true,c:'var(--muted)'})+
+    text(380,180,'upper',{a:'middle',s:13,w:700})+text(380,198,'x̄ + E',{a:'middle',s:12.5,mono:true,c:'var(--muted)'})+
+    pill(160,212,200,32,'(lower, upper)')+'</g>','Start at x-bar, go E to the left for the lower end and E to the right for the upper end');
+  /* p̂ = x ÷ n */
+  const yes=13, ic=[...Array(20)].map((_,i)=>[44+(i%5)*44,48+Math.floor(i/5)*44,i<yes]);
+  const ph=svg(520,250,
+    ic.map(([x,y,on])=>`<circle cx="${x}" cy="${y-8}" r="8" fill="${on?'var(--wk)':'var(--muted)'}" fill-opacity="${on?1:.35}"/><path d="M${x-13},${y+16} q13,-22 26,0 z" fill="${on?'var(--wk)':'var(--muted)'}" fill-opacity="${on?1:.35}"/>`).join('')+
+    text(132,232,'x = 13 yes · n = 20 people',{a:'middle',s:13,w:700})+
+    text(320,128,'p̂ =',{a:'end',s:22,w:800})+text(370,108,'13',{a:'middle',s:24,w:800,mono:true,c:'var(--wk)'})+`<line x1="336" x2="404" y1="120" y2="120" stroke="var(--ink)" stroke-width="2"/>`+text(370,148,'20',{a:'middle',s:24,w:800,mono:true})+
+    text(416,128,'= 0.65',{s:22,w:800,mono:true})+pill(320,180,170,34,'p̂ = x ÷ n'),
+    'The sample proportion is the number of yes answers divided by the sample size: 13 out of 20 gives 0.65');
+  return {est,me,ci,ph};
+})();
+const ZT=`<table class="tbl"><tr><th>Confidence</th><th>90%</th><th>95%</th><th>99%</th></tr><tr><td>z*</td><td><b>1.645</b></td><td><b>1.96</b></td><td><b>2.576</b></td></tr></table>`;
+
+Lesson.mount({
+  week:11, clo:'CLO 3', title:'Confidence Intervals', chapter:'Ch 7: Survey Sampling and Inference · Ch 9: Inferring Population Means · Gould, Ryan & Wong (2020)',
+  intro:'One sample, one estimate, but how close is it to the truth? A confidence interval gives a range of plausible values for the population parameter.',
+  topics:[
+  { id:'estimates', title:'Point estimates and interval estimates',
+    def:'A <b>point estimate</b> is one number from the sample: x̄ estimates μ, p̂ estimates p. An <b>interval estimate</b> adds a <b>margin of error</b> E: estimate ± E. The <b>confidence level</b> (90%, 95%, 99%) says how often the method captures the parameter.',
+    defFig:{label:'A dart or a net', html:G11.est},
+    life:{text:'A survey reports: “52% of residents support longer library hours, margin of error ± 3%, 95% confidence.” Data: illustrative.'},
+    meaning:{text:'52% is the point estimate. The interval 49% to 55% holds the plausible values of the true percentage.', fig:{label:'52% ± 3%', html:ivSVG([['p̂ = 52%',49,52,55]],44,60,[44,46,48,50,52,54,56,58,60],'Interval from 49 to 55 percent')}} },
+
+  { id:'margin', title:'Confidence level and margin of error',
+    def:'The <b>margin of error</b> E is z* standard errors. The multiplier <b>z*</b> comes from the confidence level: more confidence → larger z* → larger E.',
+    defFig:{label:'E grows with confidence', html:G11.me},
+    life:{text:'Time spent on a homework task: σ = 9 min, sample of n = 36 students, 95% confidence. Data: illustrative.'},
+    formula:{f:`${T('e',v('E'))} = ${T('z',v('z')+'*')} × ${T('se',fr('σ',sq(v('n'))))}`,
+      parts:[['e','<b>E</b>: the margin of error.'],['z','<b>z*</b>: 1.645 (90%), 1.96 (95%) or 2.576 (99%).'],['se','<b>σ ÷ √n</b>: the standard error from Week 10.']],
+      sub:`${v('E')} = 1.96 × ${fr('9',sq('36'))}`, keys:'1 . 9 6 × ( 9 ÷ √ 3 6 ) =',
+      ans:`<div class="m">E = 1.96 × 1.5 = <b>2.94</b> min</div>`, ansRaw:true},
+    meaning:{text:'z* = 1.96 cuts off the middle 95% of the standard normal curve. Memorise the three values.', fig:{label:'Middle 95% · z* = ±1.96', html:BA.side([['z* values',ZT],['Middle 95%',ST.normalCurve(0,1,-1.96,1.96,[-1.96,1.96])]])}} },
+
+  { id:'ci-mean', demo:'Your professor draws the interval on a number line on the board.', title:'Confidence interval for a mean',
+    def:'When σ is known, the confidence interval for μ is x̄ ± E. Write it as (lower, upper).',
+    defFig:{label:'Building the interval', html:G11.ci},
+    life:{text:'49 commuters on one bus route: mean trip time x̄ = 38.5 min. Population SD σ = 7 min. Build a 95% CI. Data: illustrative.'},
+    formula:{f:`${T('xb',XB)} ± ${T('z',v('z')+'*')} × ${T('se',fr('σ',sq(v('n'))))}`,
+      parts:[['xb','<b>x̄</b>: the point estimate, the centre of the interval.'],['z','<b>z*</b>: 1.96 for 95%.'],['se','<b>σ ÷ √n</b>: the standard error.']],
+      sub:`38.5 ± 1.96 × ${fr('7',sq('49'))}`, subNote:'First E, then x̄ − E and x̄ + E.', keys:'1 . 9 6 × ( 7 ÷ √ 4 9 ) =',
+      ans:`<div class="m">E = <b>1.96</b> → (<b>36.54</b>, <b>40.46</b>) min</div>`, ansRaw:true, ansNote:'38.5 − 1.96 = 36.54 and 38.5 + 1.96 = 40.46.'},
+    meaning:{text:'“We are 95% confident that the mean trip time of all commuters on this route is between 36.54 and 40.46 min.” Change n or the level and watch the width.', fig:{label:'Build an interval', build:ST.ciTool, caption:'Larger n → narrower. Higher confidence → wider.'}} },
+
+  { id:'ci-prop', title:'Confidence interval for a proportion',
+    def:'For a percentage, the point estimate is <b>p̂ = x ÷ n</b> (x = number of successes). Its standard error is √(p̂(1 − p̂) ÷ n).',
+    defFig:{label:'Yes answers out of n', html:G11.ph},
+    life:{text:'A survey of 300 students finds 195 use a mobile banking app. Build a 90% CI for the proportion of all students who use one. Data: illustrative.'},
+    formula:{f:`${T('p',PH)} ± ${T('z',v('z')+'*')} × ${sq(fr(T('pq',PH+'(1 − '+PH+')'),T('n',v('n'))))}`,
+      parts:[['p','<b>p̂</b> (“p-hat”): sample proportion, x ÷ n.'],['z','<b>z*</b>: 1.645 for 90%.'],['pq','<b>p̂(1 − p̂)</b>: success × failure.'],['n','<b>n</b>: sample size.']],
+      sub:`0.65 ± 1.645 × ${sq(fr('0.65 × 0.35','300'))}`, subNote:'p̂ = 195 ÷ 300 = 0.65.', keys:'1 . 6 4 5 × √ ( 0 . 6 5 × 0 . 3 5 ÷ 3 0 0 ) =',
+      ans:`<div class="m">E ≈ <b>0.045</b> → (<b>0.605</b>, <b>0.695</b>)</div>`, ansRaw:true, ansNote:'We are 90% confident that between 60.5% and 69.5% of all students use the app.'},
+    meaning:{text:'Same data, higher confidence, wider interval. To be more confident, we accept a less precise range.', fig:{label:'Same data, three confidence levels', html:ivSVG([['90%','0.605',.65,'0.695'],['95%','0.596',.65,'0.704'],['99%','0.579',.65,'0.721']].map(([l,lo,m,hi])=>[l,+lo,m,+hi]),0.55,0.75,[0.55,0.6,0.65,0.7,0.75],'90, 95 and 99 percent intervals for the same data')}} }
+  ],
+  inClass:{intro:'We build both intervals together on the board, then draw them on a number line.', items:[
+    {q:'64 smartwatch users: mean daily steps x̄ = 7,850. Population SD σ = 1,600 steps. Build the 90% and the 99% confidence intervals for μ. Which is wider, and why? Data: illustrative.', tips:['SE = σ ÷ √n first.','E = z* × SE, for each level.','Lower = x̄ − E, upper = x̄ + E.']},
+    {q:'In a survey, 220 of 400 shoppers paid by phone. Build a 95% CI for the proportion of all shoppers who pay by phone, write one sentence to interpret it, and draw it on a number line. Data: illustrative.', draw:true, tips:['p̂ = x ÷ n.','Bracket p̂(1 − p̂) ÷ n under the square root.','Mark p̂ in the middle and both ends.']}]},
+  takeaways:{label:'Week 11 on one page', mindmap:{center:'CI', branches:[
+    {t:'Idea',items:['Estimate ± margin of error','Point estimate: x̄ or p̂']},
+    {t:'z*',items:['90%: 1.645','95%: 1.96','99%: 2.576']},
+    {t:'CI for μ',items:['x̄ ± z* × σ ÷ √n']},
+    {t:'CI for p',items:['p̂ ± z* × √(p̂(1 − p̂) ÷ n)']},
+    {t:'Width',items:['Larger n → narrower','Higher confidence → wider']}]}},
+  practice:[
+    {check:[{l:'E',v:3.92}],revise:'E = z* × σ ÷ √n, with z* = 1.96 for 95%.',see:{t:'Revise: Confidence level and margin of error',href:'#margin'},type:'Easy',q:'σ = 10, n = 25, 95% confidence. Find the margin of error.',hint:bM(bT([['z*','95% → z* = <b>1.96</b>']]),[gEm(1.96,10,25,'2','3.92')])},
+    {check:[{l:'Lower',v:55.5},{l:'Upper',v:64.5}],revise:'The interval is (x̄ − E, x̄ + E).',see:{t:'Revise: Confidence interval for a mean',href:'#ci-mean'},type:'Easy',q:'x̄ = 60 and E = 4.5. Write the confidence interval.',hint:bM([gCI('60','4.5','55.5','64.5')])},
+    {check:[{l:'x̄',v:46},{l:'E',v:4}],revise:'x̄ is the midpoint: (lower + upper) ÷ 2. E is half the width: (upper − lower) ÷ 2.',see:{t:'Revise: Confidence interval for a mean',href:'#ci-mean'},type:'Easy',q:'A confidence interval for μ is (42, 50). Find x̄ and E.',hint:bM([
+      {t:'Centre',lines:[bX(`${XBd} =`,'lower + upper','2',{n:'42 + 50',d:'2'}),bA(`${XBd} = ${bF('(42 + 50)','2')} = ${bF('92','2')} = <b>46</b>`)],calc:['(42+50)÷2',LCD((42+50)/2)]},
+      {t:'Margin of error (E)',lines:[bX('E =','upper − lower','2',{n:'50 − 42',d:'2'}),bA(`E = ${bF('(50 − 42)','2')} = ${bF('8','2')} = <b>4</b>`)],calc:['(50−42)÷2',LCD((50-42)/2)]}])},
+    {check:[{l:'E',v:0.588,tol:0.002},{l:'Lower',v:17.812,u:'kg',tol:0.01},{l:'Upper',v:18.988,u:'kg',tol:0.01}],revise:'CI = x̄ ± z* × σ ÷ √n, with z* = 1.96. Find E first, then subtract and add.',see:{t:'Revise: Confidence interval for a mean',href:'#ci-mean'},type:'Medium',q:'100 bags of rice: x̄ = 18.4 kg, σ = 3 kg. Build a 95% CI for μ. Data: illustrative.',hint:bM(bT([['z*','95% → z* = <b>1.96</b>']]),[gEm(1.96,3,100,'0.3','0.588'),gCI('18.4','0.588','17.812','18.988',{u:'kg'})])},
+    {check:[{l:'E',v:2.576,tol:0.01},{l:'Lower',v:69.424,u:'months',tol:0.01},{l:'Upper',v:74.576,u:'months',tol:0.01}],revise:'For 99% confidence, z* = 2.576, not 1.96.',see:{t:'Revise: Confidence interval for a mean',href:'#ci-mean'},type:'Medium',q:'81 phone batteries: x̄ = 72 months of life, σ = 9. Build a 99% CI for μ. Data: illustrative.',hint:bM(bT([['z*','99% → z* = <b>2.576</b>']]),[gEm(2.576,9,81,'1','2.576'),gCI('72','2.576','69.424','74.576',{u:'months'})])},
+    {check:[{l:'p̂',v:0.6},{l:'E',v:0.0784},{l:'Lower',v:0.5216},{l:'Upper',v:0.6784}],revise:'p̂ = x ÷ n. E = z* × √(p̂(1 − p̂) ÷ n).',see:{t:'Revise: Confidence interval for a proportion',href:'#ci-prop'},type:'Medium',q:'90 of 150 surveyed drivers use a navigation app daily. Build a 95% CI for the proportion. Data: illustrative.',hint:bM(bT([['z*','95% → z* = <b>1.96</b>']]),[gPh(90,150,'0.6'),gEp(1.96,'0.6','0.4',150,'0.04','0.0784','='),gCI('0.6','0.0784','0.5216','0.6784',{p:1})])},
+    {check:[{l:'p̂',v:0.28},{l:'E',v:0.051726},{l:'Lower',v:0.228274},{l:'Upper',v:0.331726},{l:'Meaning',opts:['99% confident 22.8% to 33.2% of all residents cycle weekly','99% of residents cycle weekly','99% of samples give p̂ = 0.28'],v:'99% confident 22.8% to 33.2% of all residents cycle weekly'}],revise:'Use z* = 2.576 for 99%. The confidence describes the interval for the population proportion, not individual residents.',see:{t:'Revise: Confidence interval for a proportion',href:'#ci-prop'},type:'Hard',q:'140 of 500 surveyed residents cycle at least once a week. Build a 99% CI for the proportion and interpret it. Data: illustrative.',hint:bM(bT([['z*','99% → z* = <b>2.576</b>']]),[gPh(140,500,'0.28'),gEp(2.576,'0.28','0.72',500,'0.0201','0.0517','≈'),gCI('0.28','0.0517','0.2283 ≈ 0.228','0.3317 ≈ 0.332',{p:1,ab:['0.228','0.332']})],bT([['Meaning','We are 99% confident that <b>22.8% to 33.2%</b> of all residents cycle weekly.']]))},
+    {check:[{l:'90% Lower',v:14.542,tol:0.01},{l:'90% Upper',v:15.858,tol:0.01},{l:'95% Lower',v:14.416,tol:0.01},{l:'95% Upper',v:15.984,tol:0.01},{l:'Wider',opts:['90% CI','95% CI','Same width'],v:'95% CI'}],revise:'z* = 1.645 for 90% and 1.96 for 95%. A larger z* gives a larger E, so a wider interval.',see:{t:'Revise: Confidence level and margin of error',href:'#margin'},type:'Hard',q:'x̄ = 15.2, σ = 2.4, n = 36. Build the 90% and the 95% CIs and compare their widths.',hint:bM(bT([['z*','90% → <b>1.645</b> · 95% → <b>1.96</b>']]),[gEm(1.645,2.4,36,'0.4','0.658','90%: E'),gCI('15.2','0.658','14.542','15.858',{t:'90%: CI',w:'1.316'}),gEm(1.96,2.4,36,'0.4','0.784','95%: E'),gCI('15.2','0.784','14.416','15.984',{t:'95%: CI',w:'1.568'})],bT([['Answer','1.568 &gt; 1.316 → higher confidence gives a <b>wider</b> interval.']]))}],
+  next:'Next: Week 12, contingency tables and the chi-square test. <a href="week-12.html">Open Week 12 →</a>'
+});
+</script>
+</body>
+</html>
