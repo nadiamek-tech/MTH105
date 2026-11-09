@@ -161,3 +161,9 @@ body.lesson{font-family:var(--f-body)}
 .cases3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.cases3>div{min-width:0;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);display:grid;gap:4px}
 .cases3 small{font:600 .72rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.cases3 code{font:600 .88rem var(--f-mono);color:var(--wk)}
 @media (max-width:640px){.cases3{grid-template-columns:1fr}}
+
+.zt-wrap{max-height:430px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.ztfull{margin:0;font-size:.82rem}.ztfull thead th{position:sticky;top:0;z-index:1}.ztfull tbody th{position:sticky;left:0;background:var(--wk-soft)}
+.ztfull td{cursor:pointer}.ztfull td:hover{outline:2px solid var(--wk);outline-offset:-2px}
+.ex9{flex-wrap:wrap}.ex9-q{font-weight:700}.ex9-s{margin:0;padding-left:20px}
+.ztfull thead th{background:var(--surface);color:var(--wk);box-shadow:inset 0 -2px var(--line)}.ztfull tbody th{background:var(--surface);box-shadow:inset -2px 0 var(--line)}

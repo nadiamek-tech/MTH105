@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="assets/course.css?v=202610231305">
 <link rel="stylesheet" href="assets/stats.css?v=202610231305">
 <link rel="stylesheet" href="assets/banner.css?v=202610231305">
-<link rel="stylesheet" href="assets/lesson.css?v=202611090918">
+<link rel="stylesheet" href="assets/lesson.css?v=202611091013">
 <style>
 :root{--wk:#0369A1;--wk-soft:rgba(3,105,161,0.09);--wk-d:#7DD3FC;--wk-soft-d:rgba(125,211,252,0.14)}
 </style>
@@ -23,7 +23,7 @@
 <script src="assets/decode.js?v=202610231305"></script>
 <script src="assets/professor.js?v=202610231305"></script>
 <script src="assets/keywords.js?v=202610231305"></script>
-<script src="assets/lesson.js?v=202611090918"></script>
+<script src="assets/lesson.js?v=202611091013"></script>
 <script src="assets/pad.js?v=202610231305"></script>
 <script src="assets/calc.js?v=202610231305"></script>
 <script src="assets/casio.js?v=202610231305"></script>
@@ -87,6 +87,46 @@ function step0(el){
   el.innerHTML=`<div class="tool"><div class="seg2">${['0 · Draw','1 · z','2 · Table','3 · Answer'].map((t,i)=>`<button type="button" aria-pressed="${i===0}">${t}</button>`).join('')}</div><div class="pic"></div><div class="feedback"></div></div>`;
   const draw=i=>{ el.querySelectorAll('.seg2 button').forEach((b,j)=>b.setAttribute('aria-pressed',j===i)); el.querySelector('.pic').innerHTML=ST.normalCurve(5.2,1.5,4,7.3,i>=1?[4,7.3]:[]); el.querySelector('.feedback').innerHTML=T[i]; };
   el.querySelectorAll('.seg2 button').forEach((b,i)=>b.addEventListener('click',()=>draw(i))); draw(0); }
+
+
+/* ---------- why a z-table: concept graphic, the whole table, eight readings ---------- */
+const G9why=(()=>{ const {svg,card,text,arrow,pill,bell,bellArea,zx,axis}=CG;
+  return svg(520,250,
+    bellArea(20,250,170,110,-3.6,1.1,'var(--wk)',.32)+bell(20,250,170,110)+axis(14,256,170)+
+    text(135,120,'area = ?',{a:'middle',s:16,w:800,c:'var(--wk)'})+text(135,196,'P(Z < 1.10)',{a:'middle',s:13,mono:true})+
+    card(286,34,214,62,'var(--muted)',{op:.08})+text(393,58,'By hand: calculus',{a:'middle',s:14,w:700})+text(393,80,'area under a curved line',{a:'middle',s:12,c:'var(--muted)'})+
+    card(286,118,214,82,'var(--wk)',{op:.12})+text(393,142,'The z-table',{a:'middle',s:15,w:800,c:'var(--wk)'})+text(393,162,'areas already calculated',{a:'middle',s:12})+text(393,182,'row 1.1 · column .00 → 0.8643',{a:'middle',s:12,mono:true})+
+    arrow(252,110,282,70,'var(--muted)',2)+arrow(252,140,282,158,'var(--wk)',2.4)+
+    text(260,236,'Probability = area. The table gives the area to the left of z.',{a:'middle',s:13,w:700}),
+    'A probability is an area under the curve; instead of calculus we read it from the z-table'); })();
+function fullTable(el){
+  el.innerHTML=`<div class="tool"><div class="seg2"><button type="button" aria-pressed="false">Negative z</button><button type="button" aria-pressed="true">Positive z</button></div>
+    <p class="mono zt-out" style="margin:0"></p><div class="zt-wrap"></div>
+    <p style="margin:0;font-size:.9rem;color:var(--muted)">Click any cell. <a href="assets/z-table.pdf" target="_blank" rel="noopener">Printable z-table (PDF)</a> · Excel: <code>=NORM.S.DIST(z, TRUE)</code></p></div>`;
+  const out=el.querySelector('.zt-out'), wrap=el.querySelector('.zt-wrap');
+  const draw=neg=>{ el.querySelectorAll('.seg2 button').forEach((b,i)=>b.setAttribute('aria-pressed',i===(neg?0:1)));
+    const rows=[]; for(let i=0;i<=34;i++) rows.push(i/10); if(neg) rows.reverse();
+    wrap.innerHTML=`<table class="ztab ztfull"><thead><tr><th>z</th>${[0,1,2,3,4,5,6,7,8,9].map(j=>`<th>.0${j}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><th>${neg?'−':''}${r.toFixed(1)}</th>${[0,1,2,3,4,5,6,7,8,9].map(j=>{ const z=(neg?-1:1)*(r+j/100); return `<td data-z="${z.toFixed(2)}">${PHI(z).toFixed(4)}</td>`; }).join('')}</tr>`).join('')}</tbody></table>`;
+    out.innerHTML='Click a cell to read it.'; };
+  wrap.addEventListener('click',e=>{ const td=e.target.closest('td[data-z]'); if(!td) return; wrap.querySelectorAll('.zhit,.zr,.zc').forEach(x=>x.classList.remove('zhit','zr','zc'));
+    const tr=td.parentElement, ci=[...tr.children].indexOf(td); tr.classList.add('zr'); wrap.querySelectorAll('tr').forEach(r=>{ if(r.children[ci]) r.children[ci].classList.add('zc'); }); td.classList.add('zhit');
+    const z=+td.dataset.z; out.innerHTML=`z = ${z2(z)} → row ${tr.firstElementChild.textContent}, column ${wrap.querySelector('thead').querySelectorAll('th')[ci].textContent} → <b>P(Z &lt; ${z2(z)}) = ${td.textContent}</b>`; });
+  el.querySelectorAll('.seg2 button').forEach((b,i)=>b.addEventListener('click',()=>draw(i===0))); draw(false); }
+const EX9=[
+  {q:'P(Z &lt; 1.40)', z:[1.40], lo:-9, hi:1.40, steps:['Draw and shade the left of 1.40.','Row 1.4, column .00.','Read the cell: 0.9192.'], a:'0.9192', note:'z is positive, so the area is more than 0.5.'},
+  {q:'P(Z &lt; −0.80)', z:[-0.80], lo:-9, hi:-0.80, steps:['Draw and shade the left of −0.80.','Negative table: row −0.8, column .00.','Read the cell: 0.2119.'], a:'0.2119', note:'z is negative, so the area is less than 0.5.'},
+  {q:'P(Z &lt; 0)', z:[0], lo:-9, hi:0, steps:['Shade the left half.','Row 0.0, column .00.','Read the cell: 0.5000.'], a:'0.5000', note:'Half of the curve is left of the mean.'},
+  {q:'P(Z &lt; 2.57)', z:[2.57], lo:-9, hi:2.57, steps:['Split 2.57 into 2.5 + 0.07.','Row 2.5, column .07.','Read the cell: 0.9949.'], a:'0.9949', note:'Almost the whole curve.'},
+  {q:'P(Z &gt; 1.25)', z:[1.25], lo:1.25, hi:9, steps:['Shade the right of 1.25.','Table: row 1.2, column .05 → 0.8944 (left area).','Right area = 1 − 0.8944.'], a:'0.1056', note:'Greater than: 1 − table.'},
+  {q:'P(−1 &lt; Z &lt; 1)', z:[-1,1], lo:-1, hi:1, steps:['Shade between −1 and 1.','Φ(1.00) = 0.8413 · Φ(−1.00) = 0.1587.','Big area − small area = 0.8413 − 0.1587.'], a:'0.6826', note:'The 68% of the empirical rule.'},
+  {q:'P(Z &lt; −1.50) from the positive table', z:[-1.50], lo:-9, hi:-1.50, steps:['By symmetry, left of −1.50 = right of +1.50.','Φ(1.50) = 0.9332.','1 − 0.9332.'], a:'0.0668', note:'Same as reading row −1.5 in the negative table.'},
+  {q:'Screen time μ = 5.2 h, σ = 1.5 h: P(X &lt; 6 h)', z:[0.53], lo:-9, hi:0.53, steps:['z = (6 − 5.2) ÷ 1.5 = 0.53.','Row 0.5, column .03.','Read the cell: 0.7019.'], a:'0.7019', note:'About 70% of students use the phone less than 6 h a day.'}];
+function examples9(el){
+  el.innerHTML=`<div class="tool"><div class="seg2 ex9">${EX9.map((x,i)=>`<button type="button" aria-pressed="${i===0}">${i+1}</button>`).join('')}</div><div class="ex9-q mono"></div><div class="pic"></div><ol class="ex9-s"></ol><div class="feedback"></div></div>`;
+  const draw=i=>{ const x=EX9[i]; el.querySelectorAll('.ex9 button').forEach((b,j)=>b.setAttribute('aria-pressed',j===i));
+    el.querySelector('.ex9-q').innerHTML=`Example ${i+1} · ${x.q}`; el.querySelector('.pic').innerHTML=ST.normalCurve(0,1,x.lo,x.hi,x.z);
+    el.querySelector('.ex9-s').innerHTML=x.steps.map(t=>`<li>${t}</li>`).join(''); el.querySelector('.feedback').innerHTML=`Answer: <b>${x.a}</b>. ${x.note}`; };
+  el.querySelectorAll('.ex9 button').forEach((b,i)=>b.addEventListener('click',()=>draw(i))); draw(0); }
 
 const RED='#C62828';
 const G9=(()=>{ const {svg,card,text,arrow,curveArrow,pill,bell,bellArea,zx,axis}=CG;
@@ -181,6 +221,12 @@ Lesson.mount({
       sub:`${v('z')}<sub>Arab</sub> = ${fr('82 − 75','6')}`, keys:'( 8 2 − 7 5 ) ÷ 6 =',
       ans:`<div class="m">z<sub>Arab</sub> ≈ <b>1.17</b></div>`, ansRaw:true, ansNote:'The higher z is the better relative result: Physics (1.50 &gt; 1.17).'}],
     meaning:{text:'On the z-scale both marks are comparable, even with different means and SDs. Physics is further above its class mean.', fig:{label:'One common scale', html:zLine}} },
+
+  { id:'why-z-table', title:'Why a z-table? Probability = area',
+    def:'For a normal variable, a probability is an <b>area under the curve</b>. Finding that area by hand needs calculus. So the areas of N(0, 1) were calculated once and printed as a table: the <b>z-table</b>. Every normal X can be turned into z, so this one table works for heights, marks and times.',
+    defFig:{label:'Area by hand, or read it', html:G9why},
+    life:{text:'Where to find it: the standard normal table at the back of the textbook (Gould, Ryan &amp; Wong), the printable table here, or Excel with =NORM.S.DIST(z, TRUE). Tables of these areas have been printed since about 1800. Here is the whole table: negative z on one page, positive z on the other.', fig:{label:'The whole z-table · area to the left', build:fullTable}},
+    meaning:{text:'Eight readings, from easy to harder. Each one: draw and shade, split z into row and column, read the cell, answer.', fig:{label:'How we read it · 8 examples', build:examples9}} },
 
   { id:'z-table', demo:'Your professor reads the z-table on the board: row, column, area.', title:'Reading the z-table: area to the left',
     def:'The standard normal table gives the <b>area to the left</b> of z: <b>Φ(z) = P(Z &lt; z)</b>. Row: z to one decimal. Column: the second decimal.',
