@@ -51,7 +51,8 @@
     'lab.html':['How do I turn on the Analysis ToolPak?','How do I submit my lab work?','Which Excel function gives the sample SD?'],
     'exams.html':['When is the midterm?','What does the midterm cover?','What is on the final exam?'],
     'tools.html':['How do I find the IQR?','How do I find the sample variance?','How do I find E(X)?'],
-    'midterm-practice.html':['What is the addition rule?','How do I find Var(X)?','How do I use a tree diagram?']};
+    'midterm-practice.html':['What is the addition rule?','How do I find Var(X)?','How do I use a tree diagram?'],
+  'quiz2-revision.html':['How do I find a z-score?','How do I find the expected count?','Which z* for 95%?']};
   const TOPICS=['Midterm date','Grading','Skewness','IQR','Variance','CV','Venn diagram','Tree diagram','Expected value'];
 
   /* ---------- UI ---------- */
