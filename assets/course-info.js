@@ -2,7 +2,8 @@
    To update the site, edit only this file. Empty links show "coming soon" until you paste them. */
 window.COURSE={
   code:'MTH 105', title:['Introduction to','Statistics'], eyebrow:'MTH 105 · Fall 2026 · 3 credit hours · on campus',
-  instructor:'Eng. Nadia Mek',
+  instructor:'Nadia',
+  termStart:'2026-08-31',   /* Monday of Week 1 */
   pages:{lectures:'lectures.html', labs:'lab.html', exams:'exams.html'},
   blurbs:{lectures:'Notes to review each class: formulas step by step, practice, calculator.', labs:'Excel workbooks with step-by-step guides.', exams:'Dates, what each exam includes, revision.'},
 
@@ -18,16 +19,16 @@ window.COURSE={
 
   /* assessments: type is Lecture or Lab. date is the start, Dubai time. submit = Moodle submission. */
   assess:[
-    {id:'quiz1',name:'Quiz 1',type:'Lecture',weight:'10%',when:'End of Week 5',covers:['Weeks 1–5: describing data, centre and spread, probability'],clos:'1, 2',format:'In class, on paper'},
-    {id:'mid',name:'Midterm Examination',short:'Midterm',type:'Lecture',weight:'20%',date:'2026-10-19T09:30:00+04:00',timeText:'9:30–11:00 AM',place:'HUB-Yard Zones A, B, D',
+    {id:'quiz1',name:'Quiz 1',type:'Lecture',kind:'Quiz · in class, on paper',week:5,done:true,weight:'10%',when:'End of Week 5',covers:['Weeks 1–5: describing data, centre and spread, probability'],clos:'1, 2',format:'In class, on paper'},
+    {id:'mid',name:'Midterm Examination',short:'Midterm',type:'Lecture',kind:'Exam · in class, on paper',week:8,done:true,weight:'20%',date:'2026-10-19T09:30:00+04:00',timeText:'9:30–11:00 AM',place:'HUB-Yard Zones A, B, D',
       covers:['Section 1 · Descriptive statistics: graphs, centre, spread','Section 2 · Probability: rules, tree diagrams, discrete distributions','Weeks 1–7'],
       format:'In class, on paper · 90 minutes · closed book · standard calculator · no phones',clos:'1, 2',revise:[['Midterm revision','midterm-practice.html']]},
-    {id:'quiz2',name:'Quiz 2',type:'Lecture',weight:'10%',when:'End of Week 12',covers:['Binomial distribution','Normal distribution and the z-table','Confidence intervals for the mean','Chi-square test of independence'],clos:'3, 4',format:'In class, on paper · standard calculator',revise:[['Quiz 2 brief lecture','quiz2-lecture.html'],['Quiz 2 revision','quiz2-revision.html']]},
-    {id:'proj',name:'Lab Project',short:'Lab project',type:'Lab',weight:'20%',when:'Due end of Week 14',covers:['Excel analysis of a data set across the lab topics','Upload your workbook on Moodle'],clos:'1–5',
+    {id:'quiz2',name:'Quiz 2',type:'Lecture',kind:'Quiz · in class, on paper',week:12,weight:'10%',when:'End of Week 12',covers:['Binomial distribution','Normal distribution and the z-table','Confidence intervals for the mean','Chi-square test of independence'],clos:'3, 4',format:'In class, on paper · standard calculator',revise:[['Quiz 2 brief lecture','quiz2-lecture.html'],['Quiz 2 revision','quiz2-revision.html']]},
+    {id:'proj',name:'Lab Project',short:'Lab project',type:'Lab',kind:'Project · Excel, upload on Moodle',week:14,weight:'20%',when:'Due end of Week 14',covers:['Excel analysis of a data set across the lab topics','Upload your workbook on Moodle'],clos:'1–5',
       submit:{link:'',due:'',dueText:'End of Week 14'},revise:[['Lab guides','lab.html']]},
-    {id:'labq',name:'Lab Quiz',short:'Lab quiz',type:'Lab',weight:'10%',when:'End of Week 15',format:'In the computer lab, in Excel',covers:['Excel skills from the labs: descriptive statistics, confidence intervals, correlation, regression'],clos:'1, 3, 5',
+    {id:'labq',name:'Lab Quiz',short:'Lab quiz',type:'Lab',kind:'Quiz · computer lab, Excel',week:15,weight:'10%',when:'End of Week 15',format:'In the computer lab, in Excel',covers:['Excel skills from the labs: descriptive statistics, confidence intervals, correlation, regression'],clos:'1, 3, 5',
       submit:{link:'',due:'',dueText:'End of Week 15'},revise:[['Lab guides','lab.html']]},
-    {id:'final',name:'Final Examination',short:'Final',type:'Lecture',weight:'30%',when:'Week 16 · date from the Registrar',covers:['Whole course, more weight on the material after the midterm'],format:'In class, on paper · closed book · standard calculator',clos:'2–5'}
+    {id:'final',name:'Final Examination',short:'Final',type:'Lecture',kind:'Exam · in class, on paper',week:16,weight:'30%',when:'Week 16 · date from the Registrar',covers:['Whole course, more weight on the material after the midterm'],format:'In class, on paper · closed book · standard calculator',clos:'2–5'}
   ],
 
   /* semester calendar: [title, link] (no link = not open yet) */

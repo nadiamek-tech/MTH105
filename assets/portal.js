@@ -161,6 +161,22 @@
       }<button type="button" class="pt-btn ghost" data-a="${a.id}">Details</button></div>`; }).join('')||'<p class="sub">Nothing to submit right now.</p>';
     wire(el);
   }
+
+  /* one table: every assessment with type, weight, date and status */
+  function gradeTable(el){
+    const t0=C.termStart?new Date(C.termStart+'T00:00:00+04:00'):null;
+    const wk=w=>{ if(!t0||!w) return null; const a=new Date(t0.getTime()+(w-1)*7*864e5), b=new Date(a.getTime()+4*864e5); return [a,b]; };
+    const d=x=>fmt(x.toISOString(),{day:'numeric',month:'short'});
+    const now=Date.now();
+    const status=a=>{ if(a.done) return ['done','Done']; const r=wk(a.week); const end=a.date?new Date(a.date).getTime()+864e5:r?r[1].getTime()+864e5:null, st=a.date?new Date(a.date).getTime()-6*864e5:r?r[0].getTime():null;
+      if(end&&now>end) return ['done','Done']; if(st&&now>=st) return ['now','This week']; return ['up','Upcoming']; };
+    const when=a=>{ const r=wk(a.week); const main=a.date?`${dayShort(a.date)}${a.timeText?' · '+a.timeText:''}`:esc(a.when||''); return `<b>${main}</b>${r&&!a.date?`<small>Week ${a.week} · ${d(r[0])} – ${d(r[1])}</small>`:a.week?`<small>Week ${a.week}</small>`:''}`; };
+    const tot=A.reduce((s,a)=>s+(parseFloat(a.weight)||0),0);
+    el.innerHTML=`<div class="pt-gt-w"><table class="pt-gt"><thead><tr><th>Assessment</th><th>Type</th><th>Weight</th><th>Date</th><th>Status</th></tr></thead><tbody>${A.map(a=>{ const [c,l]=status(a);
+      return `<tr class="${c}"><td data-l="Assessment"><button type="button" class="pt-gt-n" data-a="${a.id}">${esc(a.name)}<span class="i">ⓘ</span></button></td><td data-l="Type">${typeTag(a.type)}<small>${esc(a.kind||a.format||'')}</small></td><td data-l="Weight" class="w">${esc(a.weight)}</td><td data-l="Date">${when(a)}</td><td data-l="Status"><span class="pt-st ${c}">${l}</span></td></tr>`; }).join('')}</tbody>
+      <tfoot><tr><td>Total</td><td></td><td class="w">${tot}%</td><td colspan="2"></td></tr></tfoot></table></div>`;
+    wire(el);
+  }
   function nextExam(){ return A.filter(a=>a.date&&!a.done&&daysTo(a.date)>=0).sort((x,y)=>x.date.localeCompare(y.date))[0]; }
 
   /* ---------- FAQ ---------- */
@@ -185,6 +201,7 @@
     root.innerHTML=`
 <section class="pt-hero"><span class="pt-eyebrow">${esc(C.eyebrow||C.code)}</span><h1>${esc(C.title[0])} <span>${esc(C.title[1]||'')}</span></h1><p class="pt-by">${esc(C.role||'Instructor')}: <b>${esc(C.instructor)}</b>${C.classTime?' · '+esc(C.classTime):''}</p>
 ${n?`<button type="button" class="pt-next" data-a="${n.id}"><b>Next: ${esc(n.name)}</b><span>${esc(dayShort(n.date))}${n.time!==false?' · '+esc(n.timeText||time(n.date)):''}${n.place?' · '+esc(n.place):''}</span><span class="mono">${until(n.date)}</span><b style="margin-left:auto">Details →</b></button>`:hl?`<button type="button" class="pt-next" data-a="${hl.id}"><b>Next: ${esc(hl.name)}</b><span>${esc(whenText(hl))}</span><b style="margin-left:auto">Details →</b></button>`:''}</section>
+<h2 id="assessments">All assessments</h2><div id="pt-gt"></div>
 <div class="pt-big">${NAV().map(n=>`<a href="${esc(n.href)}"><span class="ic">${IC[n.icon]||IC.lec}</span><b>${esc(n.label)}</b><span>${esc(n.blurb||'')}</span></a>`).join('')}</div>
 <section class="pt-help" aria-label="Help"><form class="pt-find" role="search"><input type="search" placeholder="Search the course: a topic, a formula, a date" aria-label="Search the course" autocomplete="off"><button type="submit">Search</button></form><div class="pt-hits" aria-live="polite"></div><div class="pt-agents"></div></section>
 <nav class="pt-jump" aria-label="On this page"><a href="#faq">FAQ</a><a href="#calendar">Calendar</a><a href="#clos">CLOs</a><a href="#submissions">Submissions</a></nav>
@@ -192,7 +209,7 @@ ${n?`<button type="button" class="pt-next" data-a="${n.id}"><b>Next: ${esc(n.nam
 <h2 id="calendar">Semester calendar</h2><p class="sub">Click an assessment to see what it includes.</p><div id="pt-cal"></div>
 <h2 id="clos">Course learning outcomes</h2><p class="sub">What you will be able to do by the end of the course.</p><div class="pt-clos">${C.clos.map(([k,t])=>`<div><b>${esc(k)}</b><span>${esc(t)}</span></div>`).join('')}</div>
 <h2 id="submissions">Upcoming submissions</h2><p class="sub">Every submission is on Moodle. Use these buttons to go straight to the right place.</p><div class="pt-subs" id="pt-subs"></div>`;
-    agents($('.pt-agents',root)); faq($('#pt-faq',root)); calendar($('#pt-cal',root)); submissions($('#pt-subs',root)); wire($('.pt-hero',root));
+    gradeTable($('#pt-gt',root)); agents($('.pt-agents',root)); faq($('#pt-faq',root)); calendar($('#pt-cal',root)); submissions($('#pt-subs',root)); wire($('.pt-hero',root));
     const f=$('.pt-find',root), inp=$('input',f), hits=$('.pt-hits',root);
     const show=()=>{ const q=inp.value.trim(); if(!C.search){ return; } if(q.length<2){ hits.innerHTML=''; return; }
       const r=C.search(q)||[]; hits.innerHTML=r.slice(0,6).map(x=>`<a href="${esc(x.l)}"><b>${esc(x.t)}</b>${x.s?`<small>${esc(x.s)}</small>`:''}</a>`).join('')||'<p class="sub" style="margin:0">No match. Try one key word, or use Ask me.</p>'; };
@@ -200,5 +217,5 @@ ${n?`<button type="button" class="pt-next" data-a="${n.id}"><b>Next: ${esc(n.nam
     f.addEventListener('submit',e=>{ e.preventDefault(); if(C.search) show(); else if(C.openSearch) C.openSearch(inp.value); });
   }
 
-  window.Portal={header,home,agents,calendar,examCards,submissions,assess,agent,faq};
+  window.Portal={header,home,gradeTable,agents,calendar,examCards,submissions,assess,agent,faq};
 })();

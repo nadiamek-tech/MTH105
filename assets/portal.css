@@ -175,3 +175,20 @@ body[data-home] .ca-btn{display:none!important}
 .pt-week tbody th{font-family:var(--f-mono);font-size:.7rem;color:var(--muted);font-weight:400;width:52px;white-space:nowrap}
 .pt-week td.busy{background:var(--sunk);color:var(--muted)}
 .pt-week td.oh{background:color-mix(in srgb,var(--ag,var(--wk)) 22%,transparent);color:var(--ink);font-weight:700}
+
+/* assessments table */
+.pt-gt-w{overflow-x:auto;margin:8px 0 18px}
+.pt-gt{width:100%;border-collapse:collapse;font-family:var(--f-display);font-size:.95rem;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.pt-gt th{text-align:left;font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:9px 12px;border-bottom:2px solid var(--line)}
+.pt-gt td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.pt-gt td small{display:block;color:var(--muted);font-size:.8rem;margin-top:2px}
+.pt-gt .w{font-family:var(--f-mono);font-weight:700;font-size:1.05rem}
+.pt-gt-n{all:unset;cursor:pointer;font-weight:700;color:var(--ink)}.pt-gt-n:hover,.pt-gt-n:focus-visible{text-decoration:underline}.pt-gt-n .i{margin-left:5px;color:var(--muted);font-size:.85em}
+.pt-gt tr.done td{opacity:.6}
+.pt-gt tr.now td{background:var(--wk-soft)}
+.pt-gt tfoot td{font-weight:800;border-bottom:0}
+.pt-st{display:inline-block;border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:700;white-space:nowrap}
+.pt-st.done{background:color-mix(in srgb,var(--muted) 18%,transparent);color:var(--muted)}
+.pt-st.now{background:var(--wk);color:#fff}
+.pt-st.up{background:color-mix(in srgb,var(--good,#15803d) 15%,transparent);color:var(--good,#15803d)}
+@media (max-width:640px){.pt-gt thead{display:none}.pt-gt,.pt-gt tbody,.pt-gt tr,.pt-gt td{display:block;width:100%}.pt-gt tr{border-bottom:2px solid var(--line);padding:6px 0}.pt-gt td{border:0;padding:3px 12px;display:flex;gap:10px;align-items:baseline}.pt-gt td:before{content:attr(data-l);min-width:84px;font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;color:var(--muted)}.pt-gt td{flex-wrap:wrap}.pt-gt td small{flex-basis:100%;margin:0 0 0 94px}.pt-gt tfoot tr{display:flex;justify-content:space-between}.pt-gt tfoot td:before{content:none}}
