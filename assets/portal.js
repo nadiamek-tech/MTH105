@@ -162,19 +162,25 @@
     wire(el);
   }
 
-  /* one table: every assessment with type, weight, date and status */
+  /* one view of every assessment: weight bar + timeline (type, weight, date, status) */
   function gradeTable(el){
     const t0=C.termStart?new Date(C.termStart+'T00:00:00+04:00'):null;
-    const wk=w=>{ if(!t0||!w) return null; const a=new Date(t0.getTime()+(w-1)*7*864e5), b=new Date(a.getTime()+4*864e5); return [a,b]; };
-    const d=x=>fmt(x.toISOString(),{day:'numeric',month:'short'});
-    const now=Date.now();
-    const status=a=>{ if(a.done) return ['done','Done']; const r=wk(a.week); const end=a.date?new Date(a.date).getTime()+864e5:r?r[1].getTime()+864e5:null, st=a.date?new Date(a.date).getTime()-6*864e5:r?r[0].getTime():null;
-      if(end&&now>end) return ['done','Done']; if(st&&now>=st) return ['now','This week']; return ['up','Upcoming']; };
-    const when=a=>{ const r=wk(a.week); const main=a.date?`${dayShort(a.date)}${a.timeText?' · '+a.timeText:''}`:esc(a.when||''); return `<b>${main}</b>${r&&!a.date?`<small>Week ${a.week} · ${d(r[0])} – ${d(r[1])}</small>`:a.week?`<small>Week ${a.week}</small>`:''}`; };
-    const tot=A.reduce((s,a)=>s+(parseFloat(a.weight)||0),0);
-    el.innerHTML=`<div class="pt-gt-w"><table class="pt-gt"><thead><tr><th>Assessment</th><th>Type</th><th>Weight</th><th>Date</th><th>Status</th></tr></thead><tbody>${A.map(a=>{ const [c,l]=status(a);
-      return `<tr class="${c}"><td data-l="Assessment"><button type="button" class="pt-gt-n" data-a="${a.id}">${esc(a.name)}<span class="i">ⓘ</span></button></td><td data-l="Type">${typeTag(a.type)}<small>${esc(a.kind||a.format||'')}</small></td><td data-l="Weight" class="w">${esc(a.weight)}</td><td data-l="Date">${when(a)}</td><td data-l="Status"><span class="pt-st ${c}">${l}</span></td></tr>`; }).join('')}</tbody>
-      <tfoot><tr><td>Total</td><td></td><td class="w">${tot}%</td><td colspan="2"></td></tr></tfoot></table></div>`;
+    const wk=w=>{ if(!t0||!w) return null; const x=new Date(t0.getTime()+(w-1)*7*864e5); return [x,new Date(x.getTime()+4*864e5)]; };
+    const f=(x,o)=>fmt(x.toISOString?x.toISOString():x,o), now=Date.now();
+    const status=a=>{ if(a.done) return ['done','Done ✓']; const r=wk(a.week); const end=a.date?new Date(a.date).getTime()+864e5:r?r[1].getTime()+864e5:null, st=a.date?new Date(a.date).getTime()-6*864e5:r?r[0].getTime():null;
+      if(end&&now>end) return ['done','Done ✓']; if(st&&now>=st) return ['now','This week']; return ['up','Coming']; };
+    const R=A.map(a=>({a,s:status(a),w:parseFloat(a.weight)||0,r:wk(a.week)}));
+    const sum=k=>R.filter(x=>x.s[0]===k).reduce((t,x)=>t+x.w,0), tot=R.reduce((t,x)=>t+x.w,0);
+    const dateBox=x=>x.a.date?`<b>${f(x.a.date,{day:'numeric'})}</b><span>${f(x.a.date,{month:'short'})}</span>`:`<b>W${x.a.week||'?'}</b><span>${x.r?(f(x.r[0],{month:'short'})===f(x.r[1],{month:'short'})?f(x.r[0],{day:'numeric'}):f(x.r[0],{day:'numeric',month:'short'}))+'–'+f(x.r[1],{day:'numeric',month:'short'}):''}</span>`;
+    const when=x=>x.a.date?`${dayShort(x.a.date)}${x.a.timeText?' · '+x.a.timeText:''}`:(x.a.when||'');
+    el.innerHTML=`<div class="gt">
+  <div class="gt-sum"><div class="gt-bar" role="img" aria-label="Weights: ${R.map(x=>x.a.name+' '+x.a.weight).join(', ')}">${R.map(x=>`<button type="button" class="gt-seg ${x.s[0]} ${x.a.type==='Lab'?'lab':'lec'}" style="flex:${x.w}" data-a="${x.a.id}" title="${esc(x.a.name)} · ${esc(x.a.weight)}"><b>${esc(x.a.weight)}</b><span>${esc(x.a.short||x.a.name)}</span></button>`).join('')}</div>
+   <div class="gt-leg"><span><i class="done"></i>Done <b>${sum('done')}%</b></span><span><i class="now"></i>This week <b>${sum('now')}%</b></span><span><i class="up"></i>Still to come <b>${sum('up')}%</b></span><span class="t">Total <b>${tot}%</b></span></div></div>
+  <ol class="gt-list">${R.map(x=>`<li class="${x.s[0]} ${x.a.type==='Lab'?'lab':'lec'}">
+    <div class="gt-d">${dateBox(x)}</div>
+    <div class="gt-m"><button type="button" class="gt-n" data-a="${x.a.id}">${esc(x.a.name)}</button><span class="gt-k">${typeTag(x.a.type)} ${esc(x.a.kind||'')}</span><span class="gt-when">${esc(when(x))}</span></div>
+    <div class="gt-w"><b>${esc(x.a.weight)}</b><span>of grade</span></div>
+    <span class="pt-st ${x.s[0]}">${x.s[1]}</span></li>`).join('')}</ol></div>`;
     wire(el);
   }
   function nextExam(){ return A.filter(a=>a.date&&!a.done&&daysTo(a.date)>=0).sort((x,y)=>x.date.localeCompare(y.date))[0]; }
@@ -201,8 +207,8 @@
     root.innerHTML=`
 <section class="pt-hero"><span class="pt-eyebrow">${esc(C.eyebrow||C.code)}</span><h1>${esc(C.title[0])} <span>${esc(C.title[1]||'')}</span></h1><p class="pt-by">${esc(C.role||'Instructor')}: <b>${esc(C.instructor)}</b>${C.classTime?' · '+esc(C.classTime):''}</p>
 ${n?`<button type="button" class="pt-next" data-a="${n.id}"><b>Next: ${esc(n.name)}</b><span>${esc(dayShort(n.date))}${n.time!==false?' · '+esc(n.timeText||time(n.date)):''}${n.place?' · '+esc(n.place):''}</span><span class="mono">${until(n.date)}</span><b style="margin-left:auto">Details →</b></button>`:hl?`<button type="button" class="pt-next" data-a="${hl.id}"><b>Next: ${esc(hl.name)}</b><span>${esc(whenText(hl))}</span><b style="margin-left:auto">Details →</b></button>`:''}</section>
-<h2 id="assessments">All assessments</h2><div id="pt-gt"></div>
 <div class="pt-big">${NAV().map(n=>`<a href="${esc(n.href)}"><span class="ic">${IC[n.icon]||IC.lec}</span><b>${esc(n.label)}</b><span>${esc(n.blurb||'')}</span></a>`).join('')}</div>
+<h2 id="assessments">All assessments</h2><div id="pt-gt"></div>
 <section class="pt-help" aria-label="Help"><form class="pt-find" role="search"><input type="search" placeholder="Search the course: a topic, a formula, a date" aria-label="Search the course" autocomplete="off"><button type="submit">Search</button></form><div class="pt-hits" aria-live="polite"></div><div class="pt-agents"></div></section>
 <nav class="pt-jump" aria-label="On this page"><a href="#faq">FAQ</a><a href="#calendar">Calendar</a><a href="#clos">CLOs</a><a href="#submissions">Submissions</a></nav>
 <h2 id="faq">FAQ</h2><div id="pt-faq"></div>
