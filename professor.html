@@ -298,7 +298,7 @@ const SECTIONS=[
   ['reflect','Reflections after class','Improve'],['guide','Teacher guide','Improve'],['trainer','Train the trainer','Improve'],
   ['grades','Grades dashboard','Assessment'],['video','Methodology video','Coming soon']];
 function start(){
-  app.innerHTML=`<header class="pf-top"><b>MTH 105 · Professor resources</b><span>Eng. Nadia Mek · built ${esc(B.built)}</span><span class="pf-sp"></span><a class="pf-btn" href="index.html" target="_blank" rel="noopener">Student site ↗</a><button id="lock">Lock</button></header>
+  app.innerHTML=`<header class="pf-top"><b>MTH 105 · Professor resources</b><span>Nadia · built ${esc(B.built)}</span><span class="pf-sp"></span><a class="pf-btn" href="index.html" target="_blank" rel="noopener">Student site ↗</a><button id="lock">Lock</button></header>
     <div class="pf-wrap"><nav class="pf-nav" id="nav"></nav><main class="pf-main" id="main"></main></div>`;
   let grp=''; $('#nav').innerHTML=SECTIONS.map(([id,t,g])=>{ const h=g&&g!==grp?`<small>${esc(g)}</small>`:''; if(g) grp=g; return h+`<button data-s="${id}">${esc(t)}</button>`; }).join('');
   $('#nav').onclick=e=>{ const b=e.target.closest('[data-s]'); if(b) go(b.dataset.s); };
@@ -421,7 +421,7 @@ function certificate(name,ALL,U){ const w=window.open('','_blank'); if(!w){ aler
   .seal{position:absolute;right:26mm;top:22mm;width:30mm;height:30mm;border-radius:50%;background:radial-gradient(#d4b25b,#a67c1b);color:#fff;display:flex;align-items:center;justify-content:center;font:700 9pt Arial;text-align:center;box-shadow:0 0 0 3px #fffdf8,0 0 0 5px #a67c1b}</style>
   <div class="c"><div class="seal">MTH 105<br>CERTIFIED</div><small>Canadian University Dubai · MTH 105 Introduction to Statistics</small><h1>Certificate in Teaching Introductory Statistics</h1><p>This certifies that</p><div class="n">${esc(name)}</div>
   <p>has completed the programme and passed all ${ALL.length} module tests at 80% or more, covering:</p><div class="u">${U.map((u,i)=>`<span>Unit ${i+1}: ${esc(u.title)}</span>`).join(' · ')}</div>
-  <div class="s"><div>Eng. Nadia Mek<br>Course designer</div><div>${d}</div></div></div><script>setTimeout(()=>print(),300)<\/script>`); w.document.close(); }
+  <div class="s"><div>Nadia<br>Course designer</div><div>${d}</div></div></div><script>setTimeout(()=>print(),300)<\/script>`); w.document.close(); }
 
 /* ---------- views ---------- */
 const VIEWS={

@@ -300,7 +300,7 @@ body.mt{background:var(--bg)}
   bar.querySelector('#theme').addEventListener('click',()=>GED102Theme.toggle());
 
   const main=el('main',{class:'mt-main'}), sheet=el('article',{class:'sheet'});
-  sheet.innerHTML=`<div class="sh-top"><span>MTH 105 · Introduction to Statistics</span><span>Fall 2026 · Eng. Nadia Mek</span></div>
+  sheet.innerHTML=`<div class="sh-top"><span>MTH 105 · Introduction to Statistics</span><span>Fall 2026 · Nadia</span></div>
     <h1>Midterm Revision</h1>
     <p class="sh-meta">Monday 19 October 2026 · 9:30 AM · HUB-Yard Zones A, B, D<br>90 minutes · closed book · standard calculator</p>
     <div class="sh-name"><span>Name:</span><span>Student ID:</span><span>Section:</span></div>
