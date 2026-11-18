@@ -7,30 +7,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=202611181200">
-<link rel="stylesheet" href="assets/stats.css?v=202611181200">
-<link rel="stylesheet" href="assets/banner.css?v=202611181200">
-<link rel="stylesheet" href="assets/lesson.css?v=202611181200">
+<link rel="stylesheet" href="assets/course.css?v=202611181230">
+<link rel="stylesheet" href="assets/stats.css?v=202611181230">
+<link rel="stylesheet" href="assets/banner.css?v=202611181230">
+<link rel="stylesheet" href="assets/lesson.css?v=202611181230">
 <style>
 :root{--wk:#1F63B5;--wk-soft:rgba(31,99,181,0.09);--wk-d:#7FB2FF;--wk-soft-d:rgba(127,178,255,0.14)}
 </style>
 </head>
 <body>
-<script src="assets/supports.js?v=202611181200"></script>
-<script src="assets/course.js?v=202611181200"></script>
-<script src="assets/stats.js?v=202611181200"></script>
-<script src="assets/concept.js?v=202611181200"></script>
-<script src="assets/decode.js?v=202611181200"></script>
-<script src="assets/lesson.js?v=202611181200"></script>
-<script src="assets/pad.js?v=202611181200"></script>
-<script src="assets/calc.js?v=202611181200"></script>
-<script src="assets/casio.js?v=202611181200"></script>
-<script src="assets/board.js?v=202611181200"></script>
-<script src="assets/board-answers.js?v=202611181200"></script>
-<script src="assets/kb.js?v=202611181200"></script>
-<script src="assets/search-index.js?v=202611181200"></script>
-<script src="assets/assistant.js?v=202611181200"></script>
-<script src="assets/site.js?v=202611181200"></script>
+<script src="assets/supports.js?v=202611181230"></script>
+<script src="assets/course.js?v=202611181230"></script>
+<script src="assets/stats.js?v=202611181230"></script>
+<script src="assets/concept.js?v=202611181230"></script>
+<script src="assets/decode.js?v=202611181230"></script>
+<script src="assets/lesson.js?v=202611181230"></script>
+<script src="assets/pad.js?v=202611181230"></script>
+<script src="assets/calc.js?v=202611181230"></script>
+<script src="assets/casio.js?v=202611181230"></script>
+<script src="assets/board.js?v=202611181230"></script>
+<script src="assets/board-answers.js?v=202611181230"></script>
+<script src="assets/kb.js?v=202611181230"></script>
+<script src="assets/search-index.js?v=202611181230"></script>
+<script src="assets/assistant.js?v=202611181230"></script>
+<script src="assets/site.js?v=202611181230"></script>
 <script>
 const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
 const {T, fr, sq, SG, XB, PH, v} = F;
@@ -58,11 +58,20 @@ const sum=a=>a.reduce((s,x)=>s+x,0);
 const sq2='<sup>2</sup>';
 
 /* ---------- formula + method cards (only what is needed) ---------- */
-const CARD=(rows,how)=>`<table class="tbl"><tr><th>What</th><th>Formula</th></tr>${rows.map(([a,b])=>`<tr><td>${a}</td><td class="mono">${b}</td></tr>`).join('')}</table><div class="howto"><b>How to solve</b><ol>${how.map(h=>`<li>${h}</li>`).join('')}</ol></div>`;
+/* ---------- formula card + "how to solve" as tiny steps: one action each, with a worked example ---------- */
+const bell=(m)=>{const P=[];for(let i=0;i<=40;i++){const x=-3+i*0.15;P.push([10+i*2,34-26*Math.exp(-x*x/2)]);}
+  const inR=x=>m==='l'?x<=50:m==='r'?x>=50:(x>=24&&x<=56);
+  const sh=P.filter(([x])=>inR(x)), d='M'+P.map(q=>q.join(',')).join(' L');
+  const a=sh.length?`M${sh[0][0]},34 L`+sh.map(q=>q.join(',')).join(' L')+` L${sh[sh.length-1][0]},34 Z`:'';
+  return `<svg viewBox="0 0 100 38" width="78" height="30" aria-hidden="true"><path d="${a}" fill="var(--wk)" opacity=".35"/><path d="${d}" fill="none" stroke="currentColor" stroke-width="1.4"/><line x1="8" y1="34" x2="92" y2="34" stroke="currentColor" stroke-width="1"/></svg>`;};
+const FORM=rows=>`<table class="tbl"><tr><th>What</th><th>Formula</th></tr>${rows.map(([a,b])=>`<tr><td>${a}</td><td class="mono">${b}</td></tr>`).join('')}</table>`;
+const FLOW=(eg,st)=>`<div class="flow"><div class="flow-h">How to solve <span>· example: ${eg}</span></div><ol>${st.map(([a,e])=>`<li><b>${a}</b><span class="eg">${e}</span></li>`).join('')}</ol></div>`;
+const PICK=(t,c)=>`<div class="pick"><div class="flow-h">${t}</div><div class="pick-g">${c.map(([v,k,r])=>`<div>${v}<b>${k}</b><span>${r}</span></div>`).join('')}</div></div>`;
 
 /* ---------------- Part 1 · Binomial ---------------- */
-const BIN_LEAD=CARD([['One value','P(X = x) = nCx · p<sup>x</sup> · q<sup>n − x</sup>,  q = 1 − p'],['Mean','μ = n · p'],['SD','σ = √(n · p · q)']],
- ['Check: fixed n, two outcomes, same p, independent trials.','Write n, p, q and x.','“At most / at least”: add the values you need, or use 1 − P.','Calculator: nCr key, brackets on the powers.']);
+const BIN_LEAD=FORM([['Exactly x','nCx · p<sup>x</sup> · q<sup>n − x</sup>'],['Mean','μ = n · p'],['SD','σ = √(n · p · q)']])
+ +FLOW('n = 5, p = 0.3, find P(X = 2)',[['Write n, p, q, x','n = 5 · p = 0.3 · q = 0.7 · x = 2'],['Put in the formula','5C2 × 0.3<sup>2</sup> × 0.7<sup>3</sup>'],['Calculator','= 0.3087']])
+ +PICK('Which one?',[['','Exactly','one formula'],['','At least 1','1 − P(0)'],['','At most 1','P(0) + P(1)']]);
 const P1=[
  {revise:'P(X = x) = nCx · p^x · q^(n − x). Usual mistake: forgetting nCx.',see:{t:'Revise: Week 7 · Binomial',href:'week-07.html'},check:[{l:'P(X = 2)',v:0.3087}],type:'One value',q:'n = 5, p = 0.3. Find P(X = 2).',
   hint:MG({f:'P(X = x) = nCx · p<sup>x</sup> · q<sup>n − x</sup>',d:'n = 5, x = 2, p = 0.3, q = 0.7',s:'5C2 · 0.3<sup>2</sup> · 0.7<sup>3</sup> = 10 × 0.09 × 0.343',k:'5 nCr 2 × 0 . 3 x² × 0 . 7 ^ 3 =',a:'<b>0.3087</b>'})},
@@ -79,8 +88,9 @@ const BIG1={revise:'Write n, p, q first. One value: nCx · p^x · q^(n − x). A
   hint:steps([['Write','n = 8, p = 0.25, q = 0.75'],['(a)','8C2 × 0.25<sup>2</sup> × 0.75<sup>6</sup> = 28 × 0.0625 × 0.1780 ≈ <b>0.3115</b>'],['(b)','0.75<sup>8</sup> ≈ <b>0.1001</b>'],['(c)','1 − 0.1001 = <b>0.8999</b>'],['Answer','(d) μ = 8 × 0.25 = <b>2</b> · σ = √(8 × 0.25 × 0.75) = √1.5 ≈ <b>1.22</b>']])};
 
 /* ---------------- Part 2 · Normal ---------------- */
-const NOR_LEAD=CARD([['z-score','z = (x − μ) ÷ σ'],['Less than','P(X &lt; x) = table(z)'],['Greater than','P(X &gt; x) = 1 − table(z)'],['Between','table(z<sub>b</sub>) − table(z<sub>a</sub>)'],['Back to x','x = μ + z · σ']],
- ['Step 0: draw the bell and shade the area.','Find z, rounded to 2 decimals: (x − μ) in brackets first.','Read the table: row = first decimal, column = second decimal.','Less than: the table. Greater than: 1 − table. Between: subtract.']);
+const NOR_LEAD=FORM([['z-score','z = (x − μ) ÷ σ'],['Back to x','x = μ + z · σ']])
+ +FLOW('μ = 60, σ = 8, find P(X &lt; 70)',[['Draw and shade',bell('l')],['Find z','(70 − 60) ÷ 8 = 1.25'],['Read the table','row 1.2, column 0.05 → 0.8944']])
+ +PICK('Then choose',[[bell('l'),'Less than','table'],[bell('r'),'More than','1 − table'],[bell('b'),'Between','big − small']]);
 const P2=[
  {revise:'Less than → the table value directly.',see:{t:'Revise: Week 9 · The z-table',href:'week-09.html'},check:[{l:'z',v:1.25,tol:0.006},{l:'P(X < 70)',v:0.8944}],type:'Less than',q:'μ = 60, σ = 8. Find P(X &lt; 70).',
   hint:MG({f:'z = (x − μ) ÷ σ',s:'z = (70 − 60) ÷ 8 = 1.25',k:'( 7 0 − 6 0 ) ÷ 8 =',a:'table(1.25) = <b>0.8944</b>'})},
@@ -97,8 +107,9 @@ const BIG2={revise:'Draw and shade, find z, read the table: less than = table, g
   hint:steps([['(a)','z = (10 − 12) ÷ 2 = −1.00 → <b>0.1587</b>'],['(b)','z = (15 − 12) ÷ 2 = 1.50 → 1 − 0.9332 = <b>0.0668</b>'],['(c)','0.9332 − 0.1587 = <b>0.7745</b>'],['Answer','(d) 200 × 0.0668 ≈ <b>13</b> phones']])};
 
 /* ---------------- Part 3 · Confidence interval for the mean ---------------- */
-const CI_LEAD=CARD([['σ known','x̄ ± z* · σ ÷ √n'],['σ unknown','x̄ ± t* · s ÷ √n  (df = n − 1)'],['z*','90%: 1.645 · 95%: 1.96 · 99%: 2.576']],
- ['Write x̄, σ (or s), n and the confidence level.','SE = σ ÷ √n.','Margin E = z* × SE.','Interval: x̄ − E to x̄ + E.','Say it in context: “We are 95% confident that the population mean is between … and …”.']);
+const CI_LEAD=FORM([['Interval','x̄ ± z* · σ ÷ √n'],['σ unknown','x̄ ± t* · s ÷ √n (t* given)']])
+ +FLOW('x̄ = 50, σ = 10, n = 25, 95%',[['Pick z*','95% → 1.96'],['SE = σ ÷ √n','10 ÷ 5 = 2'],['E = z* × SE','1.96 × 2 = 3.92'],['x̄ − E and x̄ + E','(46.08, 53.92)']])
+ +PICK('z* to remember',[['','90%','1.645'],['','95%','1.96'],['','99%','2.576']]);
 const P3=[
  {revise:'SE = σ ÷ √n, E = z* × SE, then x̄ ± E. 95% → 1.96.',see:{t:'Revise: Week 11 · Confidence intervals',href:'week-11.html'},check:[{l:'Lower',v:46.08,tol:0.01},{l:'Upper',v:53.92,tol:0.01}],type:'95%',q:'x̄ = 50, σ = 10, n = 25. Find the 95% confidence interval for μ.',
   hint:MG({f:'x̄ ± z* · σ ÷ √n',s:'SE = 10 ÷ √25 = 2 · E = 1.96 × 2 = 3.92',k:'5 0 − 1 . 9 6 × 1 0 ÷ √ 2 5 =',a:'(<b>46.08</b>, <b>53.92</b>)'})},
@@ -115,8 +126,9 @@ const BIG3={revise:'SE = σ ÷ √n; E = z* × SE; interval x̄ ± E. A higher c
   hint:steps([['(a)','SE = 0.7 ÷ √49 = 0.7 ÷ 7 = <b>0.1</b>'],['(b)','E = 1.96 × 0.1 = 0.196 → (<b>2.30</b>, <b>2.70</b>)'],['(c)','E = 2.576 × 0.1 = 0.258 → (<b>2.24</b>, <b>2.76</b>)'],['Answer','(d) <b>99%</b> is wider. We are 95% confident the mean daily study time of all students is between 2.30 and 2.70 hours.']])};
 
 /* ---------------- Part 4 · Chi-square test of independence ---------------- */
-const CHI_LEAD=CARD([['Hypotheses','H₀: the two variables are independent · H₁: they are related'],['Expected','E = row total × column total ÷ grand total'],['Test statistic','χ² = Σ (O − E)² ÷ E'],['df','(rows − 1) × (columns − 1)'],['Decision','χ² &gt; critical value → reject H₀']],
- ['Write H₀ and H₁.','Add row totals, column totals and the grand total.','Expected count for every cell.','(O − E)² ÷ E for every cell, then add: χ².','df, then compare with the critical value (given).','Conclusion in context.']);
+const CHI_LEAD=FORM([['Expected','E = row total × column total ÷ total'],['χ²','Σ (O − E)² ÷ E'],['df','(rows − 1) × (columns − 1)']])
+ +FLOW('2 × 2 table, O = 30, 20, 20, 30',[['H₀: independent','H₁: related'],['Totals','rows 50, 50 · columns 50, 50 · total 100'],['E for each cell','50 × 50 ÷ 100 = 25'],['(O − E)² ÷ E, then add','1 + 1 + 1 + 1 = 4'],['df','(2 − 1)(2 − 1) = 1'],['Compare','4 &gt; 3.841 → reject H₀']])
+ +PICK('Decision',[['','χ² bigger','reject H₀ → related'],['','χ² smaller','keep H₀ → no relation']]);
 const P4=[
  {revise:'E = row total × column total ÷ grand total.',see:{t:'Revise: Week 12 · Chi-square',href:'week-12.html'},check:[{l:'E',v:15}],type:'Expected',q:'A cell has row total 60, column total 50, and the grand total is 200. Find its expected count.',
   hint:MG({f:'E = row × column ÷ grand total',s:'60 × 50 ÷ 200',k:'6 0 × 5 0 ÷ 2 0 0 =',a:'E = <b>15</b>'})},
@@ -143,6 +155,7 @@ const COUNT=PARTS.reduce((n,p)=>n+p.blocks.reduce((m,b)=>m+b.items.length,0)+1,0
 (function(){
   const LS=window.LearningSupports||{on:()=>false,get:()=>null};
   const css=`
+.flow,.pick{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:10px 0}.flow-h{font:700 .78rem var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--wk);margin-bottom:6px}.flow-h span{text-transform:none;letter-spacing:0;font-weight:400;color:var(--muted)}.flow ol{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.flow li{counter-increment:s;background:var(--wk-soft);border-radius:8px;padding:8px 10px 8px 38px;position:relative;display:flex;flex-direction:column;gap:3px}.flow li:before{content:counter(s);position:absolute;left:9px;top:8px;width:22px;height:22px;border-radius:50%;background:var(--wk);color:#fff;font:700 .8rem/22px var(--f-display);text-align:center}.flow li b{font:600 .95rem var(--f-display)}.eg{font-family:var(--f-mono);font-size:.85rem;color:var(--ink)}.pick-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}.pick-g>div{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;padding:6px;border-radius:8px;background:var(--wk-soft)}.pick-g b{font:600 .9rem var(--f-display)}.pick-g span{font-family:var(--f-mono);font-size:.85rem}
 .howto{border-left:4px solid var(--wk);background:var(--wk-soft);border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0 4px}.howto ol{margin:4px 0 0;padding-left:20px}.mono{font-family:var(--f-mono);font-size:.9rem}
 body.mt{background:var(--bg)}
 .mt-main{padding:22px 12px 40px}
