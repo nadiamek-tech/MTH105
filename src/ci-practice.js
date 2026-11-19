@@ -55,11 +55,11 @@ const STEPS5=[
 const EXHTML=(x,k)=>{const S=SOLVE(x),sym=x.ts?'s':'σ',cv=x.ts?'t*':'z*';
  const ans=[
   EQ(`x̄ = ${V(x.xb)}`)+EQ(`${sym} = ${V(x.sd,'v2')}`)+EQ(`n = ${V(x.n,'v3')}`)+EQ(`confidence = ${V(x.lv)}`),
-  x.ts?EQ(`σ unknown → use t*`)+EQ(`t* = ${V(x.ts,'v2')}  (given, df = ${x.n} − 1 = ${x.n-1})`)+`<p class="note">t* is always given in the question.</p>`
-     :EQ(`σ known → use z*`)+ZTAB(x.lv)+EQ(`z* = ${V(S.cs,'v2')}`)+`<p class="note">In exams, z* is sometimes given in the question: then use it directly.</p>`,
-  `<p class="sm">The part <b class="c-se">${sym} ÷ √n</b> of the formula is called the <b>standard error</b> (SE).</p>`+EQ(`SE = ${FR(sym,'√n')} = ${FR(String(x.sd),'√'+x.n)} = ${FR(String(x.sd),String(Math.sqrt(x.n)))} = ${V(n4(S.se))}`),
-  `<p class="sm">Multiply the SE by ${cv}: <b class="c-me">${cv} × SE</b> is the <b>margin of error</b> (E).</p>`+EQ(`E = ${cv} × SE = ${S.cs} × ${n4(S.se)} = ${V(n4(S.E))}`),
-  CIF(String(x.xb),S.cs,String(x.sd),'√'+x.n)+EQ(`${x.xb} − ${n4(S.E)} &lt; μ &lt; ${x.xb} ${CT('+')} ${n4(S.E)}`)+EQ(`<b>${n4(Math.round(S.lo*100)/100)} &lt; μ &lt; ${n4(Math.round(S.hi*100)/100)}</b>`)+LINE(x,S)+EQ(`${x.lv} CI: ${ANS('('+n4(Math.round(S.lo*100)/100)+' , '+n4(Math.round(S.hi*100)/100)+') '+x.u)}`)+
+  x.ts?EQ(`σ unknown → use t*`)+EQ(`t* = ${V(x.ts,'v2')}  (given, df = ${x.n} − 1 = ${x.n-1})`)+(x.worked?`<p class="note">t* is always given in the question.</p>`:'')
+     :(x.worked?EQ(`σ known → use z*`)+ZTAB(x.lv)+EQ(`z* = ${V(S.cs,'v2')}`)+`<p class="note">In exams, z* is sometimes given in the question: then use it directly.</p>`:EQ(`σ known → z* = ${V(S.cs,'v2')}`)),
+  (x.worked?`<p class="sm">The part <b class="c-se">${sym} ÷ √n</b> of the formula is called the <b>standard error</b> (SE).</p>`:'')+EQ(`SE = ${FR(sym,'√n')} = ${FR(String(x.sd),'√'+x.n)} = ${FR(String(x.sd),String(Math.sqrt(x.n)))} = ${V(n4(S.se))}`),
+  (x.worked?`<p class="sm">Multiply the SE by ${cv}: <b class="c-me">${cv} × SE</b> is the <b>margin of error</b> (E).</p>`:'')+EQ(`E = ${cv} × SE = ${S.cs} × ${n4(S.se)} = ${V(n4(S.E))}`),
+  (x.worked?CIF(String(x.xb),S.cs,String(x.sd),'√'+x.n):'')+EQ(`${x.xb} − ${n4(S.E)} &lt; μ &lt; ${x.xb} ${CT('+')} ${n4(S.E)}`)+EQ(`<b>${n4(Math.round(S.lo*100)/100)} &lt; μ &lt; ${n4(Math.round(S.hi*100)/100)}</b>`)+LINE(x,S)+EQ(`${x.lv} CI: ${ANS('('+n4(Math.round(S.lo*100)/100)+' , '+n4(Math.round(S.hi*100)/100)+') '+x.u)}`)+
   `<p class="say">We are ${x.lv} confident that ${x.what} is between ${n4(Math.round(S.lo*100)/100)} and ${n4(Math.round(S.hi*100)/100)} ${x.u}.</p>`];
  return `<div class="ex"><b>${x.q}</b> Find the ${x.lv} confidence interval for the population mean μ and interpret it.</div>
   <div class="s5">${STEPS5.map(([t,why],s)=>`<div class="s5-i"><div class="s5-h"><span class="sn">${s+1}</span><div><div class="st">${t}</div><div class="sw">${why}</div></div>
