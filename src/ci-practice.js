@@ -40,21 +40,26 @@ const LINE=(x,S)=>{const lo=n4(Math.round(S.lo*100)/100),hi=n4(Math.round(S.hi*1
  <circle cx="300" cy="40" r="7" fill="var(--c2)"/>
  <text x="120" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="var(--cr)">${lo}</text><text x="300" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="var(--c2)">x̄ = ${x.xb}</text><text x="480" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="var(--cg)">${hi}</text>
  <text x="210" y="66" text-anchor="middle" font-size="12" fill="currentColor">− E = ${E}</text><text x="390" y="66" text-anchor="middle" font-size="12" fill="currentColor">+ E = ${E}</text></svg>`;};
+const BR=(inner,lab,cls)=>`<span class="ub ${cls}"><span class="ub-in">${inner}</span><span class="ub-l">${lab}</span></span>`;
+const CIF=(xb,z,sd,n)=>{const se=BR(FR(sd,n),'SE','se'),e=BR(`<span class="zz">${z} ·</span>${se}`,'E · margin of error','me');
+ return `<div class="cif"><span>${xb}</span> − ${e} <span class="lt">&lt;</span> <b class="mu">μ</b> <span class="lt">&lt;</span> <span>${xb}</span> ${CT('+')} ${e}</div>`;};
+const FORMULA=`<div class="fbox"><div class="fb-t">The confidence interval for the population mean <span style="text-transform:none">μ</span></div>${CIF('x̄','z*','σ','√n')}
+ <div class="fb-s"><div><b class="c-se">σ ÷ √n</b> is called the <b>standard error</b>, SE</div><div><b class="c-me">z* × SE</b> is the <b>margin of error</b>, E</div><div>So: <b>x̄ − E &lt; μ &lt; x̄ + E</b></div></div></div>`;
 const STEPS5=[
  ['Write the data','x̄, σ (or s), n and the confidence level.'],
  ['Critical value','σ known → z* from the confidence level. σ unknown → t* (given).'],
  ['Standard error','SE = σ ÷ √n.'],
  ['Margin of error','E = critical value × SE.'],
- ['Interval and meaning','x̄ − E to x̄ + E, then one sentence in context.']];
+ ['Interval and meaning','x̄ − E < μ < x̄ + E, then one sentence in context.']];
 
 const EXHTML=(x,k)=>{const S=SOLVE(x),sym=x.ts?'s':'σ',cv=x.ts?'t*':'z*';
  const ans=[
   EQ(`x̄ = ${V(x.xb)}`)+EQ(`${sym} = ${V(x.sd,'v2')}`)+EQ(`n = ${V(x.n,'v3')}`)+EQ(`confidence = ${V(x.lv)}`),
   x.ts?EQ(`σ unknown → use t*`)+EQ(`t* = ${V(x.ts,'v2')}  (given, df = ${x.n} − 1 = ${x.n-1})`)+`<p class="note">t* is always given in the question.</p>`
      :EQ(`σ known → use z*`)+ZTAB(x.lv)+EQ(`z* = ${V(S.cs,'v2')}`)+`<p class="note">In exams, z* is sometimes given in the question: then use it directly.</p>`,
-  EQ(`SE = ${FR(sym,'√n')} = ${FR(String(x.sd),'√'+x.n)} = ${FR(String(x.sd),String(Math.sqrt(x.n)))} = ${V(n4(S.se))}`),
-  EQ(`E = ${cv} × SE = ${S.cs} × ${n4(S.se)} = ${V(n4(S.E))}`),
-  LINE(x,S)+EQ(`${x.lv} CI: ${ANS('('+n4(Math.round(S.lo*100)/100)+' , '+n4(Math.round(S.hi*100)/100)+') '+x.u)}`)+
+  `<p class="sm">The part <b class="c-se">${sym} ÷ √n</b> of the formula is called the <b>standard error</b> (SE).</p>`+EQ(`SE = ${FR(sym,'√n')} = ${FR(String(x.sd),'√'+x.n)} = ${FR(String(x.sd),String(Math.sqrt(x.n)))} = ${V(n4(S.se))}`),
+  `<p class="sm">Multiply the SE by ${cv}: <b class="c-me">${cv} × SE</b> is the <b>margin of error</b> (E).</p>`+EQ(`E = ${cv} × SE = ${S.cs} × ${n4(S.se)} = ${V(n4(S.E))}`),
+  CIF(String(x.xb),S.cs,String(x.sd),'√'+x.n)+EQ(`${x.xb} − ${n4(S.E)} &lt; μ &lt; ${x.xb} ${CT('+')} ${n4(S.E)}`)+EQ(`<b>${n4(Math.round(S.lo*100)/100)} &lt; μ &lt; ${n4(Math.round(S.hi*100)/100)}</b>`)+LINE(x,S)+EQ(`${x.lv} CI: ${ANS('('+n4(Math.round(S.lo*100)/100)+' , '+n4(Math.round(S.hi*100)/100)+') '+x.u)}`)+
   `<p class="say">We are ${x.lv} confident that ${x.what} is between ${n4(Math.round(S.lo*100)/100)} and ${n4(Math.round(S.hi*100)/100)} ${x.u}.</p>`];
  return `<div class="ex"><b>${x.q}</b> Find the ${x.lv} confidence interval for the population mean μ and interpret it.</div>
   <div class="s5">${STEPS5.map(([t,why],s)=>`<div class="s5-i"><div class="s5-h"><span class="sn">${s+1}</span><div><div class="st">${t}</div><div class="sw">${why}</div></div>
@@ -130,6 +135,15 @@ body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803
 .rule{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}.rule>div{border:2px solid var(--line);border-radius:10px;padding:8px 10px;opacity:.55;font-size:.95rem}.rule>div b{display:block}.rule>div span{display:block;color:var(--muted);font-size:.88rem}
 .rule>div.on{opacity:1;border-color:var(--cg);background:color-mix(in srgb,var(--cg) 8%,var(--surface))}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
+.fbox{border:2px solid var(--ink);border-radius:12px;padding:12px 16px;margin:4px 0 14px;background:var(--surface);text-align:center}
+.fb-t{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cif{font-family:var(--f-mono);font-size:1.15rem;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.35em;margin:6px 0;padding-bottom:3.2em;row-gap:3.4em}
+.cif .mu{font-size:1.35rem;color:var(--c1)}.cif .lt{font-weight:700}
+.ub{display:inline-flex;position:relative}.ub-in{display:inline-flex;align-items:center;gap:.25em;padding:0 4px 3px;border-bottom:3px solid var(--bc);border-radius:0 0 8px 8px}.ub.me>.ub-in{padding-bottom:1.5em;margin-bottom:-1.5em;align-items:center}.ub.me>.ub-in>.ub{align-self:center}.zz{align-self:center;white-space:nowrap}.ub.me>.ub-l{top:calc(100% + 1.95rem)}.ub.se>.ub-in{padding-top:0}
+.ub-l{position:absolute;top:100%;left:50%;transform:translateX(-50%);font-family:var(--f-display);font-size:.7rem;font-weight:800;color:var(--bc);margin-top:2px;white-space:nowrap}
+.ub.se{--bc:var(--cr)}.ub.me{--bc:#7c3aed}
+.fb-s{font-family:var(--f-display);display:flex;flex-wrap:wrap;justify-content:center;gap:6px 18px;font-size:.95rem;margin-top:4px}
+.c-se{color:var(--cr)}.c-me{color:#7c3aed}
 .ciline{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:stretch;margin:6px 0}
 .ciline>div{border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;font-family:var(--f-mono)}
 .cl-lo{border:2px solid var(--cr);background:color-mix(in srgb,var(--cr) 7%,var(--surface))}.cl-hi{border:2px solid var(--cg);background:color-mix(in srgb,var(--cg) 7%,var(--surface))}.cl-mid{border:2px solid var(--c2);background:color-mix(in srgb,var(--c2) 7%,var(--surface))}
@@ -175,7 +189,7 @@ body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803
   const main=el('main',{class:'ql-main'});
   const cover=el('section',{class:'ql-cover'});
   cover.innerHTML=`<div class="ql-top"><span>MTH 105 · Introduction to Statistics</span><span>Fall 2026 · Nadia</span></div>
-    <h1>Confidence interval for the mean · 5 steps</h1><p>One method for every question: data → critical value → SE → margin of error → interval and meaning. Try each step, then press Show.</p>${STEPBAR}
+    <h1>Confidence interval for the mean · 5 steps</h1><p>One method for every question: data → critical value → SE → margin of error → interval and meaning. Try each step, then press Show.</p>${STEPBAR}${FORMULA}
     <ol class="ql-toc">${CH.map(w=>`<li><a href="#${w.id}"><small>${w.wk}</small>${w.t}</a></li>`).join('')}</ol>
     <div class="ql-tools"><a class="btn" href="downloads/MTH105-CI-practice.pdf" download>Download PDF</a> <button type="button" class="btn" id="showall">Show all answers</button> <button type="button" class="btn" id="pr">Print / Save as PDF</button></div>`;
   main.appendChild(cover);
