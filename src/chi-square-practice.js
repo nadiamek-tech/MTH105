@@ -172,7 +172,7 @@ body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803
   cover.innerHTML=`<div class="ql-top"><span>MTH 105 · Introduction to Statistics</span><span>Fall 2026 · Nadia</span></div>
     <h1>Chi-square test · 5 steps</h1><p>One method for every table: hypotheses → α, df and χ² critical → expected counts → χ² calculated → decision. Try each step, then press Show.</p>${STEPBAR}
     <ol class="ql-toc">${CH.map(w=>`<li><a href="#${w.id}"><small>${w.wk}</small>${w.t}</a></li>`).join('')}</ol>
-    <div class="ql-tools"><button type="button" class="btn" id="showall">Show all answers</button> <button type="button" class="btn" id="pr">Print / Save as PDF</button></div>`;
+    <div class="ql-tools"><a class="btn" href="downloads/MTH105-Chi-square-practice.pdf" download>Download PDF</a> <button type="button" class="btn" id="showall">Show all answers</button> <button type="button" class="btn" id="pr">Print / Save as PDF</button></div>`;
   main.appendChild(cover);
   cover.querySelector('#pr').addEventListener('click',()=>window.print());
   CH.forEach((w,i)=>{
