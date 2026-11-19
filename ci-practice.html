@@ -7,30 +7,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=202611191335">
-<link rel="stylesheet" href="assets/stats.css?v=202611191335">
-<link rel="stylesheet" href="assets/banner.css?v=202611191335">
-<link rel="stylesheet" href="assets/lesson.css?v=202611191335">
+<link rel="stylesheet" href="assets/course.css?v=202611191345">
+<link rel="stylesheet" href="assets/stats.css?v=202611191345">
+<link rel="stylesheet" href="assets/banner.css?v=202611191345">
+<link rel="stylesheet" href="assets/lesson.css?v=202611191345">
 <style>
 :root{--wk:#9C2A6B;--wk-soft:rgba(156,42,107,0.09);--wk-d:#E58BBE;--wk-soft-d:rgba(229,139,190,0.14)}
 </style>
 </head>
 <body>
-<script src="assets/supports.js?v=202611191335"></script>
-<script src="assets/course.js?v=202611191335"></script>
-<script src="assets/stats.js?v=202611191335"></script>
-<script src="assets/concept.js?v=202611191335"></script>
-<script src="assets/decode.js?v=202611191335"></script>
-<script src="assets/lesson.js?v=202611191335"></script>
-<script src="assets/pad.js?v=202611191335"></script>
-<script src="assets/calc.js?v=202611191335"></script>
-<script src="assets/casio.js?v=202611191335"></script>
-<script src="assets/board.js?v=202611191335"></script>
-<script src="assets/board-answers.js?v=202611191335"></script>
-<script src="assets/kb.js?v=202611191335"></script>
-<script src="assets/search-index.js?v=202611191335"></script>
-<script src="assets/assistant.js?v=202611191335"></script>
-<script src="assets/site.js?v=202611191335"></script>
+<script src="assets/supports.js?v=202611191345"></script>
+<script src="assets/course.js?v=202611191345"></script>
+<script src="assets/stats.js?v=202611191345"></script>
+<script src="assets/concept.js?v=202611191345"></script>
+<script src="assets/decode.js?v=202611191345"></script>
+<script src="assets/lesson.js?v=202611191345"></script>
+<script src="assets/pad.js?v=202611191345"></script>
+<script src="assets/calc.js?v=202611191345"></script>
+<script src="assets/casio.js?v=202611191345"></script>
+<script src="assets/board.js?v=202611191345"></script>
+<script src="assets/board-answers.js?v=202611191345"></script>
+<script src="assets/kb.js?v=202611191345"></script>
+<script src="assets/search-index.js?v=202611191345"></script>
+<script src="assets/assistant.js?v=202611191345"></script>
+<script src="assets/site.js?v=202611191345"></script>
 <script>
 const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
 const {T, fr, sq, SG, XB, PH, v} = F;
@@ -67,6 +67,16 @@ const EXS=[
 const SOLVE=x=>{const cs=x.ts||ZS[x.lv],c=parseFloat(cs),se=x.sd/Math.sqrt(x.n),E=c*se;return {cs,se,E,lo:x.xb-E,hi:x.xb+E};};
 const ZTAB=lv=>`<div class="tw"><table class="ct"><tr><th>Confidence</th><th>z*</th></tr>${Object.entries(ZS).map(([k,v])=>`<tr class="${k===lv?'hr':''}"><td>${k}</td><td class="${k===lv?'hit':''}">${v}</td></tr>`).join('')}</table></div>`;
 
+const LINE=(x,S)=>{const lo=n4(Math.round(S.lo*100)/100),hi=n4(Math.round(S.hi*100)/100),E=n4(S.E);
+ return `<div class="ciline"><div class="cl-lo"><span class="cl-t">Lower</span><span class="cl-f">x̄ − E</span><span class="cl-f">${x.xb} − ${E}</span><b>${lo}</b></div>
+ <div class="cl-mid"><span class="cl-t">Centre</span><span class="cl-f">x̄</span><b>${x.xb}</b></div>
+ <div class="cl-hi"><span class="cl-t">Upper</span><span class="cl-f">x̄ + E</span><span class="cl-f">${x.xb} + ${E}</span><b>${hi}</b></div></div>
+ <svg class="cinum" viewBox="0 0 600 70" aria-label="Interval from ${lo} to ${hi}"><line x1="20" y1="40" x2="580" y2="40" stroke="currentColor" stroke-width="1.5"/>
+ <line x1="120" y1="40" x2="480" y2="40" stroke="var(--c1)" stroke-width="7" stroke-linecap="round" opacity=".85"/>
+ <line x1="120" y1="26" x2="120" y2="54" stroke="var(--cr)" stroke-width="3"/><line x1="480" y1="26" x2="480" y2="54" stroke="var(--cg)" stroke-width="3"/>
+ <circle cx="300" cy="40" r="7" fill="var(--c2)"/>
+ <text x="120" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="var(--cr)">${lo}</text><text x="300" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="var(--c2)">x̄ = ${x.xb}</text><text x="480" y="18" text-anchor="middle" font-size="15" font-weight="700" fill="var(--cg)">${hi}</text>
+ <text x="210" y="66" text-anchor="middle" font-size="12" fill="currentColor">− E = ${E}</text><text x="390" y="66" text-anchor="middle" font-size="12" fill="currentColor">+ E = ${E}</text></svg>`;};
 const STEPS5=[
  ['Write the data','x̄, σ (or s), n and the confidence level.'],
  ['Critical value','σ known → z* from the confidence level. σ unknown → t* (given).'],
@@ -81,7 +91,7 @@ const EXHTML=(x,k)=>{const S=SOLVE(x),sym=x.ts?'s':'σ',cv=x.ts?'t*':'z*';
      :EQ(`σ known → use z*`)+ZTAB(x.lv)+EQ(`z* = ${V(S.cs,'v2')}`)+`<p class="note">In exams, z* is sometimes given in the question: then use it directly.</p>`,
   EQ(`SE = ${FR(sym,'√n')} = ${FR(String(x.sd),'√'+x.n)} = ${FR(String(x.sd),String(Math.sqrt(x.n)))} = ${V(n4(S.se))}`),
   EQ(`E = ${cv} × SE = ${S.cs} × ${n4(S.se)} = ${V(n4(S.E))}`),
-  EQ(`Lower = x̄ − E = ${x.xb} − ${n4(S.E)} = ${V(n4(S.lo))}`)+EQ(`Upper = x̄ + E = ${x.xb} ${CT('+')} ${n4(S.E)} = ${V(n4(S.hi))}`)+EQ(`${x.lv} CI: ${ANS('('+n4(Math.round(S.lo*100)/100)+' , '+n4(Math.round(S.hi*100)/100)+') '+x.u)}`)+
+  LINE(x,S)+EQ(`${x.lv} CI: ${ANS('('+n4(Math.round(S.lo*100)/100)+' , '+n4(Math.round(S.hi*100)/100)+') '+x.u)}`)+
   `<p class="say">We are ${x.lv} confident that ${x.what} is between ${n4(Math.round(S.lo*100)/100)} and ${n4(Math.round(S.hi*100)/100)} ${x.u}.</p>`];
  return `<div class="ex"><b>${x.q}</b> Find the ${x.lv} confidence interval for the population mean μ and interpret it.</div>
   <div class="s5">${STEPS5.map(([t,why],s)=>`<div class="s5-i"><div class="s5-h"><span class="sn">${s+1}</span><div><div class="st">${t}</div><div class="sw">${why}</div></div>
@@ -157,6 +167,12 @@ body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803
 .rule{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}.rule>div{border:2px solid var(--line);border-radius:10px;padding:8px 10px;opacity:.55;font-size:.95rem}.rule>div b{display:block}.rule>div span{display:block;color:var(--muted);font-size:.88rem}
 .rule>div.on{opacity:1;border-color:var(--cg);background:color-mix(in srgb,var(--cg) 8%,var(--surface))}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
+.ciline{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:stretch;margin:6px 0}
+.ciline>div{border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;font-family:var(--f-mono)}
+.cl-lo{border:2px solid var(--cr);background:color-mix(in srgb,var(--cr) 7%,var(--surface))}.cl-hi{border:2px solid var(--cg);background:color-mix(in srgb,var(--cg) 7%,var(--surface))}.cl-mid{border:2px solid var(--c2);background:color-mix(in srgb,var(--c2) 7%,var(--surface))}
+.cl-t{font-family:var(--f-display);font-weight:800;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}.cl-lo .cl-t,.cl-lo b{color:var(--cr)}.cl-hi .cl-t,.cl-hi b{color:var(--cg)}.cl-mid .cl-t,.cl-mid b{color:var(--c2)}
+.cl-f{font-size:.88rem}.ciline b{font-size:1.15rem}
+.cinum{width:100%;max-width:600px;height:auto;display:block;margin:4px 0;color:var(--ink);font-family:var(--f-mono)}
 .s5{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .s5-i{border:1px solid var(--line);border-left:5px solid var(--c1);border-radius:10px;padding:8px 12px;background:var(--surface)}
 .s5-i:nth-child(2){border-left-color:var(--c2)}.s5-i:nth-child(3){border-left-color:var(--cr)}.s5-i:nth-child(4){border-left-color:var(--c3)}.s5-i:nth-child(5){border-left-color:var(--cg)}
