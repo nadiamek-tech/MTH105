@@ -80,9 +80,9 @@
     /* top bar: back link, contents, voice, theme */
     const bar=el('header',{class:'lbar'});
     const secs=(cfg.opener?[{id:'start',t:'Before we start'}]:[]).concat(cfg.topics.map(t=>({id:t.id,t:t.title}))).concat(cfg.mistakes?[{id:'mistakes',t:'Mistake → fix'}]:[]).concat(cfg.inClass?[{id:'in-class',t:'In class'}]:[]).concat([{id:'takeaways',t:'Takeaways'}]).concat(cfg.exit?[{id:'exit',t:'Exit check'}]:[]).concat([{id:'practice',t:'Practice'}]);
-    const num=id=>secs.findIndex(x=>x.id===id)+1;
+    const n0=cfg.numStart===undefined?1:cfg.numStart, num=id=>secs.findIndex(x=>x.id===id)+n0;
     bar.innerHTML=`<div class="lbar-in"><a class="brand" href="${cfg.home||'lectures.html'}"><b>MTH 105</b><span>← Lectures · Week ${cfg.week}</span></a>
-      <nav class="lchips" aria-label="In this lecture">${secs.map((s,i)=>`<a href="#${s.id}" data-id="${s.id}"><span>${i+1}</span>${esc(s.t)}</a>`).join('')}</nav>
+      <nav class="lchips" aria-label="In this lecture">${secs.map((s,i)=>`<a href="#${s.id}" data-id="${s.id}"><span>${i+n0}</span>${esc(s.t)}</a>`).join('')}</nav>
       <div class="lctl">${LS.on('voice')?'<button type="button" class="pill listen" id="listen">▶ Listen</button>':''}<button type="button" class="pill" id="theme" title="Light or dark">◐</button></div></div><div class="progress"><i></i></div>`;
     document.body.appendChild(bar);
     bar.querySelector('#theme').addEventListener('click',()=>GED102Theme.toggle());

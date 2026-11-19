@@ -23,7 +23,7 @@
 <script src="assets/decode.js?v=202610231305"></script>
 <script src="assets/professor.js?v=202611181430"></script>
 <script src="assets/keywords.js?v=202610231305"></script>
-<script src="assets/lesson.js?v=202611181430"></script>
+<script src="assets/lesson.js?v=202611191030"></script>
 <script src="assets/pad.js?v=202610231305"></script>
 <script src="assets/calc.js?v=202610231305"></script>
 <script src="assets/casio.js?v=202610231305"></script>
@@ -124,13 +124,16 @@ const G12=(()=>{ const {svg,card,text,arrow,curveArrow,pill,axis}=CG;
     'If chi-square lands beyond the critical value, in the right tail of area alpha, reject H0');
   return {tw,hy,ex,chi,dec};
 })();
+const OE=v=>v.split('|').map((x,i)=>i?`<span style="color:#B5651D;font-weight:700">(${x})</span>`:`<b>${x}</b>`).join(' ');
+const MERGED=tbl(['O (E)','On time','Late','Row total'],[['Planner app',OE('72|63'),OE('18|27'),90],['No app',OE('96|105'),OE('54|45'),150],['Column total',168,72,'<b>240</b>']]);
+const RULE=`<div style="display:grid;gap:10px;padding:6px 2px"><div style="border:2px solid #9aa3ad;border-radius:10px;padding:10px 12px"><b>χ² calculated &lt; χ² critical</b><br>→ fail to reject H₀<br><span style="color:var(--muted)">we fail to prove the dependency</span></div><div style="border:2px solid #2E7D32;border-radius:10px;padding:10px 12px;background:rgba(46,125,50,.08)"><b>χ² calculated &gt; χ² critical</b><br>→ reject H₀<br><span style="color:var(--muted)">the dependency is proven</span></div></div>`;
 const CRIT=`<div class="tblwrap"><table class="tbl"><tr><th>df</th><th>α = 0.10</th><th>α = 0.05</th><th>α = 0.01</th></tr>${Object.entries(ST.CHI).slice(0,6).map(([d,a])=>`<tr><td>${d}</td>${a.map((x,i)=>`<td>${d==='1'&&i===1?`<b>${x}</b>`:x}</td>`).join('')}</tr>`).join('')}</table></div>`;
 
 Lesson.mount({
-  week:12, clo:'CLO 4', title:'Contingency Tables and the Chi-square Test', chapter:'Ch 10: Associations between Categorical Variables · Gould, Ryan & Wong (2020)',
+  week:12, numStart:0, clo:'CLO 4', title:'Contingency Tables and the Chi-square Test', chapter:'Ch 10: Associations between Categorical Variables · Gould, Ryan & Wong (2020)',
   intro:'Are two categorical variables related? We count, compare with what we would expect by chance, and decide with one test.',
   topics:[
-  { id:'two-way', title:'Contingency tables',
+  { id:'two-way', title:'Before the steps · Contingency tables',
     def:'A <b>contingency table</b> (two-way table) counts individuals by two categorical variables: one in the rows, one in the columns. Add the <b>row totals</b>, the <b>column totals</b> and the <b>grand total</b>.',
     defFig:{label:'Two variables, one table', html:G12.tw},
     life:{text:'240 students: do they use a study-planner app, and did they submit the last assignment on time? Data: illustrative.'},
@@ -140,13 +143,23 @@ Lesson.mount({
       ans:`<div class="m">Grand total = <b>240</b></div>`, ansRaw:true, ansNote:'Both ways give 240: the totals are correct.'},
     meaning:{text:'The table with its totals is the starting point. Is using the app related to submitting on time? The chi-square test answers.', fig:{label:'Observed counts with totals', html:OBS}} },
 
-  { id:'hypotheses', title:'The test of independence: hypotheses',
-    def:'<b>H₀</b>: the two variables are <b>independent</b> (not related). <b>H₁</b>: they are <b>related</b>. We assume H₀ and reject it only if the data are very unlikely under it. The significance level is usually <b>α = 0.05</b>.',
+  { id:'hypotheses', title:'Step 1 · Hypotheses',
+    def:'<b>H₀</b>: the two variables are <b>independent</b> (not related). <b>H₁</b>: they are <b>dependent</b> (related). We assume H₀ and reject it only if the data are very unlikely under it.',
     defFig:{label:'Independent or related', html:G12.hy},
     life:{text:'H₀: using a planner app and submitting on time are independent. H₁: they are related.'},
-    meaning:{text:'Every chi-square test follows the same five steps.', fig:{label:'Five steps', flow:[{t:'Hypotheses',s:'H₀, H₁',d:'H₀: independent. H₁: related.'},{t:'Expected',s:'E for each cell',d:'The counts we would expect if H₀ were true.'},{t:'χ²',s:'compare O and E',d:'Add (O − E)² ÷ E over all cells.'},{t:'df and critical value',s:'α = 0.05',d:'df = (r − 1)(c − 1). Read the table.'},{t:'Decide',s:'in words',d:'χ² > critical → reject H₀. Write the conclusion in context.'}]}} },
+    meaning:{text:'Every chi-square test follows the same five steps.', fig:{label:'Five steps', flow:[{t:'Hypotheses',s:'H₀, H₁',d:'H₀: independent. H₁: dependent (related).'},{t:'α, df, χ² critical',s:'the table',d:'α → df = (r − 1)(c − 1) → χ² critical. Sometimes given in the question.'},{t:'Expected',s:'E table, then O (E)',d:'E = row total × column total ÷ grand total.'},{t:'χ² calculated',s:'brackets',d:'Σ (O − E)² ÷ E, one bracket per cell.'},{t:'Decision',s:'in words',d:'Calculated &lt; critical → fail to reject H₀. Calculated &gt; critical → reject H₀.'}]}} },
 
-  { id:'expected', title:'Expected counts',
+  { id:'critical', title:'Step 2 · α, df and χ² critical',
+    def:'<b>α</b> is the significance level (the error level we accept), usually <b>0.05</b>, which means 95% confidence. With α and the degrees of freedom <b>df</b>, read <b>χ² critical</b> in the chi-square table. In exams, χ² critical is sometimes given in the question.',
+    defFig:{label:'Chi-square critical values', html:CRIT},
+    life:{text:'Planner table: 2 rows (app, no app), 2 columns (on time, late), α = 0.05.'},
+    formula:{f:`${T('df','df')} = (${T('r',v('r'))} − 1)(${T('c',v('c'))} − 1)`,
+      parts:[['df','<b>df</b>: degrees of freedom.'],['r','<b>r</b>: number of rows (categories, not the total row).'],['c','<b>c</b>: number of columns (not the total column).']],
+      sub:'df = (2 − 1)(2 − 1)', keys:'( 2 − 1 ) × ( 2 − 1 ) =',
+      ans:`<div class="m">df = <b>1</b> → χ² critical = <b>3.841</b></div>`, ansRaw:true, ansNote:'Row df = 1, column α = 0.05.'},
+    meaning:{text:'3.841 is the border: a χ² calculated beyond it is too big to be chance.', fig:{label:'Beyond the critical value', html:G12.dec}} },
+
+  { id:'expected', title:'Step 3 · Expected counts',
     def:'The <b>expected count</b> E is the count each cell would have if the variables were independent. Every E should be at least 5 for the test to be valid.',
     defFig:{label:'Row × column ÷ grand', html:G12.ex},
     life:{text:'Same 240 students. If app use made no difference, how many app users would we expect on time?'},
@@ -154,52 +167,49 @@ Lesson.mount({
       parts:[['e','<b>E</b>: expected count for one cell.'],['r','<b>row total</b>: total of that cell’s row.'],['c','<b>column total</b>: total of that cell’s column.'],['g','<b>grand total</b>: total of the whole table.']],
       sub:`${v('E')} = ${fr('90 × 168','240')}`, keys:'( 9 0 × 1 6 8 ) ÷ 2 4 0 =',
       ans:`<div class="m">E = <b>63</b></div><p class="calcnote">Other cells: 27, 105, 45. All ≥ 5.</p>`, ansRaw:true, ansNote:'Expected counts keep the same row and column totals.'},
-    meaning:{text:'Observed 72, expected 63: more app users were on time than independence predicts. The test measures all such gaps together.', fig:{label:'Expected counts', html:EXP}} },
+    meaning:{text:'First the expected table, then O and E together in one table: observed 72, expected 63 → more app users on time than independence predicts.', fig:{label:'Expected table · O and E together', html:BA.side([['Expected (E)',EXP],['O (E) together',MERGED]])}} },
 
-  { id:'chi-square', demo:'Your professor builds the O, E, (O − E)² ÷ E table on the board.', title:'The chi-square statistic',
+  { id:'chi-square', demo:'Your professor writes one bracket (O − E)² ÷ E per cell on the board.', title:'Step 4 · χ² calculated',
     def:'The <b>chi-square statistic</b> χ² adds up, over every cell, how far the observed count O is from the expected count E. Large χ² → the data do not fit independence.',
     defFig:{label:'Gaps between O and E', html:G12.chi},
-    life:{text:'Observed: 72, 18, 96, 54. Expected: 63, 27, 105, 45.'},
+    life:{text:'O (E): 72 (63), 18 (27), 96 (105), 54 (45).'},
     formula:{f:`${T('x','χ<sup>2</sup>')} = ${T('S',SG)} ${fr(T('d','('+v('O')+' − '+v('E')+')<sup>2</sup>'),T('e',v('E')))}`,
       parts:[['x','<b>χ²</b> (“chi-square”): the test statistic.'],['S','<b>Σ</b>: add over every cell.'],['d','<b>(O − E)²</b>: observed minus expected, squared.'],['e','<b>E</b>: divide by the expected count of the same cell.']],
       sub:`χ² = ${fr('(72 − 63)²','63')} + ${fr('(18 − 27)²','27')} + ${fr('(96 − 105)²','105')} + ${fr('(54 − 45)²','45')}`,
       keys:'( 7 2 − 6 3 ) x² ÷ 6 3 + ( 1 8 − 2 7 ) x² ÷ 2 7 + ( 9 6 − 1 0 5 ) x² ÷ 1 0 5 + ( 5 4 − 4 5 ) x² ÷ 4 5 =', keyNote:'Bracket every O − E before squaring.',
-      ans:`<div class="m">1.286 + 3 + 0.771 + 1.8 ≈ <b>6.857</b></div>`, ansRaw:true},
+      ans:`<div class="m">1.286 + 3 + 0.771 + 1.8 ≈ <b>6.857</b></div>`, ansRaw:true, ansNote:'χ² calculated = 6.857.'},
     meaning:{text:'χ² is never negative. 0 means O = E in every cell. Type any table and the tool finds E, χ² and the decision.', fig:{label:'Test any table', build:el=>ST.chiTool(el,{rows:['Planner app','No app'],cols:['On time','Late'],O:[[72,18],[96,54]]})}} },
 
-  { id:'decision', title:'Degrees of freedom and the decision',
-    def:'Compare χ² with the <b>critical value</b> from the chi-square table, using α and the <b>degrees of freedom</b> df. If χ² &gt; critical value, reject H₀.',
-    defFig:{label:'Beyond the critical value', html:G12.dec},
-    life:{text:'Planner table: 2 rows, 2 columns, χ² = 6.857, α = 0.05.'},
-    formula:{f:`${T('df','df')} = (${T('r',v('r'))} − 1)(${T('c',v('c'))} − 1)`,
-      parts:[['df','<b>df</b>: degrees of freedom.'],['r','<b>r</b>: number of rows (categories, not the total row).'],['c','<b>c</b>: number of columns (not the total column).']],
-      sub:'df = (2 − 1)(2 − 1)', keys:'( 2 − 1 ) × ( 2 − 1 ) =',
-      ans:`<div class="m">df = <b>1</b> → critical value = <b>3.841</b></div><p class="calcnote">6.857 &gt; 3.841 → <b>reject H₀</b></p>`, ansRaw:true},
-    meaning:{text:'At α = 0.05, there is evidence that using a planner app and submitting on time are related. The test shows an association, not that the app causes on-time work.', fig:{label:'Chi-square critical values', html:CRIT}} }
+  { id:'decision', title:'Step 5 · Decision',
+    def:'Compare <b>χ² calculated</b> with <b>χ² critical</b>. Calculated &lt; critical → <b>fail to reject H₀</b>: we fail to prove the dependency. Calculated &gt; critical → <b>reject H₀</b>: the dependency is proven.',
+    defFig:{label:'The rule', html:RULE},
+    life:{text:'Planner table: χ² calculated = 6.857, χ² critical = 3.841.'},
+    meaning:{text:'6.857 &gt; 3.841 → reject H₀. At the 5% significance level (95% confidence), using a planner app and submitting on time are dependent: they are related. Related does not mean the app causes on-time work.', fig:{label:'Beyond the critical value', html:G12.dec}} }
   ],
   inClass:{intro:'We build the tables and run the test together on the board.', items:[
     {q:'150 students give their year of study and preferred class time. Year 1: Morning 28, Afternoon 20, Evening 12. Year 2: Morning 22, Afternoon 40, Evening 28. At α = 0.05, is preferred class time related to year of study? Data: illustrative.', tips:['Write H₀ and H₁ first.','Add the row and column totals.','E = row total × column total ÷ grand total.','df = (r − 1)(c − 1).']},
     {q:'120 customers: under 30, 40 order delivery and 20 pick up; 30 and over, 25 order delivery and 35 pick up. At α = 0.05, is the ordering method related to age group? Show all five steps. Data: illustrative.', tips:['H₀: independent. H₁: related.','Totals, then E for every cell.','χ², df, critical value, decision in words.']}]},
   takeaways:{label:'Week 12 on one page', mindmap:{center:'χ² test', branches:[
     {t:'Table',items:['Two categorical variables','Row, column and grand totals']},
-    {t:'Hypotheses',items:['H₀: independent','H₁: related']},
-    {t:'Expected',items:['E = row × column ÷ grand','Every E ≥ 5']},
-    {t:'Statistic',items:['χ² = Σ (O − E)² ÷ E']},
-    {t:'Decide',items:['df = (r − 1)(c − 1)','χ² > critical → reject H₀','Conclusion in words']}]}},
+    {t:'1 · Hypotheses',items:['H₀: independent','H₁: dependent (related)']},
+    {t:'2 · Critical',items:['α = 0.05 → 95% confidence','df = (r − 1)(c − 1)','χ² critical from the table']},
+    {t:'3 · Expected',items:['E = row × column ÷ grand','Table O (E) together']},
+    {t:'4 · χ² calculated',items:['Σ (O − E)² ÷ E','One bracket per cell']},
+    {t:'5 · Decision',items:['Calculated < critical → fail to reject H₀','Calculated > critical → reject H₀','Conclusion in words']}]}},
   practice:[
-    {check:[{l:'df',v:6},{l:'Critical value',v:12.592}],revise:'df = (rows − 1) × (columns − 1). Read the critical value in the df row, α = 0.05 column.',see:{t:'Revise: Degrees of freedom and the decision',href:'#decision'},type:'Easy',q:'A table has 3 rows and 4 columns. Find df and the critical value at α = 0.05.',hint:bM([gDf(3,4)],bT([['Critical value','df = 6, α = 0.05 → <b>12.592</b> (table)']]))},
-    {check:[{l:'E',v:18}],revise:'Expected count = row total × column total ÷ grand total.',see:{t:'Revise: Expected counts',href:'#expected'},type:'Easy',q:'Row total 80, column total 45, grand total 200. Find the expected count.',hint:bM([gExp(80,45,200)])},
-    {check:[{l:'(O − E)² ÷ E',v:1.5}],revise:'Each cell adds (O − E)² ÷ E. Square the difference before dividing by E.',see:{t:'Revise: The chi-square statistic',href:'#chi-square'},type:'Easy',q:'One cell has O = 30 and E = 24. Find its contribution to χ².',hint:bM([{t:'One cell',lines:[bX('','(O − E)²','E',{n:'O = 30',d:'E = 24'}),bA(`${bF('(30 − 24)²','24')} = ${bF('36','24')} = <b>1.5</b>`)],calc:['(30−24)²÷24',LCD((30-24)**2/24)]}])},
-    {check:[{l:'E: Metro, late',v:15},{l:'E: Metro, on time',v:45},{l:'E: Car, late',v:25},{l:'E: Car, on time',v:75}],revise:'Find the row and column totals first. Each E = row total × column total ÷ grand total.',see:{t:'Revise: Expected counts',href:'#expected'},type:'Medium',q:'160 students. Metro users: 10 late, 50 on time. Car users: 30 late, 70 on time. Find the four expected counts. Data: illustrative.',hint:bM([
+    {check:[{l:'df',v:6},{l:'Critical value',v:12.592}],revise:'df = (rows − 1) × (columns − 1). Read the critical value in the df row, α = 0.05 column.',see:{t:'Revise: Step 2 · α, df and χ² critical',href:'#critical'},type:'Easy',q:'A table has 3 rows and 4 columns. Find df and the critical value at α = 0.05.',hint:bM([gDf(3,4)],bT([['Critical value','df = 6, α = 0.05 → <b>12.592</b> (table)']]))},
+    {check:[{l:'E',v:18}],revise:'Expected count = row total × column total ÷ grand total.',see:{t:'Revise: Step 3 · Expected counts',href:'#expected'},type:'Easy',q:'Row total 80, column total 45, grand total 200. Find the expected count.',hint:bM([gExp(80,45,200)])},
+    {check:[{l:'(O − E)² ÷ E',v:1.5}],revise:'Each cell adds (O − E)² ÷ E. Square the difference before dividing by E.',see:{t:'Revise: Step 4 · χ² calculated',href:'#chi-square'},type:'Easy',q:'One cell has O = 30 and E = 24. Find its contribution to χ².',hint:bM([{t:'One cell',lines:[bX('','(O − E)²','E',{n:'O = 30',d:'E = 24'}),bA(`${bF('(30 − 24)²','24')} = ${bF('36','24')} = <b>1.5</b>`)],calc:['(30−24)²÷24',LCD((30-24)**2/24)]}])},
+    {check:[{l:'E: Metro, late',v:15},{l:'E: Metro, on time',v:45},{l:'E: Car, late',v:25},{l:'E: Car, on time',v:75}],revise:'Find the row and column totals first. Each E = row total × column total ÷ grand total.',see:{t:'Revise: Step 3 · Expected counts',href:'#expected'},type:'Medium',q:'160 students. Metro users: 10 late, 50 on time. Car users: 30 late, 70 on time. Find the four expected counts. Data: illustrative.',hint:bM([
       {t:'Totals',lines:[BD.tb(['','Late','On time','Total'],[['Metro','10','50','60'],['Car','30','70','100']],['Total','40','120','160'])]},
       gExp(60,40,160,{t:'Expected counts (E)',more:[bL(`Metro, on time: ${bF('(60) × (120)','160')} = <b>45</b>`),bL(`Car, late: ${bF('(100) × (40)','160')} = <b>25</b>`),bL(`Car, on time: ${bF('(100) × (120)','160')} = <b>75</b>`)]})])},
-    {check:[{l:'χ²',v:32/9,tol:0.005},{l:'df',v:1},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Fail to reject H₀'}],revise:'Add (O − E)² ÷ E over all four cells. Reject H₀ only if χ² is greater than the critical value.',see:{t:'Revise: Degrees of freedom and the decision',href:'#decision'},type:'Medium',q:'Same table: find χ², df and the decision at α = 0.05.',hint:bM([gChi([10,50,30,70],[15,45,25,75],{ans:'3.556'}),gDf(2,2)],bT([['Critical value','df = 1, α = 0.05 → <b>3.841</b>'],['Answer','3.556 &lt; 3.841 → <b>fail to reject H₀</b>: no evidence that commute mode and lateness are related.']]))},
-    {check:[{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'df = (rows − 1) × (columns − 1). Reject H₀ when χ² is greater than the critical value.',see:{t:'Revise: Degrees of freedom and the decision',href:'#decision'},type:'Medium',q:'A 2 × 3 table gives χ² = 7.2. Decide at α = 0.05.',hint:bM([gDf(2,3)],bT([['Critical value','df = 2, α = 0.05 → <b>5.991</b>'],['Answer','7.2 &gt; 5.991 → <b>reject H₀</b>: the variables are related.']]))},
-    {check:[{l:'χ²',v:115/12,tol:0.005},{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'Find every E first, then add (O − E)² ÷ E over all six cells. Compare χ² with the critical value.',see:{t:'Revise: The chi-square statistic',href:'#chi-square'},type:'Hard',q:'Lunch choice on two campuses. Campus A: hot meal 40, salad 25, sandwich 35. Campus B: hot meal 20, salad 35, sandwich 45. Test at α = 0.05. Data: illustrative.',hint:bM(bT([['H₀','Lunch choice and campus are independent.']]),[
+    {check:[{l:'χ²',v:32/9,tol:0.005},{l:'df',v:1},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Fail to reject H₀'}],revise:'Add (O − E)² ÷ E over all four cells. Reject H₀ only if χ² is greater than the critical value.',see:{t:'Revise: Step 2 · α, df and χ² critical',href:'#critical'},type:'Medium',q:'Same table: find χ², df and the decision at α = 0.05.',hint:bM([gChi([10,50,30,70],[15,45,25,75],{ans:'3.556'}),gDf(2,2)],bT([['Critical value','df = 1, α = 0.05 → <b>3.841</b>'],['Answer','3.556 &lt; 3.841 → <b>fail to reject H₀</b>: no evidence that commute mode and lateness are related.']]))},
+    {check:[{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'df = (rows − 1) × (columns − 1). Reject H₀ when χ² is greater than the critical value.',see:{t:'Revise: Step 2 · α, df and χ² critical',href:'#critical'},type:'Medium',q:'A 2 × 3 table gives χ² = 7.2. Decide at α = 0.05.',hint:bM([gDf(2,3)],bT([['Critical value','df = 2, α = 0.05 → <b>5.991</b>'],['Answer','7.2 &gt; 5.991 → <b>reject H₀</b>: the variables are related.']]))},
+    {check:[{l:'χ²',v:115/12,tol:0.005},{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'Find every E first, then add (O − E)² ÷ E over all six cells. Compare χ² with the critical value.',see:{t:'Revise: Step 4 · χ² calculated',href:'#chi-square'},type:'Hard',q:'Lunch choice on two campuses. Campus A: hot meal 40, salad 25, sandwich 35. Campus B: hot meal 20, salad 35, sandwich 45. Test at α = 0.05. Data: illustrative.',hint:bM(bT([['H₀','Lunch choice and campus are independent.']]),[
       {t:'Totals',lines:[BD.tb(['','A','B','Total'],[['Hot meal','40','20','60'],['Salad','25','35','60'],['Sandwich','35','45','80']],['Total','100','100','200'])]},
       gExp(100,60,200,{t:'Expected counts (E)',more:[bL(`Sandwich: ${bF('(100) × (80)','200')} = <b>40</b>`),bL('E = 30, 30, 40 for each campus')]}),
       gChi([40,25,35,20,35,45],[30,30,40,30,30,40],{ans:'9.583'}),gDf(2,3)],bT([['Critical value','df = 2, α = 0.05 → <b>5.991</b>'],['Answer','9.583 &gt; 5.991 → <b>reject H₀</b>: lunch choice is related to campus.']]))},
-    {check:[{l:'χ²',v:2150/288,tol:0.005},{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'E = row total × column total ÷ grand total for each of the six cells. Then add (O − E)² ÷ E and compare.',see:{t:'Revise: The chi-square statistic',href:'#chi-square'},type:'Hard',q:'Car ownership by age. 18–20: yes 15, no 35. 21–23: yes 22, no 38. 24+: yes 23, no 17. Test at α = 0.05. Data: illustrative.',hint:bM(bT([['H₀','Car ownership and age group are independent.']]),[
+    {check:[{l:'χ²',v:2150/288,tol:0.005},{l:'df',v:2},{l:'Critical value',v:5.991},{l:'Decision',opts:['Reject H₀','Fail to reject H₀'],v:'Reject H₀'}],revise:'E = row total × column total ÷ grand total for each of the six cells. Then add (O − E)² ÷ E and compare.',see:{t:'Revise: Step 4 · χ² calculated',href:'#chi-square'},type:'Hard',q:'Car ownership by age. 18–20: yes 15, no 35. 21–23: yes 22, no 38. 24+: yes 23, no 17. Test at α = 0.05. Data: illustrative.',hint:bM(bT([['H₀','Car ownership and age group are independent.']]),[
       {t:'Totals',lines:[BD.tb(['','Yes','No','Total'],[['18–20','15','35','50'],['21–23','22','38','60'],['24 or older','23','17','40']],['Total','60','90','150'])]},
       gExp(50,60,150,{t:'Expected counts (E)',more:[BD.tb(['E','Yes','No'],[['18–20','20','30'],['21–23','24','36'],['24 or older','16','24']]),bL('All E ≥ 5 ✓')]}),
       gChi([15,35,22,38,23,17],[20,30,24,36,16,24],{ans:'7.465'}),gDf(3,2)],bT([['Critical value','df = 2, α = 0.05 → <b>5.991</b>'],['Answer','7.465 &gt; 5.991 → <b>reject H₀</b>: car ownership is related to age group.']]))}],

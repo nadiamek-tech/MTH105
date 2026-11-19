@@ -89,9 +89,9 @@ const BIG3={revise:'SE = σ ÷ √n; E = z* × SE; interval x̄ ± E. A higher c
   hint:steps([['(a)','SE = 0.7 ÷ √49 = 0.7 ÷ 7 = <b>0.1</b>'],['(b)','E = 1.96 × 0.1 = 0.196 → (<b>2.30</b>, <b>2.70</b>)'],['(c)','E = 2.576 × 0.1 = 0.258 → (<b>2.24</b>, <b>2.76</b>)'],['Answer','(d) <b>99%</b> is wider. We are 95% confident the mean daily study time of all students is between 2.30 and 2.70 hours.']])};
 
 /* ---------------- Part 4 · Chi-square test of independence ---------------- */
-const CHI_LEAD=FORM([['Expected','E = row total × column total ÷ total'],['χ²','Σ (O − E)² ÷ E'],['df','(rows − 1) × (columns − 1)']])
- +FLOW('2 × 2 table, O = 30, 20, 20, 30',[['H₀: independent','H₁: related'],['Totals','rows 50, 50 · columns 50, 50 · total 100'],['E for each cell','50 × 50 ÷ 100 = 25'],['(O − E)² ÷ E, then add','1 + 1 + 1 + 1 = 4'],['df','(2 − 1)(2 − 1) = 1'],['Compare','4 &gt; 3.841 → reject H₀']])
- +PICK('Decision',[['','χ² bigger','reject H₀ → related'],['','χ² smaller','keep H₀ → no relation']]);
+const CHI_LEAD=FORM([['df','(rows − 1) × (columns − 1)'],['Expected','E = row total × column total ÷ total'],['χ²','Σ (O − E)² ÷ E']])
+ +FLOW('2 × 2 table, O = 30, 20, 20, 30',[['H₀: independent','H₁: dependent'],['α, df, χ² critical','0.05 · df = 1 · 3.841'],['Expected, then O (E)','50 × 50 ÷ 100 = 25'],['χ² with brackets','(30 − 25)² ÷ 25 + … = 4'],['Decision','4 &gt; 3.841 → reject H₀']])
+ +PICK('Decision rule',[['','calculated &lt; critical','fail to reject H₀ · dependency not proven'],['','calculated &gt; critical','reject H₀ · dependency proven']]);
 const P4=[
  {revise:'E = row total × column total ÷ grand total.',see:{t:'Revise: Week 12 · Chi-square',href:'week-12.html'},check:[{l:'E',v:15}],type:'Expected',q:'A cell has row total 60, column total 50, and the grand total is 200. Find its expected count.',
   hint:MG({f:'E = row × column ÷ grand total',s:'60 × 50 ÷ 200',k:'6 0 × 5 0 ÷ 2 0 0 =',a:'E = <b>15</b>'})},

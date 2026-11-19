@@ -7,30 +7,30 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
-<link rel="stylesheet" href="assets/course.css?v=202611181300">
-<link rel="stylesheet" href="assets/stats.css?v=202611181300">
-<link rel="stylesheet" href="assets/banner.css?v=202611181300">
-<link rel="stylesheet" href="assets/lesson.css?v=202611181300">
+<link rel="stylesheet" href="assets/course.css?v=202611191030">
+<link rel="stylesheet" href="assets/stats.css?v=202611191030">
+<link rel="stylesheet" href="assets/banner.css?v=202611191030">
+<link rel="stylesheet" href="assets/lesson.css?v=202611191030">
 <style>
 :root{--wk:#1F63B5;--wk-soft:rgba(31,99,181,0.09);--wk-d:#7FB2FF;--wk-soft-d:rgba(127,178,255,0.14)}
 </style>
 </head>
 <body>
-<script src="assets/supports.js?v=202611181300"></script>
-<script src="assets/course.js?v=202611181430"></script>
-<script src="assets/stats.js?v=202611190945"></script>
-<script src="assets/concept.js?v=202611181300"></script>
-<script src="assets/decode.js?v=202611181300"></script>
-<script src="assets/lesson.js?v=202611181430"></script>
-<script src="assets/pad.js?v=202611181300"></script>
-<script src="assets/calc.js?v=202611181300"></script>
-<script src="assets/casio.js?v=202611181300"></script>
-<script src="assets/board.js?v=202611181300"></script>
-<script src="assets/board-answers.js?v=202611181300"></script>
-<script src="assets/kb.js?v=202611181300"></script>
-<script src="assets/search-index.js?v=202611181300"></script>
-<script src="assets/assistant.js?v=202611181300"></script>
-<script src="assets/site.js?v=202611181300"></script>
+<script src="assets/supports.js?v=202611191030"></script>
+<script src="assets/course.js?v=202611191030"></script>
+<script src="assets/stats.js?v=202611191030"></script>
+<script src="assets/concept.js?v=202611191030"></script>
+<script src="assets/decode.js?v=202611191030"></script>
+<script src="assets/lesson.js?v=202611191030"></script>
+<script src="assets/pad.js?v=202611191030"></script>
+<script src="assets/calc.js?v=202611191030"></script>
+<script src="assets/casio.js?v=202611191030"></script>
+<script src="assets/board.js?v=202611191030"></script>
+<script src="assets/board-answers.js?v=202611191030"></script>
+<script src="assets/kb.js?v=202611191030"></script>
+<script src="assets/search-index.js?v=202611191030"></script>
+<script src="assets/assistant.js?v=202611191030"></script>
+<script src="assets/site.js?v=202611191030"></script>
 <script>
 const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
 const {T, fr, sq, SG, XB, PH, v} = F;
@@ -136,12 +136,11 @@ ${BOX('get','Where does the critical value come from?',`<p>From the chi-square t
 <h3 class="exh">Solved exercise</h3>
 <div class="ex">Is the study year related to using the library? α = 0.05.
  <div class="tw"><table class="ct"><tr><th></th><th>Yes</th><th>No</th></tr><tr><th>Year 1</th><td>45</td><td>15</td></tr><tr><th>Year 2</th><td>30</td><td>30</td></tr></table></div></div>
-${STEP(1,'Hypotheses','H₀ always says “independent”.',EQ(`H₀: study year and library use are independent`)+EQ(`H₁: they are related`))}
-${STEP(2,'Totals','Add each row, each column, then everything.',`<div class="tw"><table class="ct"><tr><th></th><th>Yes</th><th>No</th><th class="tot">Total</th></tr><tr><th>Year 1</th><td>45</td><td>15</td><td class="tot">60</td></tr><tr><th>Year 2</th><td>30</td><td>30</td><td class="tot">60</td></tr><tr><th class="tot">Total</th><td class="tot">75</td><td class="tot">45</td><td class="tot">120</td></tr></table></div>`)}
-${STEP(3,'Expected counts','For each cell: its row total × its column total ÷ 120.',EQ(`Year 1, Yes: ${FR('60 × 75','120')} = ${V('37.5')}`)+EQ(`Year 1, No: ${FR('60 × 45','120')} = ${V('22.5')}`)+`<p class="sm">Year 2 has the same row total (60) → 37.5 and 22.5 again.</p>`,CALC('60×75÷120','37.5'))}
-${STEP(4,'χ²','One fraction per cell, then add the 4 results.',`<div class="tw"><table class="ct"><tr><th>Cell</th><th>O</th><th>E</th><th>(O − E)² ÷ E</th></tr><tr><td>Y1 Yes</td><td>45</td><td>37.5</td><td>(7.5)² ÷ 37.5 = 1.5</td></tr><tr><td>Y1 No</td><td>15</td><td>22.5</td><td>(−7.5)² ÷ 22.5 = 2.5</td></tr><tr><td>Y2 Yes</td><td>30</td><td>37.5</td><td>(−7.5)² ÷ 37.5 = 1.5</td></tr><tr><td>Y2 No</td><td>30</td><td>22.5</td><td>(7.5)² ÷ 22.5 = 2.5</td></tr></table></div>`+EQ(`χ² = 1.5 ${CT('+')} 2.5 ${CT('+')} 1.5 ${CT('+')} 2.5 = ${ANS('8')}`),CALC('(45−37.5)²÷37.5+(15−22.5)²÷22.5+(30−37.5)²÷37.5+(30−22.5)²÷22.5','8'))}
-${STEP(5,'df and critical value','2 rows, 2 columns. Read the table at df = 1, α = 0.05.',EQ(`df = ${CT('(2 − 1)(2 − 1)')} = ${V('1')}`)+EQ(`critical value = ${V('3.841','v2')}`))}
-${STEP(6,'Decide and conclude','Compare χ² with the critical value.',DECIDE('8 vs 3.841','8 &gt; 3.841 → reject H₀')+`<p class="say">Study year and library use are related.</p>`)}
+${STEP(1,'Hypotheses','H₀ always says “independent”.',EQ(`H₀: study year and library use are independent`)+EQ(`H₁: they are dependent (related)`))}
+${STEP(2,'α, df and χ² critical','α is in the question. Then df, then the table. In exams, χ² critical is sometimes given.',EQ(`α = ${V('0.05')}`)+EQ(`df = ${CT('(2 − 1)(2 − 1)')} = ${V('1')}`)+EQ(`χ²<sub>critical</sub> = ${V('3.841','v2')}`))}
+${STEP(3,'Expected counts','Totals, then E = row total × column total ÷ grand total. Then O and E in one table.',`<div class="tw"><table class="ct"><tr><th></th><th>Yes</th><th>No</th><th class="tot">Total</th></tr><tr><th>Year 1</th><td>45</td><td>15</td><td class="tot">60</td></tr><tr><th>Year 2</th><td>30</td><td>30</td><td class="tot">60</td></tr><tr><th class="tot">Total</th><td class="tot">75</td><td class="tot">45</td><td class="tot">120</td></tr></table></div>`+EQ(`Year 1, Yes: ${FR('60 × 75','120')} = ${V('37.5')}`)+EQ(`Year 1, No: ${FR('60 × 45','120')} = ${V('22.5')}`)+`<div class="tw"><table class="ct"><tr><th>O (E)</th><th>Yes</th><th>No</th></tr><tr><th>Year 1</th><td><b>45</b> <span class="v2">(37.5)</span></td><td><b>15</b> <span class="v2">(22.5)</span></td></tr><tr><th>Year 2</th><td><b>30</b> <span class="v2">(37.5)</span></td><td><b>30</b> <span class="v2">(22.5)</span></td></tr></table></div>`,CALC('60×75÷120','37.5'))}
+${STEP(4,'χ² calculated','One bracket per cell, then add.',EQ(`χ² = ${FR('(45 − 37.5)²','37.5')} ${CT('+')} ${FR('(15 − 22.5)²','22.5')} ${CT('+')} ${FR('(30 − 37.5)²','37.5')} ${CT('+')} ${FR('(30 − 22.5)²','22.5')}`)+EQ(`χ² = 1.5 ${CT('+')} 2.5 ${CT('+')} 1.5 ${CT('+')} 2.5 = ${ANS('8')}`),CALC('(45−37.5)²÷37.5+(15−22.5)²÷22.5+(30−37.5)²÷37.5+(30−22.5)²÷22.5','8'))}
+${STEP(5,'Decision','Rule: calculated &lt; critical → fail to reject H₀ (we fail to prove the dependency). Calculated &gt; critical → reject H₀ (the dependency is proven).',DECIDE('8 vs 3.841','8 &gt; 3.841 → reject H₀')+`<p class="say">At the 5% significance level (95% confidence), study year and library use are dependent: they are related.</p>`)}
 ${MIS('df = n − 1 = 119','df = (rows − 1)(columns − 1) = 1')}`});
 
 (function(){
