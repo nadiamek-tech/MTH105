@@ -24,7 +24,7 @@ window.COURSE={
       covers:['Section 1 · Descriptive statistics: graphs, centre, spread','Section 2 · Probability: rules, tree diagrams, discrete distributions','Weeks 1–7'],
       format:'In class, on paper · 90 minutes · closed book · standard calculator · no phones',clos:'1, 2',revise:[['Midterm revision','midterm-practice.html']]},
     {id:'labq',name:'Lab Quiz',short:'Lab quiz',type:'Lab',kind:'Quiz · computer lab, Excel',week:10,done:true,weight:'10%',when:'Wed 4 Nov (Section 102) · Thu 5 Nov (Section 101)',format:'In the computer lab, in Excel',covers:['Excel skills from Labs 1–4: COUNTIF, SUM, mean, median, mode, range, variance, SD, charts'],clos:'1, 3, 5'},
-    {id:'quiz2',name:'Quiz 2',type:'Lecture',kind:'Quiz · in class, on paper',week:12,weight:'10%',when:'End of Week 12',covers:['Confidence intervals for the mean','Chi-square test of independence'],clos:'3, 4',format:'In class, on paper · standard calculator',revise:[['Quiz 2 practice','quiz2-practice.html'],['Quiz 2 brief lecture','quiz2-lecture.html']]},
+    {id:'quiz2',name:'Quiz 2',type:'Lecture',kind:'Quiz · in class, on paper',week:13,weight:'10%',date:'2026-11-23T09:00:00+04:00',when:'Monday 23 Nov · class time',timeText:'Class time',covers:['Confidence intervals for the mean','Chi-square test of independence'],clos:'3, 4',format:'In class, on paper · standard calculator',revise:[['Quiz 2 practice','quiz2-practice.html'],['Quiz 2 brief lecture','quiz2-lecture.html']]},
     {id:'proj',name:'Lab Project',short:'Lab project',type:'Lab',kind:'Project · Excel, upload on Moodle',week:14,weight:'20%',when:'Due end of Week 14',covers:['Excel analysis of a data set across the lab topics','Upload your workbook on Moodle'],clos:'1–5',
       submit:{link:'',due:'',dueText:'End of Week 14'},revise:[['Lab guides','lab.html']]},
     {id:'final',name:'Final Examination',short:'Final',type:'Lecture',kind:'Exam · in class, on paper',week:16,weight:'30%',when:'Week 16 · date from the Registrar',covers:['Whole course, more weight on the material after the midterm'],format:'In class, on paper · closed book · standard calculator',clos:'2–5'}
@@ -43,8 +43,8 @@ window.COURSE={
     {w:'9', lec:['The standard normal distribution · z-scores','week-09.html'], lab:['Central Limit Theorem in Excel','lab.html#lab-09']},
     {w:'10', lec:['Sampling distribution of the mean','week-10.html'], lab:['Confidence intervals','lab.html#lab-10'], ev:['labq']},
     {w:'11', lec:['Confidence intervals','week-11.html'], lab:['Confidence intervals','lab.html#lab-10']},
-    {w:'12', lec:['Contingency tables · chi-square','week-12.html'], lab:['Chi-square test in Excel','lab.html#lab-12'], ev:['quiz2']},
-    {w:'13', lec:['Correlation and regression line','week-13.html'], lab:['Correlation analysis','lab.html#lab-13']},
+    {w:'12', lec:['Contingency tables · chi-square','week-12.html'], lab:['Chi-square test in Excel','lab.html#lab-12']},
+    {w:'13', lec:['Correlation and regression line','week-13.html'], lab:['Correlation analysis','lab.html#lab-13'], ev:['quiz2']},
     {w:'14', lec:['Simple linear regression','week-14.html'], lab:['Simple linear regression','lab.html#lab-14'], ev:['proj']},
     {w:'15', lec:['Interpreting regression','week-15.html'], lab:['Simple linear regression','lab.html#lab-14']},
     {w:'16', lec:'Final examination period', ev:['final']}
