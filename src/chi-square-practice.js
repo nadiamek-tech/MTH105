@@ -1,0 +1,181 @@
+// {"file": "chi-square-practice.html", "title": "MTH 105 Chi-square Practice", "wk": "#2E7D32", "wkd": "#81C784"}
+/* Quiz 2 brief lecture: for a student who missed the classes. Per chapter: what it is, key words, coloured formulas,
+   how to get each value (calculator keys, z-table, critical-value table), one exercise solved step by step with every decision. */
+
+/* ---------- colour helpers (green = top of fraction, red = bottom, purple = brackets, orange = + and Σ) ---------- */
+const CT=s=>s.replace(/[()]/g,c=>`<span class="kb">${c}</span>`).replace(/[+Σ]/g,c=>`<span class="ks">${c}</span>`);
+const FR=(n,d)=>`<span class="fr"><span class="n">${CT(n)}</span><span class="d">${CT(d)}</span></span>`;
+const EQ=h=>`<div class="eq">${h}</div>`;
+const V=(s,c='v1')=>`<span class="${c}">${s}</span>`;           // coloured value
+const ANS=s=>`<span class="ans">${s}</span>`;
+const KEYS=(ks,res)=>`<div class="keys"><span class="kl">Calculator</span>${ks.map(k=>`<kbd${/^(SHIFT|nCr|=|x²|√|\^|Ans)$/.test(k)?' class="fn"':''}>${k}</kbd>`).join('')}${res!==undefined?`<span class="kr">${res}</span>`:''}</div>`;
+const CALC=(e,r)=>`<div class="cimg">${Board.calc(e,r)}</div>`;
+const DECIDE=(q,a)=>`<div class="decide"><span class="dq">Decide · ${q}</span><span class="da">${a}</span></div>`;
+const STEP=(n,title,why,body,side='')=>`<div class="step"><div class="sn">${n}</div><div class="sb"><div class="st">${title}</div>${why?`<div class="sw">${why}</div>`:''}${body}</div>${side?`<div class="ss">${side}</div>`:''}</div>`;
+const BOX=(cls,title,body)=>`<div class="box ${cls}"><div class="bt">${title}</div>${body}</div>`;
+const WORDS=a=>`<div class="words">${a.map(([s,m])=>`<div><b>${s}</b><span>${m}</span></div>`).join('')}</div>`;
+const MIS=(bad,good)=>`<div class="mis"><div class="bad"><b>✗ Mistake</b>${bad}</div><div class="good"><b>✓ Correct</b>${good}</div></div>`;
+const CH=[];
+/* ---------- chi-square practice: 6 exercises, the same 5 steps every time ---------- */
+const CRIT={1:'3.841',2:'5.991',3:'7.815',4:'9.488'};
+const n4=x=>{const r=Math.round(x*10000)/10000;return String(r).replace("-","−");};
+const EXS=[
+ {id:'ex1',t:'Coffee or tea',q:'A café asks 100 students what they drink in class.',rows:['Morning class','Evening class'],cols:['Coffee','Tea'],O:[[28,12],[22,38]],v1:'class time',v2:'drink choice',worked:true},
+ {id:'ex2',t:'Gym and breakfast',q:'100 employees: gym membership and breakfast habit.',rows:['Gym member','Not a member'],cols:['Healthy breakfast','No breakfast'],O:[[26,24],[24,26]],v1:'gym membership',v2:'breakfast habit'},
+ {id:'ex3',t:'Campus and transport',q:'200 students: campus and how they travel.',rows:['Main campus','City campus'],cols:['Metro','Car','Taxi'],O:[[30,50,20],[45,25,30]],v1:'campus',v2:'transport'},
+ {id:'ex4',t:'Device and reading',q:'100 readers: device used and reading preference.',rows:['Laptop','Tablet','Phone'],cols:['Prefers print','Prefers screen'],O:[[26,14],[22,18],[12,8]],v1:'device',v2:'reading preference'},
+ {id:'ex5',t:'Sleep and results',q:'100 students: hours of sleep before an exam and the result.',rows:['Less than 6 h','6 to 8 h','More than 8 h'],cols:['Pass','Fail'],O:[[22,18],[34,6],[14,6]],v1:'hours of sleep',v2:'exam result'},
+ {id:'ex6',t:'Day and payment',q:'200 shop payments: day of the week and payment method.',rows:['Weekday','Weekend'],cols:['Cash','Card','Mobile pay'],O:[[24,48,48],[36,32,12]],v1:'day',v2:'payment method'}];
+
+const SOLVE=x=>{const R=x.O.map(r=>r.reduce((a,b)=>a+b,0)),C=x.cols.map((_,j)=>x.O.reduce((a,r)=>a+r[j],0)),N=R.reduce((a,b)=>a+b,0);
+  const E=R.map(r=>C.map(c=>r*c/N)),T=x.O.map((r,i)=>r.map((o,j)=>(o-E[i][j])**2/E[i][j]));const chi=T.flat().reduce((a,b)=>a+b,0),df=(R.length-1)*(C.length-1);
+  return {R,C,N,E,T,chi,df,crit:CRIT[df],rej:chi>parseFloat(CRIT[df])};};
+
+const OTAB=(x,S,withT)=>`<div class="tw"><table class="ct"><tr><th></th>${x.cols.map(c=>`<th>${c}</th>`).join('')}${withT?'<th class="tot">Total</th>':''}</tr>${x.rows.map((r,i)=>`<tr><th>${r}</th>${x.O[i].map(o=>`<td>${o}</td>`).join('')}${withT?`<td class="tot">${S.R[i]}</td>`:''}</tr>`).join('')}${withT?`<tr><th class="tot">Total</th>${S.C.map(c=>`<td class="tot">${c}</td>`).join('')}<td class="tot">${S.N}</td></tr>`:''}</table></div>`;
+const ETAB=(x,S)=>`<div class="tw"><table class="ct"><tr><th>E</th>${x.cols.map(c=>`<th>${c}</th>`).join('')}</tr>${x.rows.map((r,i)=>`<tr><th>${r}</th>${S.E[i].map(e=>`<td class="ev">${n4(e)}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const CTAB=(x,S)=>{const cells=[];x.rows.forEach((r,i)=>x.cols.forEach((c,j)=>cells.push([r+' · '+c,x.O[i][j],S.E[i][j],S.T[i][j]])));
+  return `<div class="tw"><table class="ct"><tr><th>Cell</th><th>O</th><th>E</th><th>(O − E)² ÷ E</th></tr>${cells.map(([n,o,e,t])=>`<tr><td class="cl">${n}</td><td>${o}</td><td class="ev">${n4(e)}</td><td>(${n4(o-e)})² ÷ ${n4(e)} = <b>${n4(t)}</b></td></tr>`).join('')}<tr><th colspan="3" class="tot">χ² = add the last column</th><td class="tot"><b>${n4(S.chi)}</b></td></tr></table></div>`;};
+const CRITTAB=df=>`<div class="tw"><table class="ct"><tr><th>df</th><th>α = 0.10</th><th class="hc">α = 0.05</th><th>α = 0.01</th></tr>${[[1,'2.706','3.841','6.635'],[2,'4.605','5.991','9.210'],[3,'6.251','7.815','11.345']].map(r=>`<tr class="${r[0]===df?'hr':''}"><th>${r[0]}</th><td>${r[1]}</td><td class="${r[0]===df?'hit':''}">${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</table></div>`;
+
+const STEPS5=[
+ ['Hypotheses','H₀ always says “independent”.'],
+ ['Expected counts','E = row total × column total ÷ grand total, for every cell.'],
+ ['Test statistic χ²','(O − E)² ÷ E for every cell, then add.'],
+ ['df and critical value','df = (rows − 1)(columns − 1). Read the table at α = 0.05.'],
+ ['Decision and conclusion','χ² bigger than the critical value → reject H₀.']];
+
+const EXHTML=(x,k)=>{const S=SOLVE(x),i0=0,j0=0;
+ const ans=[
+  EQ(`H₀: ${x.v1} and ${x.v2} are <b>independent</b>`)+EQ(`H₁: ${x.v1} and ${x.v2} are <b>related</b>`),
+  `<p class="sm">Totals first:</p>`+OTAB(x,S,true)+EQ(`E<sub>${x.rows[i0]}, ${x.cols[j0]}</sub> = ${FR(S.R[i0]+' × '+S.C[j0],String(S.N))} = ${V(n4(S.E[i0][j0]))}`)+`<p class="sm">Same rule for every cell:</p>`+ETAB(x,S)+`<p class="sm">Check: every E is at least 5 ✓</p>`,
+  CTAB(x,S)+EQ(`χ² = ${ANS(n4(S.chi))}`),
+  EQ(`df = ${CT(`(${x.rows.length} − 1)(${x.cols.length} − 1)`)} = ${V(S.df)}`)+CRITTAB(S.df)+EQ(`critical value = ${V(S.crit,'v2')}`),
+  DECIDE(`${n4(S.chi)} vs ${S.crit}`,S.rej?`${n4(S.chi)} &gt; ${S.crit} → reject H₀`:`${n4(S.chi)} &lt; ${S.crit} → do not reject H₀`)+`<p class="say">${S.rej?`There is evidence that ${x.v1} and ${x.v2} are <b>related</b>.`:`There is no evidence that ${x.v1} and ${x.v2} are related.`}</p>`];
+ return `<div class="ex"><b>${x.q}</b> Is ${x.v1} related to ${x.v2}? Use α = 0.05.${OTAB(x,S,false)}</div>
+  <div class="s5">${STEPS5.map(([t,why],s)=>`<div class="s5-i"><div class="s5-h"><span class="sn">${s+1}</span><div><div class="st">${t}</div><div class="sw">${why}</div></div>
+   <button type="button" class="pill s5-b" aria-expanded="${x.worked?'true':'false'}">${x.worked?'Hide':'Show'}</button></div><div class="s5-a"${x.worked?'':' hidden'}>${ans[s]}</div></div>`).join('')}</div>`;};
+
+CH.push(...EXS.map((x,k)=>({id:x.id,wk:k===0?'Worked example':'Exercise '+(k+1),t:x.t,html:EXHTML(x,k)})));
+
+const STEPBAR=`<div class="sbar">${STEPS5.map(([t],i)=>`<div style="background:var(${['--c1','--c2','--cr','--c3','--cg'][i]})"><b>${i+1}</b>${t}</div>`).join('')}</div>`;
+(function(){
+  const css=`
+body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803d;--cr:#c62828;--ck:#7c3aed;--cs:#ea580c}
+:root[data-theme="dark"] body.q2l{--c1:#7FB2FF;--c2:#f0a35e;--c3:#c4a5ff;--cg:#4ade80;--cr:#ff8a80;--ck:#c4a5ff;--cs:#fb923c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.q2l{--c1:#7FB2FF;--c2:#f0a35e;--c3:#c4a5ff;--cg:#4ade80;--cr:#ff8a80;--ck:#c4a5ff;--cs:#fb923c}}
+.ql-main{padding:22px 12px 40px}
+.ql-cover,.ch{max-width:900px;margin:0 auto 22px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.08);padding:30px 44px}
+.ql-top{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink);padding-bottom:8px}
+.ql-cover h1{font-family:var(--f-display);font-size:clamp(1.9rem,4.5vw,2.6rem);font-weight:800;text-align:center;margin:20px 0 4px}
+.ql-cover>p{text-align:center;color:var(--muted);font-family:var(--f-display);margin:0 0 14px}
+.ql-toc{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ql-toc a{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-left:5px solid var(--c1);border-radius:8px;padding:9px 12px;font-family:var(--f-display);height:100%}
+.ql-toc small{display:block;color:var(--c1);font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
+.ql-tools{text-align:center;margin-top:14px}
+.ch{scroll-margin-top:72px;font-family:var(--f-display)}
+.ch-h{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;border-bottom:3px solid var(--c1);padding-bottom:8px;margin-bottom:14px}
+.ch-h h2{font-size:1.6rem;font-weight:800;margin:0;line-height:1.15}
+.ch-h small{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c1)}
+.ch-h a{font-size:.85rem;white-space:nowrap}
+.ch p{margin:6px 0}
+.box{border-radius:10px;padding:10px 14px;margin:10px 0;border:1px solid var(--line);border-left:6px solid var(--bc,var(--c1));background:color-mix(in srgb,var(--bc,var(--c1)) 6%,var(--surface))}
+.box .bt{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--bc,var(--c1));margin-bottom:4px}
+.box.what{--bc:var(--c1)}.box.chk{--bc:var(--cg)}.box.kw{--bc:var(--c3)}.box.fm{--bc:var(--cr)}.box.get{--bc:var(--c2)}
+.egl{color:var(--muted);font-size:.95rem}
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.four>div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:.92rem}
+.four.sm>div{font-size:.88rem}
+.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px}.words>div{display:flex;gap:8px;align-items:baseline;background:var(--surface);border-radius:8px;padding:5px 8px;border:1px solid var(--line)}
+.words b{color:var(--c3);font-family:var(--f-mono);min-width:2.6em;white-space:nowrap}.words span{font-size:.9rem}
+.fgrid{display:flex;flex-wrap:wrap;gap:8px 12px}
+.eq{font-family:var(--f-mono);font-size:1.02rem;display:flex;align-items:center;flex-wrap:wrap;gap:.3em;margin:4px 0;padding:4px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--line);width:fit-content;max-width:100%}
+.fr{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 .15em}.fr .n{color:var(--cg);border-bottom:2px solid currentColor;padding:0 .3em}.fr .n{border-color:var(--ink)}.fr .d{color:var(--cr);padding:0 .3em}
+.kb{color:var(--ck);font-weight:700}.ks{color:var(--cs);font-weight:700}
+.v1{color:var(--c1);font-weight:700}.v2{color:var(--c2);font-weight:700}.v3{color:var(--c3);font-weight:700}
+.ans{background:var(--cg);color:#fff;border-radius:6px;padding:1px 8px;font-weight:700}
+.which{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}.which>div{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px;font-size:.92rem}.which b{color:var(--cr)}
+.bell{color:var(--ink)}
+.keys{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:6px 0}.keys .kl{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.keys kbd{font-family:var(--f-mono);font-size:.85rem;background:#e8e8e4;color:#15181c;border-radius:6px;padding:2px 8px;box-shadow:0 2px 0 #9aa}.keys kbd.fn{background:#4a505b;color:#fff}
+.keys .kr{font-family:var(--f-mono);font-weight:700;margin-left:6px}.keys .kr:before{content:'→ '}
+.read{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:6px 0}.read>div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:.9rem}.read>div>b:first-child{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--c2);color:#fff;text-align:center;font-size:.75rem;line-height:20px;margin-right:4px}
+.tw{overflow-x:auto;margin:6px 0}
+.zt,.ct{border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;background:var(--surface)}
+.zt th,.zt td,.ct th,.ct td{border:1px solid var(--line);padding:3px 7px;text-align:center}
+.zt th,.ct th{background:color-mix(in srgb,var(--ink) 6%,var(--surface))}
+.zt .hc,.ct .hc{background:color-mix(in srgb,var(--c2) 25%,var(--surface))}
+.zt tr.hr th,.ct tr.hr th,.zt tr.hr td,.ct tr.hr td{background:color-mix(in srgb,var(--c2) 14%,var(--surface))}
+.zt td.hit,.ct td.hit{background:var(--c2)!important;color:#fff;font-weight:700}
+.ct .tot{color:var(--cr);font-weight:700}
+.fullz summary{cursor:pointer;font-weight:700;color:var(--c2);margin-top:6px}.fullz .tw{max-height:420px}
+.sm{font-size:.88rem;color:var(--muted)}
+.exh{font-size:1.15rem;margin:20px 0 6px;color:var(--c1)}
+.ex{border:2px solid var(--ink);border-radius:10px;padding:10px 14px;font-size:1rem}.ex ol{margin:6px 0 0;padding-left:24px}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:start;border-bottom:1px dashed var(--line);padding:10px 0}
+.sn{width:30px;height:30px;border-radius:50%;background:var(--c1);color:#fff;font-weight:800;display:grid;place-items:center}
+.st{font-weight:800;font-size:1.02rem}.sw{color:var(--muted);font-size:.9rem;margin:1px 0 4px}
+.ss{width:150px}.cimg svg{width:150px;height:auto;display:block}.ss .bell{display:block;margin:4px auto}
+.decide{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;border:2px solid var(--cs);border-radius:8px;padding:4px 10px;margin:4px 0;background:color-mix(in srgb,var(--cs) 8%,var(--surface))}
+.dq{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cs);font-weight:700}.da{font-weight:800}
+.say{border-left:4px solid var(--cg);padding:4px 10px;background:color-mix(in srgb,var(--cg) 8%,var(--surface));border-radius:0 8px 8px 0;font-weight:600}
+.mis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mis>div{border-radius:8px;padding:8px 10px;font-size:.92rem}.mis b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.mis .bad{background:color-mix(in srgb,var(--cr) 9%,var(--surface));border:1px solid var(--cr)}.mis .bad b{color:var(--cr)}
+.mis .good{background:color-mix(in srgb,var(--cg) 9%,var(--surface));border:1px solid var(--cg)}.mis .good b{color:var(--cg)}
+.s5{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.s5-i{border:1px solid var(--line);border-left:5px solid var(--c1);border-radius:10px;padding:8px 12px;background:var(--surface)}
+.s5-i:nth-child(2){border-left-color:var(--c2)}.s5-i:nth-child(3){border-left-color:var(--cr)}.s5-i:nth-child(4){border-left-color:var(--c3)}.s5-i:nth-child(5){border-left-color:var(--cg)}
+.s5-i:nth-child(2) .sn{background:var(--c2)}.s5-i:nth-child(3) .sn{background:var(--cr)}.s5-i:nth-child(4) .sn{background:var(--c3)}.s5-i:nth-child(5) .sn{background:var(--cg)}
+.s5-h{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center}
+.s5-a{margin:8px 0 2px 44px}
+.ct .ev{color:var(--c2);font-weight:700}.ct td.cl{text-align:left;font-family:var(--f-display)}
+.sbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:4px 0 14px}.sbar div{font-family:var(--f-display);border-radius:8px;padding:8px;color:#fff;font-weight:700;font-size:.9rem;text-align:center}.sbar b{display:block;font-size:1.2rem}
+@media (max-width:700px){.sbar{grid-template-columns:1fr 1fr}.s5-a{margin-left:0}}
+@media print{.s5-a{display:block!important}.s5-b{display:none}.s5-i{break-inside:avoid}}
+@media (max-width:700px){.ql-cover,.ch{padding:20px 14px}.ql-main{padding:12px 6px 30px}.ql-toc,.four,.read{grid-template-columns:1fr 1fr}.step{grid-template-columns:30px minmax(0,1fr)}.ss{grid-column:2;width:140px}.mis{grid-template-columns:1fr}.ch-h{flex-direction:column;align-items:flex-start}}
+@media print{
+  :root,:root[data-theme]{--bg:#fff!important;--surface:#fff!important;--ink:#111!important;--muted:#444!important;--line:#bbb!important;color-scheme:light}
+  body.q2l{--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803d;--cr:#c62828;--ck:#7c3aed;--cs:#ea580c}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:10mm}
+  body{background:#fff!important;font-size:12px}
+  .lbar,.ql-cover,.support-note,.ca-btn,.ca-panel,.calm-start,.ch-h a,.fullz{display:none!important}
+  .ql-main{padding:0}
+  .ch{box-shadow:none;border:0;padding:0;margin:0;max-width:none;break-before:page}
+  .ch:first-of-type{break-before:auto}
+  .step,.box,.mis,.ex{break-inside:avoid}
+  .ss,.cimg svg{width:105px}
+}`;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  document.body.classList.add('lesson','q2l');
+  const el=(t,a={},h='')=>{ const e=document.createElement(t); Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v)); if(h) e.innerHTML=h; return e; };
+
+  const bar=el('header',{class:'lbar'});
+  bar.innerHTML=`<div class="lbar-in"><a class="brand" href="exams.html"><b>MTH 105</b><span>← Exams · Chi-square practice</span></a>
+    <nav class="lchips" aria-label="Chapters">${CH.map((w,i)=>`<a href="#${w.id}" data-id="${w.id}">${i===0?'Example':'Ex '+(i+1)}</a>`).join('')}</nav>
+    <div class="lctl"><button type="button" class="pill" id="pr-top">Print / PDF</button><button type="button" class="pill" id="theme" title="Light or dark">◐</button></div></div><div class="progress"><i></i></div>`;
+  document.body.appendChild(bar);
+  bar.querySelector('#theme').addEventListener('click',()=>GED102Theme.toggle());
+  bar.querySelector('#pr-top').addEventListener('click',()=>window.print());
+
+  const main=el('main',{class:'ql-main'});
+  const cover=el('section',{class:'ql-cover'});
+  cover.innerHTML=`<div class="ql-top"><span>MTH 105 · Introduction to Statistics</span><span>Fall 2026 · Nadia</span></div>
+    <h1>Chi-square test · 5 steps</h1><p>One method for every table: hypotheses → expected counts → χ² → df and critical value → decision. Try each step, then press Show.</p>${STEPBAR}
+    <ol class="ql-toc">${CH.map(w=>`<li><a href="#${w.id}"><small>${w.wk}</small>${w.t}</a></li>`).join('')}</ol>
+    <div class="ql-tools"><button type="button" class="btn" id="showall">Show all answers</button> <button type="button" class="btn" id="pr">Print / Save as PDF</button></div>`;
+  main.appendChild(cover);
+  cover.querySelector('#pr').addEventListener('click',()=>window.print());
+  CH.forEach((w,i)=>{
+    const s=el('section',{class:'ch',id:w.id});
+    s.innerHTML=`<div class="ch-h"><h2><small>${w.wk}</small>${w.t}</h2><a href="week-12.html">Week 12 lecture →</a></div>${w.html}`;
+    main.appendChild(s);
+  });
+  document.body.appendChild(main);
+  document.body.appendChild(el('p',{class:'support-note'},'This website is interactive course support. It does not replace classes, attendance or class activities.'));
+
+  const chips=[...bar.querySelectorAll('.lchips a')];main.querySelectorAll('.s5-b').forEach(b=>b.addEventListener('click',()=>{const a=b.closest('.s5-i').querySelector('.s5-a'),o=a.hidden;a.hidden=!o;b.textContent=o?'Hide':'Show';b.setAttribute('aria-expanded',String(o));}));const allb=cover.querySelector('#showall');allb&&allb.addEventListener('click',()=>{const open=allb.dataset.o!=='1';main.querySelectorAll('.s5-i').forEach(i=>{const a=i.querySelector('.s5-a'),b=i.querySelector('.s5-b');a.hidden=!open;b.textContent=open?'Hide':'Show';b.setAttribute('aria-expanded',String(open));});allb.dataset.o=open?'1':'0';allb.textContent=open?'Hide all answers':'Show all answers';}), secs=[...main.querySelectorAll('.ch')];
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) chips.forEach(c=>c.classList.toggle('on',c.dataset.id===e.target.id)); }),{rootMargin:'-20% 0px -70% 0px'});
+  secs.forEach(x=>io.observe(x));
+  const onScroll=()=>{ const d=document.documentElement; bar.querySelector('.progress i').style.width=(d.scrollTop/((d.scrollHeight-d.clientHeight)||1)*100)+'%'; };
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  const h=location.hash.slice(1); if(h&&document.getElementById(h)) setTimeout(()=>document.getElementById(h).scrollIntoView(),60);
+})();
