@@ -25,7 +25,7 @@
    <h1>Quiz 2 practice</h1><p>Confidence intervals and the chi-square test · 6 exercises each · the same 5 steps every time</p>
    <div class="qp-g">${C.map(x=>`<section class="qp-c" style="--cc:${x.c}"><small>${x.k}</small><h2>${x.t}</h2><div class="qp-s">${x.s.map((s,i)=>`<span>${i+1} · ${s}</span>`).join('')}</div>
      <div class="qp-b"><a class="btn" href="${x.h}">Open practice</a><a class="btn ghost" href="${x.p}" download>Download PDF</a></div></section>`).join('')}</div>
-   <div class="qp-all"><a class="btn" href="downloads/MTH105-Quiz2-practice.pdf" download>Download both (one PDF)</a></div>`;
+   `;
   document.body.appendChild(m);
   const n=document.createElement('p');n.className='support-note';n.textContent='This website is interactive course support. It does not replace classes, attendance or class activities.';document.body.appendChild(n);
 })();
