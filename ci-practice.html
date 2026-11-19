@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MTH 105 Confidence Interval Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="assets/course.css?v=202611191335">
+<link rel="stylesheet" href="assets/stats.css?v=202611191335">
+<link rel="stylesheet" href="assets/banner.css?v=202611191335">
+<link rel="stylesheet" href="assets/lesson.css?v=202611191335">
+<style>
+:root{--wk:#9C2A6B;--wk-soft:rgba(156,42,107,0.09);--wk-d:#E58BBE;--wk-soft-d:rgba(229,139,190,0.14)}
+</style>
+</head>
+<body>
+<script src="assets/supports.js?v=202611191335"></script>
+<script src="assets/course.js?v=202611191335"></script>
+<script src="assets/stats.js?v=202611191335"></script>
+<script src="assets/concept.js?v=202611191335"></script>
+<script src="assets/decode.js?v=202611191335"></script>
+<script src="assets/lesson.js?v=202611191335"></script>
+<script src="assets/pad.js?v=202611191335"></script>
+<script src="assets/calc.js?v=202611191335"></script>
+<script src="assets/casio.js?v=202611191335"></script>
+<script src="assets/board.js?v=202611191335"></script>
+<script src="assets/board-answers.js?v=202611191335"></script>
+<script src="assets/kb.js?v=202611191335"></script>
+<script src="assets/search-index.js?v=202611191335"></script>
+<script src="assets/assistant.js?v=202611191335"></script>
+<script src="assets/site.js?v=202611191335"></script>
+<script>
+const {W} = Lecture; Lecture.__noLogo=true; const esc = W.esc;
+const {T, fr, sq, SG, XB, PH, v} = F;
+const goScene = i => { const b=document.querySelectorAll('.toc ol li button')[i]; if(b) b.click(); };
+const practice = (items, label) => el => W.practice(el, items, {label: label||'Show answer', prefix: ''});
+/* Quiz 2 brief lecture: for a student who missed the classes. Per chapter: what it is, key words, coloured formulas,
+   how to get each value (calculator keys, z-table, critical-value table), one exercise solved step by step with every decision. */
+
+/* ---------- colour helpers (green = top of fraction, red = bottom, purple = brackets, orange = + and Σ) ---------- */
+const CT=s=>s.replace(/[()]/g,c=>`<span class="kb">${c}</span>`).replace(/[+Σ]/g,c=>`<span class="ks">${c}</span>`);
+const FR=(n,d)=>`<span class="fr"><span class="n">${CT(n)}</span><span class="d">${CT(d)}</span></span>`;
+const EQ=h=>`<div class="eq">${h}</div>`;
+const V=(s,c='v1')=>`<span class="${c}">${s}</span>`;           // coloured value
+const ANS=s=>`<span class="ans">${s}</span>`;
+const KEYS=(ks,res)=>`<div class="keys"><span class="kl">Calculator</span>${ks.map(k=>`<kbd${/^(SHIFT|nCr|=|x²|√|\^|Ans)$/.test(k)?' class="fn"':''}>${k}</kbd>`).join('')}${res!==undefined?`<span class="kr">${res}</span>`:''}</div>`;
+const CALC=(e,r)=>`<div class="cimg">${Board.calc(e,r)}</div>`;
+const DECIDE=(q,a)=>`<div class="decide"><span class="dq">Decide · ${q}</span><span class="da">${a}</span></div>`;
+const STEP=(n,title,why,body,side='')=>`<div class="step"><div class="sn">${n}</div><div class="sb"><div class="st">${title}</div>${why?`<div class="sw">${why}</div>`:''}${body}</div>${side?`<div class="ss">${side}</div>`:''}</div>`;
+const BOX=(cls,title,body)=>`<div class="box ${cls}"><div class="bt">${title}</div>${body}</div>`;
+const WORDS=a=>`<div class="words">${a.map(([s,m])=>`<div><b>${s}</b><span>${m}</span></div>`).join('')}</div>`;
+const MIS=(bad,good)=>`<div class="mis"><div class="bad"><b>✗ Mistake</b>${bad}</div><div class="good"><b>✓ Correct</b>${good}</div></div>`;
+const CH=[];
+/* ---------- confidence-interval practice: 6 exercises, the same 5 steps every time ---------- */
+const n4=x=>{const r=Math.round(x*10000)/10000;return String(r).replace("-","−");};
+const ZS={'90%':'1.645','95%':'1.96','99%':'2.576'};
+const EXS=[
+ {id:'ex1',t:'Delivery time',q:'A food-delivery app checks 36 orders. The mean delivery time is x̄ = 28 minutes. The population SD is σ = 6 minutes.',lv:'95%',xb:28,sd:6,n:36,u:'minutes',what:'the mean delivery time of all orders',worked:true},
+ {id:'ex2',t:'Hours of sleep',q:'100 students record their sleep. The mean is x̄ = 6.8 hours, with σ = 1.5 hours.',lv:'90%',xb:6.8,sd:1.5,n:100,u:'hours',what:'the mean sleep time of all students'},
+ {id:'ex3',t:'Mobile data',q:'64 phone users are checked. Their mean monthly data use is x̄ = 18 GB, with σ = 8 GB.',lv:'99%',xb:18,sd:8,n:64,u:'GB',what:'the mean monthly data use of all users'},
+ {id:'ex4',t:'Taxi fares',q:'81 taxi trips in Dubai have a mean fare of x̄ = 45 AED, with σ = 9 AED.',lv:'95%',xb:45,sd:9,n:81,u:'AED',what:'the mean fare of all trips'},
+ {id:'ex5',t:'Water bottles',q:'A factory checks 16 bottles. The mean volume is x̄ = 502 ml and the sample SD is s = 4 ml. σ is not known. For 95% and df = 15, t* = 2.131.',lv:'95%',xb:502,sd:4,n:16,u:'ml',what:'the mean volume of all bottles',ts:'2.131'},
+ {id:'ex6',t:'Commute time',q:'49 employees report a mean commute of x̄ = 35 minutes, with σ = 14 minutes.',lv:'95%',xb:35,sd:14,n:49,u:'minutes',what:'the mean commute time of all employees'}];
+
+const SOLVE=x=>{const cs=x.ts||ZS[x.lv],c=parseFloat(cs),se=x.sd/Math.sqrt(x.n),E=c*se;return {cs,se,E,lo:x.xb-E,hi:x.xb+E};};
+const ZTAB=lv=>`<div class="tw"><table class="ct"><tr><th>Confidence</th><th>z*</th></tr>${Object.entries(ZS).map(([k,v])=>`<tr class="${k===lv?'hr':''}"><td>${k}</td><td class="${k===lv?'hit':''}">${v}</td></tr>`).join('')}</table></div>`;
+
+const STEPS5=[
+ ['Write the data','x̄, σ (or s), n and the confidence level.'],
+ ['Critical value','σ known → z* from the confidence level. σ unknown → t* (given).'],
+ ['Standard error','SE = σ ÷ √n.'],
+ ['Margin of error','E = critical value × SE.'],
+ ['Interval and meaning','x̄ − E to x̄ + E, then one sentence in context.']];
+
+const EXHTML=(x,k)=>{const S=SOLVE(x),sym=x.ts?'s':'σ',cv=x.ts?'t*':'z*';
+ const ans=[
+  EQ(`x̄ = ${V(x.xb)}`)+EQ(`${sym} = ${V(x.sd,'v2')}`)+EQ(`n = ${V(x.n,'v3')}`)+EQ(`confidence = ${V(x.lv)}`),
+  x.ts?EQ(`σ unknown → use t*`)+EQ(`t* = ${V(x.ts,'v2')}  (given, df = ${x.n} − 1 = ${x.n-1})`)+`<p class="note">t* is always given in the question.</p>`
+     :EQ(`σ known → use z*`)+ZTAB(x.lv)+EQ(`z* = ${V(S.cs,'v2')}`)+`<p class="note">In exams, z* is sometimes given in the question: then use it directly.</p>`,
+  EQ(`SE = ${FR(sym,'√n')} = ${FR(String(x.sd),'√'+x.n)} = ${FR(String(x.sd),String(Math.sqrt(x.n)))} = ${V(n4(S.se))}`),
+  EQ(`E = ${cv} × SE = ${S.cs} × ${n4(S.se)} = ${V(n4(S.E))}`),
+  EQ(`Lower = x̄ − E = ${x.xb} − ${n4(S.E)} = ${V(n4(S.lo))}`)+EQ(`Upper = x̄ + E = ${x.xb} ${CT('+')} ${n4(S.E)} = ${V(n4(S.hi))}`)+EQ(`${x.lv} CI: ${ANS('('+n4(Math.round(S.lo*100)/100)+' , '+n4(Math.round(S.hi*100)/100)+') '+x.u)}`)+
+  `<p class="say">We are ${x.lv} confident that ${x.what} is between ${n4(Math.round(S.lo*100)/100)} and ${n4(Math.round(S.hi*100)/100)} ${x.u}.</p>`];
+ return `<div class="ex"><b>${x.q}</b> Find the ${x.lv} confidence interval for the population mean μ and interpret it.</div>
+  <div class="s5">${STEPS5.map(([t,why],s)=>`<div class="s5-i"><div class="s5-h"><span class="sn">${s+1}</span><div><div class="st">${t}</div><div class="sw">${why}</div></div>
+   <button type="button" class="pill s5-b" aria-expanded="${x.worked?'true':'false'}">${x.worked?'Hide':'Show'}</button></div><div class="s5-a"${x.worked?'':' hidden'}>${ans[s]}</div></div>`).join('')}</div>`;};
+
+CH.push(...EXS.map((x,k)=>({id:x.id,wk:k===0?'Worked example':'Exercise '+(k+1),t:x.t,html:EXHTML(x,k)})));
+
+const STEPBAR=`<div class="sbar">${STEPS5.map(([t],i)=>`<div style="background:var(${['--c1','--c2','--cr','--c3','--cg'][i]})"><b>${i+1}</b>${t}</div>`).join('')}</div>`;
+(function(){
+  const css=`
+body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803d;--cr:#c62828;--ck:#7c3aed;--cs:#ea580c}
+:root[data-theme="dark"] body.q2l{--c1:#7FB2FF;--c2:#f0a35e;--c3:#c4a5ff;--cg:#4ade80;--cr:#ff8a80;--ck:#c4a5ff;--cs:#fb923c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body.q2l{--c1:#7FB2FF;--c2:#f0a35e;--c3:#c4a5ff;--cg:#4ade80;--cr:#ff8a80;--ck:#c4a5ff;--cs:#fb923c}}
+.ql-main{padding:22px 12px 40px}
+.ql-cover,.ch{max-width:900px;margin:0 auto 22px;background:var(--surface);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.08);padding:30px 44px}
+.ql-top{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border-bottom:2px solid var(--ink);padding-bottom:8px}
+.ql-cover h1{font-family:var(--f-display);font-size:clamp(1.9rem,4.5vw,2.6rem);font-weight:800;text-align:center;margin:20px 0 4px}
+.ql-cover>p{text-align:center;color:var(--muted);font-family:var(--f-display);margin:0 0 14px}
+.ql-toc{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.ql-toc a{display:block;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-left:5px solid var(--c1);border-radius:8px;padding:9px 12px;font-family:var(--f-display);height:100%}
+.ql-toc small{display:block;color:var(--c1);font-family:var(--f-mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}
+.ql-tools{text-align:center;margin-top:14px}
+.ch{scroll-margin-top:72px;font-family:var(--f-display)}
+.ch-h{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;border-bottom:3px solid var(--c1);padding-bottom:8px;margin-bottom:14px}
+.ch-h h2{font-size:1.6rem;font-weight:800;margin:0;line-height:1.15}
+.ch-h small{display:block;font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c1)}
+.ch-h a{font-size:.85rem;white-space:nowrap}
+.ch p{margin:6px 0}
+.box{border-radius:10px;padding:10px 14px;margin:10px 0;border:1px solid var(--line);border-left:6px solid var(--bc,var(--c1));background:color-mix(in srgb,var(--bc,var(--c1)) 6%,var(--surface))}
+.box .bt{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--bc,var(--c1));margin-bottom:4px}
+.box.what{--bc:var(--c1)}.box.chk{--bc:var(--cg)}.box.kw{--bc:var(--c3)}.box.fm{--bc:var(--cr)}.box.get{--bc:var(--c2)}
+.egl{color:var(--muted);font-size:.95rem}
+.four{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.four>div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:.92rem}
+.four.sm>div{font-size:.88rem}
+.words{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:6px}.words>div{display:flex;gap:8px;align-items:baseline;background:var(--surface);border-radius:8px;padding:5px 8px;border:1px solid var(--line)}
+.words b{color:var(--c3);font-family:var(--f-mono);min-width:2.6em;white-space:nowrap}.words span{font-size:.9rem}
+.fgrid{display:flex;flex-wrap:wrap;gap:8px 12px}
+.eq{font-family:var(--f-mono);font-size:1.02rem;display:flex;align-items:center;flex-wrap:wrap;gap:.3em;margin:4px 0;padding:4px 10px;background:var(--surface);border-radius:8px;border:1px solid var(--line);width:fit-content;max-width:100%}
+.fr{display:inline-flex;flex-direction:column;text-align:center;vertical-align:middle;margin:0 .15em}.fr .n{color:var(--cg);border-bottom:2px solid currentColor;padding:0 .3em}.fr .n{border-color:var(--ink)}.fr .d{color:var(--cr);padding:0 .3em}
+.kb{color:var(--ck);font-weight:700}.ks{color:var(--cs);font-weight:700}
+.v1{color:var(--c1);font-weight:700}.v2{color:var(--c2);font-weight:700}.v3{color:var(--c3);font-weight:700}
+.ans{background:var(--cg);color:#fff;border-radius:6px;padding:1px 8px;font-weight:700}
+.which{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}.which>div{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px;font-size:.92rem}.which b{color:var(--cr)}
+.bell{color:var(--ink)}
+.keys{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:6px 0}.keys .kl{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.keys kbd{font-family:var(--f-mono);font-size:.85rem;background:#e8e8e4;color:#15181c;border-radius:6px;padding:2px 8px;box-shadow:0 2px 0 #9aa}.keys kbd.fn{background:#4a505b;color:#fff}
+.keys .kr{font-family:var(--f-mono);font-weight:700;margin-left:6px}.keys .kr:before{content:'→ '}
+.read{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:6px 0}.read>div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:.9rem}.read>div>b:first-child{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--c2);color:#fff;text-align:center;font-size:.75rem;line-height:20px;margin-right:4px}
+.tw{overflow-x:auto;margin:6px 0}
+.zt,.ct{border-collapse:collapse;font-family:var(--f-mono);font-size:.82rem;background:var(--surface)}
+.zt th,.zt td,.ct th,.ct td{border:1px solid var(--line);padding:3px 7px;text-align:center}
+.zt th,.ct th{background:color-mix(in srgb,var(--ink) 6%,var(--surface))}
+.zt .hc,.ct .hc{background:color-mix(in srgb,var(--c2) 25%,var(--surface))}
+.zt tr.hr th,.ct tr.hr th,.zt tr.hr td,.ct tr.hr td{background:color-mix(in srgb,var(--c2) 14%,var(--surface))}
+.zt td.hit,.ct td.hit{background:var(--c2)!important;color:#fff;font-weight:700}
+.ct .tot{color:var(--cr);font-weight:700}
+.fullz summary{cursor:pointer;font-weight:700;color:var(--c2);margin-top:6px}.fullz .tw{max-height:420px}
+.sm{font-size:.88rem;color:var(--muted)}
+.exh{font-size:1.15rem;margin:20px 0 6px;color:var(--c1)}
+.ex{border:2px solid var(--ink);border-radius:10px;padding:10px 14px;font-size:1rem}.ex ol{margin:6px 0 0;padding-left:24px}
+.step{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:start;border-bottom:1px dashed var(--line);padding:10px 0}
+.sn{width:30px;height:30px;border-radius:50%;background:var(--c1);color:#fff;font-weight:800;display:grid;place-items:center}
+.st{font-weight:800;font-size:1.02rem}.sw{color:var(--muted);font-size:.9rem;margin:1px 0 4px}
+.ss{width:150px}.cimg svg{width:150px;height:auto;display:block}.ss .bell{display:block;margin:4px auto}
+.decide{display:inline-flex;flex-wrap:wrap;align-items:center;gap:8px;border:2px solid var(--cs);border-radius:8px;padding:4px 10px;margin:4px 0;background:color-mix(in srgb,var(--cs) 8%,var(--surface))}
+.dq{font-family:var(--f-mono);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--cs);font-weight:700}.da{font-weight:800}
+.say{border-left:4px solid var(--cg);padding:4px 10px;background:color-mix(in srgb,var(--cg) 8%,var(--surface));border-radius:0 8px 8px 0;font-weight:600}
+.mis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mis>div{border-radius:8px;padding:8px 10px;font-size:.92rem}.mis b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+.mis .bad{background:color-mix(in srgb,var(--cr) 9%,var(--surface));border:1px solid var(--cr)}.mis .bad b{color:var(--cr)}
+.mis .good{background:color-mix(in srgb,var(--cg) 9%,var(--surface));border:1px solid var(--cg)}.mis .good b{color:var(--cg)}
+.ct.mg td{white-space:nowrap}.note{border-left:4px solid var(--cs);background:color-mix(in srgb,var(--cs) 8%,var(--surface));padding:4px 10px;border-radius:0 8px 8px 0;font-size:.92rem}
+.eq.wrap{line-height:2.4;row-gap:.6em}
+.rule{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}.rule>div{border:2px solid var(--line);border-radius:10px;padding:8px 10px;opacity:.55;font-size:.95rem}.rule>div b{display:block}.rule>div span{display:block;color:var(--muted);font-size:.88rem}
+.rule>div.on{opacity:1;border-color:var(--cg);background:color-mix(in srgb,var(--cg) 8%,var(--surface))}
+@media (max-width:700px){.rule{grid-template-columns:1fr}}
+.s5{margin-top:10px;display:flex;flex-direction:column;gap:8px}
+.s5-i{border:1px solid var(--line);border-left:5px solid var(--c1);border-radius:10px;padding:8px 12px;background:var(--surface)}
+.s5-i:nth-child(2){border-left-color:var(--c2)}.s5-i:nth-child(3){border-left-color:var(--cr)}.s5-i:nth-child(4){border-left-color:var(--c3)}.s5-i:nth-child(5){border-left-color:var(--cg)}
+.s5-i:nth-child(2) .sn{background:var(--c2)}.s5-i:nth-child(3) .sn{background:var(--cr)}.s5-i:nth-child(4) .sn{background:var(--c3)}.s5-i:nth-child(5) .sn{background:var(--cg)}
+.s5-h{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:10px;align-items:center}
+.s5-a{margin:8px 0 2px 44px}
+.ct .ev{color:var(--c2);font-weight:700}.ct td.cl{text-align:left;font-family:var(--f-display)}
+.sbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:4px 0 14px}.sbar div{font-family:var(--f-display);border-radius:8px;padding:8px;color:#fff;font-weight:700;font-size:.9rem;text-align:center}.sbar b{display:block;font-size:1.2rem}
+@media (max-width:700px){.sbar{grid-template-columns:1fr 1fr}.s5-a{margin-left:0}}
+@media print{.s5-a{display:block!important}.s5-b{display:none}.s5-i{break-inside:avoid}}
+@media (max-width:700px){.ql-cover,.ch{padding:20px 14px}.ql-main{padding:12px 6px 30px}.ql-toc,.four,.read{grid-template-columns:1fr 1fr}.step{grid-template-columns:30px minmax(0,1fr)}.ss{grid-column:2;width:140px}.mis{grid-template-columns:1fr}.ch-h{flex-direction:column;align-items:flex-start}}
+@media print{
+  :root,:root[data-theme]{--bg:#fff!important;--surface:#fff!important;--ink:#111!important;--muted:#444!important;--line:#bbb!important;color-scheme:light}
+  body.q2l{--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803d;--cr:#c62828;--ck:#7c3aed;--cs:#ea580c}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{size:A4;margin:10mm}
+  body{background:#fff!important;font-size:12px}
+  .lbar,.ql-cover,.support-note,.ca-btn,.ca-panel,.calm-start,.ch-h a,.fullz{display:none!important}
+  .ql-main{padding:0}
+  .ch{box-shadow:none;border:0;padding:0;margin:0;max-width:none;break-before:page}
+  .ch:first-of-type{break-before:auto}
+  .step,.box,.mis,.ex{break-inside:avoid}
+  .ss,.cimg svg{width:105px}
+}`;
+  const st=document.createElement('style'); st.textContent=css; document.head.appendChild(st);
+  document.body.classList.add('lesson','q2l');
+  const el=(t,a={},h='')=>{ const e=document.createElement(t); Object.entries(a).forEach(([k,v])=>e.setAttribute(k,v)); if(h) e.innerHTML=h; return e; };
+
+  const bar=el('header',{class:'lbar'});
+  bar.innerHTML=`<div class="lbar-in"><a class="brand" href="exams.html"><b>MTH 105</b><span>← Exams · Confidence interval practice</span></a>
+    <nav class="lchips" aria-label="Chapters">${CH.map((w,i)=>`<a href="#${w.id}" data-id="${w.id}">${i===0?'Example':'Ex '+(i+1)}</a>`).join('')}</nav>
+    <div class="lctl"><button type="button" class="pill" id="pr-top">Print / PDF</button><button type="button" class="pill" id="theme" title="Light or dark">◐</button></div></div><div class="progress"><i></i></div>`;
+  document.body.appendChild(bar);
+  bar.querySelector('#theme').addEventListener('click',()=>GED102Theme.toggle());
+  bar.querySelector('#pr-top').addEventListener('click',()=>window.print());
+
+  const main=el('main',{class:'ql-main'});
+  const cover=el('section',{class:'ql-cover'});
+  cover.innerHTML=`<div class="ql-top"><span>MTH 105 · Introduction to Statistics</span><span>Fall 2026 · Nadia</span></div>
+    <h1>Confidence interval for the mean · 5 steps</h1><p>One method for every question: data → critical value → SE → margin of error → interval and meaning. Try each step, then press Show.</p>${STEPBAR}
+    <ol class="ql-toc">${CH.map(w=>`<li><a href="#${w.id}"><small>${w.wk}</small>${w.t}</a></li>`).join('')}</ol>
+    <div class="ql-tools"><a class="btn" href="downloads/MTH105-CI-practice.pdf" download>Download PDF</a> <button type="button" class="btn" id="showall">Show all answers</button> <button type="button" class="btn" id="pr">Print / Save as PDF</button></div>`;
+  main.appendChild(cover);
+  cover.querySelector('#pr').addEventListener('click',()=>window.print());
+  CH.forEach((w,i)=>{
+    const s=el('section',{class:'ch',id:w.id});
+    s.innerHTML=`<div class="ch-h"><h2><small>${w.wk}</small>${w.t}</h2><a href="week-11.html">Week 11 lecture →</a></div>${w.html}`;
+    main.appendChild(s);
+  });
+  document.body.appendChild(main);
+  document.body.appendChild(el('p',{class:'support-note'},'This website is interactive course support. It does not replace classes, attendance or class activities.'));
+
+  const chips=[...bar.querySelectorAll('.lchips a')];main.querySelectorAll('.s5-b').forEach(b=>b.addEventListener('click',()=>{const a=b.closest('.s5-i').querySelector('.s5-a'),o=a.hidden;a.hidden=!o;b.textContent=o?'Hide':'Show';b.setAttribute('aria-expanded',String(o));}));const allb=cover.querySelector('#showall');allb&&allb.addEventListener('click',()=>{const open=allb.dataset.o!=='1';main.querySelectorAll('.s5-i').forEach(i=>{const a=i.querySelector('.s5-a'),b=i.querySelector('.s5-b');a.hidden=!open;b.textContent=open?'Hide':'Show';b.setAttribute('aria-expanded',String(open));});allb.dataset.o=open?'1':'0';allb.textContent=open?'Hide all answers':'Show all answers';}), secs=[...main.querySelectorAll('.ch')];
+  const io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting) chips.forEach(c=>c.classList.toggle('on',c.dataset.id===e.target.id)); }),{rootMargin:'-20% 0px -70% 0px'});
+  secs.forEach(x=>io.observe(x));
+  const onScroll=()=>{ const d=document.documentElement; bar.querySelector('.progress i').style.width=(d.scrollTop/((d.scrollHeight-d.clientHeight)||1)*100)+'%'; };
+  addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  const h=location.hash.slice(1); if(h&&document.getElementById(h)) setTimeout(()=>document.getElementById(h).scrollIntoView(),60);
+})();
+</script>
+</body>
+</html>
