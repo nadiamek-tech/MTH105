@@ -252,7 +252,7 @@ function cltTool(el){
   el.querySelector('input').addEventListener('input',run); run();
 }
 function ciTool(el){
-  el.innerHTML=`<div class="tool"><div class="seg2"><button type="button" aria-pressed="true">Mean</button><button type="button" aria-pressed="false">Proportion</button></div>
+  el.innerHTML=`<div class="tool"><div class="seg2" style="display:none"><button type="button" aria-pressed="true">Mean</button><button type="button" aria-pressed="false">Proportion</button></div>
    <div class="inrow m1"><div><label for="ci-x">x̄</label><input type="number" id="ci-x" value="54"></div><div><label for="ci-s">σ</label><input type="number" id="ci-s" value="6"></div><div><label for="ci-n">n</label><input type="number" id="ci-n" value="50"></div><div><label for="ci-c">Confidence</label><select id="ci-c"><option>90</option><option selected>95</option><option>99</option></select></div></div>
    <div class="inrow m2" hidden><div><label for="ci-xp">x (successes)</label><input type="number" id="ci-xp" value="120"></div><div><label for="ci-np">n</label><input type="number" id="ci-np" value="200"></div><div><label for="ci-cp">Confidence</label><select id="ci-cp"><option>90</option><option selected>95</option><option>99</option></select></div></div>
    <div class="steps"></div><div class="pic"></div></div>`;

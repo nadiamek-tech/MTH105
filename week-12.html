@@ -18,7 +18,7 @@
 <body>
 <script src="assets/supports.js?v=202610231305"></script>
 <script src="assets/course.js?v=202611181430"></script>
-<script src="assets/stats.js?v=202610231305"></script>
+<script src="assets/stats.js?v=202611190945"></script>
 <script src="assets/concept.js?v=202610231305"></script>
 <script src="assets/decode.js?v=202610231305"></script>
 <script src="assets/professor.js?v=202611181430"></script>
@@ -131,14 +131,14 @@ Lesson.mount({
   intro:'Are two categorical variables related? We count, compare with what we would expect by chance, and decide with one test.',
   topics:[
   { id:'two-way', title:'Contingency tables',
-    def:'A <b>contingency table</b> (two-way table) counts individuals by two categorical variables: one in the rows, one in the columns. Compare the groups with <b>row percentages</b>.',
+    def:'A <b>contingency table</b> (two-way table) counts individuals by two categorical variables: one in the rows, one in the columns. Add the <b>row totals</b>, the <b>column totals</b> and the <b>grand total</b>.',
     defFig:{label:'Two variables, one table', html:G12.tw},
-    life:{text:'240 students: do they use a study-planner app, and did they submit the last assignment on time? Data: illustrative.', fig:{label:'Observed counts', html:OBS}},
-    formula:{f:`${T('rp','Row %')} = ${fr(T('c','cell count'),T('r','row total'))} × 100%`,
-      parts:[['rp','<b>Row %</b>: the share of that row in this cell.'],['c','<b>cell count</b>: the number in one cell.'],['r','<b>row total</b>: the total of the same row.']],
-      sub:BA.side([['On time, planner app',`${fr('72','90')} × 100%`],['On time, no app',`${fr('96','150')} × 100%`]]), keys:'7 2 ÷ 9 0 × 1 0 0 =',
-      ans:`<div class="m">80% vs 64%</div>`, ansRaw:true},
-    meaning:{text:'80% of app users were on time, against 64% of non-users. The rows differ. Is the gap bigger than chance? The chi-square test answers.', fig:{label:'On time or late, by group', html:barsSVG}} },
+    life:{text:'240 students: do they use a study-planner app, and did they submit the last assignment on time? Data: illustrative.'},
+    formula:{f:`${T('g','Total')} = ${T('r','Σ rows')} = ${T('c','Σ columns')}`,
+      parts:[['g','<b>Total</b>: the grand total, everyone in the table.'],['r','<b>Σ rows</b>: add the row totals.'],['c','<b>Σ columns</b>: add the column totals.']],
+      sub:`90 + 150 = 168 + 72`, keys:'9 0 + 1 5 0 =',
+      ans:`<div class="m">Grand total = <b>240</b></div>`, ansRaw:true, ansNote:'Both ways give 240: the totals are correct.'},
+    meaning:{text:'The table with its totals is the starting point. Is using the app related to submitting on time? The chi-square test answers.', fig:{label:'Observed counts with totals', html:OBS}} },
 
   { id:'hypotheses', title:'The test of independence: hypotheses',
     def:'<b>H₀</b>: the two variables are <b>independent</b> (not related). <b>H₁</b>: they are <b>related</b>. We assume H₀ and reject it only if the data are very unlikely under it. The significance level is usually <b>α = 0.05</b>.',
@@ -179,9 +179,9 @@ Lesson.mount({
   ],
   inClass:{intro:'We build the tables and run the test together on the board.', items:[
     {q:'150 students give their year of study and preferred class time. Year 1: Morning 28, Afternoon 20, Evening 12. Year 2: Morning 22, Afternoon 40, Evening 28. At α = 0.05, is preferred class time related to year of study? Data: illustrative.', tips:['Write H₀ and H₁ first.','Add the row and column totals.','E = row total × column total ÷ grand total.','df = (r − 1)(c − 1).']},
-    {q:'Using the table in Exercise 1, find the row percentages and draw a bar chart comparing Year 1 and Year 2. Does the chart agree with your decision?', draw:true, tips:['Row % = cell ÷ row total × 100%.','One bar (or group of bars) per year.','Similar bars → no relationship; different bars → related.']}]},
+    {q:'120 customers: under 30, 40 order delivery and 20 pick up; 30 and over, 25 order delivery and 35 pick up. At α = 0.05, is the ordering method related to age group? Show all five steps. Data: illustrative.', tips:['H₀: independent. H₁: related.','Totals, then E for every cell.','χ², df, critical value, decision in words.']}]},
   takeaways:{label:'Week 12 on one page', mindmap:{center:'χ² test', branches:[
-    {t:'Table',items:['Two categorical variables','Row % = cell ÷ row total']},
+    {t:'Table',items:['Two categorical variables','Row, column and grand totals']},
     {t:'Hypotheses',items:['H₀: independent','H₁: related']},
     {t:'Expected',items:['E = row × column ÷ grand','Every E ≥ 5']},
     {t:'Statistic',items:['χ² = Σ (O − E)² ÷ E']},
