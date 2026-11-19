@@ -38,19 +38,25 @@ const CTAB=(x,S)=>{const cells=[];x.rows.forEach((r,i)=>x.cols.forEach((c,j)=>ce
 const CRITTAB=df=>`<div class="tw"><table class="ct"><tr><th>df</th><th>α = 0.10</th><th class="hc">α = 0.05</th><th>α = 0.01</th></tr>${[[1,'2.706','3.841','6.635'],[2,'4.605','5.991','9.210'],[3,'6.251','7.815','11.345']].map(r=>`<tr class="${r[0]===df?'hr':''}"><th>${r[0]}</th><td>${r[1]}</td><td class="${r[0]===df?'hit':''}">${r[2]}</td><td>${r[3]}</td></tr>`).join('')}</table></div>`;
 
 const STEPS5=[
- ['Hypotheses','H₀ always says “independent”.'],
- ['Expected counts','E = row total × column total ÷ grand total, for every cell.'],
- ['Test statistic χ²','(O − E)² ÷ E for every cell, then add.'],
- ['df and critical value','df = (rows − 1)(columns − 1). Read the table at α = 0.05.'],
- ['Decision and conclusion','χ² bigger than the critical value → reject H₀.']];
+ ['Hypotheses','Write H₀ and H₁.'],
+ ['α, df and χ² critical','α from the question → df → the critical value from the table.'],
+ ['Expected counts','E = row total × column total ÷ grand total, then put O and E together.'],
+ ['χ² calculated','χ² = Σ (O − E)² ÷ E, with brackets for every cell.'],
+ ['Decision','Compare χ² calculated with χ² critical.']];
 
-const EXHTML=(x,k)=>{const S=SOLVE(x),i0=0,j0=0;
+const MERGED=(x,S)=>`<div class="tw"><table class="ct mg"><tr><th>O (E)</th>${x.cols.map(c=>`<th>${c}</th>`).join('')}<th class="tot">Total</th></tr>${x.rows.map((r,i)=>`<tr><th>${r}</th>${x.O[i].map((o,j)=>`<td><b>${o}</b> <span class="ev">(${n4(S.E[i][j])})</span></td>`).join('')}<td class="tot">${S.R[i]}</td></tr>`).join('')}<tr><th class="tot">Total</th>${S.C.map(c=>`<td class="tot">${c}</td>`).join('')}<td class="tot">${S.N}</td></tr></table></div><p class="sm">Black = observed O · <span class="ev">orange (E) = expected</span></p>`;
+const ETAB2=(x,S)=>`<div class="tw"><table class="ct"><tr><th>E</th>${x.cols.map(c=>`<th>${c}</th>`).join('')}<th class="tot">Total</th></tr>${x.rows.map((r,i)=>`<tr><th>${r}</th>${S.E[i].map((e,j)=>`<td class="ev">${n4(e)}</td>`).join('')}<td class="tot">${S.R[i]}</td></tr>`).join('')}<tr><th class="tot">Total</th>${S.C.map(c=>`<td class="tot">${c}</td>`).join('')}<td class="tot">${S.N}</td></tr></table></div>`;
+const TERMS=(x,S)=>{const t=[];x.O.forEach((r,i)=>r.forEach((o,j)=>t.push(FR(`(${o} − ${n4(S.E[i][j])})²`,n4(S.E[i][j])))));return `<div class="eq wrap">χ² = ${t.join(` <span class="ks">+</span> `)}</div>`;};
+
+const EXHTML=(x,k)=>{const S=SOLVE(x),i0=0,j0=0,a=S.rej;
  const ans=[
-  EQ(`H₀: ${x.v1} and ${x.v2} are <b>independent</b>`)+EQ(`H₁: ${x.v1} and ${x.v2} are <b>related</b>`),
-  `<p class="sm">Totals first:</p>`+OTAB(x,S,true)+EQ(`E<sub>${x.rows[i0]}, ${x.cols[j0]}</sub> = ${FR(S.R[i0]+' × '+S.C[j0],String(S.N))} = ${V(n4(S.E[i0][j0]))}`)+`<p class="sm">Same rule for every cell:</p>`+ETAB(x,S)+`<p class="sm">Check: every E is at least 5 ✓</p>`,
-  CTAB(x,S)+EQ(`χ² = ${ANS(n4(S.chi))}`),
-  EQ(`df = ${CT(`(${x.rows.length} − 1)(${x.cols.length} − 1)`)} = ${V(S.df)}`)+CRITTAB(S.df)+EQ(`critical value = ${V(S.crit,'v2')}`),
-  DECIDE(`${n4(S.chi)} vs ${S.crit}`,S.rej?`${n4(S.chi)} &gt; ${S.crit} → reject H₀`:`${n4(S.chi)} &lt; ${S.crit} → do not reject H₀`)+`<p class="say">${S.rej?`There is evidence that ${x.v1} and ${x.v2} are <b>related</b>.`:`There is no evidence that ${x.v1} and ${x.v2} are related.`}</p>`];
+  EQ(`H₀: ${x.v1} and ${x.v2} are <b>independent</b> (not related)`)+EQ(`H₁: ${x.v1} and ${x.v2} are <b>dependent</b> (related)`),
+  EQ(`α = ${V('0.05')}`)+EQ(`df = ${CT(`(r − 1)(c − 1)`)} = ${CT(`(${x.rows.length} − 1)(${x.cols.length} − 1)`)} = ${V(S.df)}`)+CRITTAB(S.df)+EQ(`χ²<sub>critical</sub> = ${V(S.crit,'v2')}`)+`<p class="note">In exams, χ² critical is sometimes given in the question: then use it directly.</p>`,
+  `<p class="sm">Totals first:</p>`+OTAB(x,S,true)+EQ(`E<sub>${x.rows[i0]}, ${x.cols[j0]}</sub> = ${FR(S.R[i0]+' × '+S.C[j0],String(S.N))} = ${V(n4(S.E[i0][j0]))}`)+`<p class="sm">Same rule for every cell → the expected table:</p>`+ETAB2(x,S)+`<p class="sm">Observed and expected together:</p>`+MERGED(x,S),
+  TERMS(x,S)+EQ(`χ² = ${S.T.flat().map(n4).join(` ${CT('+')} `)}`)+EQ(`χ²<sub>calculated</sub> = ${ANS(n4(S.chi))}`),
+  `<div class="rule"><div class="${a?'':'on'}"><b>χ² calculated &lt; χ² critical</b>→ fail to reject H₀<span>we fail to prove the dependency</span></div><div class="${a?'on':''}"><b>χ² calculated &gt; χ² critical</b>→ reject H₀<span>the dependency is proven</span></div></div>`+
+  DECIDE(`${n4(S.chi)} vs ${S.crit}`,a?`${n4(S.chi)} &gt; ${S.crit} → reject H₀`:`${n4(S.chi)} &lt; ${S.crit} → fail to reject H₀`)+
+  `<p class="say">${a?`At the 5% significance level (95% confidence), ${x.v1} and ${x.v2} are <b>dependent</b>: they are related.`:`At the 5% significance level (95% confidence), we cannot prove that ${x.v1} and ${x.v2} are related: we treat them as <b>independent</b>.`}</p>`];
  return `<div class="ex"><b>${x.q}</b> Is ${x.v1} related to ${x.v2}? Use α = 0.05.${OTAB(x,S,false)}</div>
   <div class="s5">${STEPS5.map(([t,why],s)=>`<div class="s5-i"><div class="s5-h"><span class="sn">${s+1}</span><div><div class="st">${t}</div><div class="sw">${why}</div></div>
    <button type="button" class="pill s5-b" aria-expanded="${x.worked?'true':'false'}">${x.worked?'Hide':'Show'}</button></div><div class="s5-a"${x.worked?'':' hidden'}>${ans[s]}</div></div>`).join('')}</div>`;};
@@ -120,6 +126,11 @@ body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803
 .mis{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.mis>div{border-radius:8px;padding:8px 10px;font-size:.92rem}.mis b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
 .mis .bad{background:color-mix(in srgb,var(--cr) 9%,var(--surface));border:1px solid var(--cr)}.mis .bad b{color:var(--cr)}
 .mis .good{background:color-mix(in srgb,var(--cg) 9%,var(--surface));border:1px solid var(--cg)}.mis .good b{color:var(--cg)}
+.ct.mg td{white-space:nowrap}.note{border-left:4px solid var(--cs);background:color-mix(in srgb,var(--cs) 8%,var(--surface));padding:4px 10px;border-radius:0 8px 8px 0;font-size:.92rem}
+.eq.wrap{line-height:2.4;row-gap:.6em}
+.rule{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0}.rule>div{border:2px solid var(--line);border-radius:10px;padding:8px 10px;opacity:.55;font-size:.95rem}.rule>div b{display:block}.rule>div span{display:block;color:var(--muted);font-size:.88rem}
+.rule>div.on{opacity:1;border-color:var(--cg);background:color-mix(in srgb,var(--cg) 8%,var(--surface))}
+@media (max-width:700px){.rule{grid-template-columns:1fr}}
 .s5{margin-top:10px;display:flex;flex-direction:column;gap:8px}
 .s5-i{border:1px solid var(--line);border-left:5px solid var(--c1);border-radius:10px;padding:8px 12px;background:var(--surface)}
 .s5-i:nth-child(2){border-left-color:var(--c2)}.s5-i:nth-child(3){border-left-color:var(--cr)}.s5-i:nth-child(4){border-left-color:var(--c3)}.s5-i:nth-child(5){border-left-color:var(--cg)}
@@ -159,7 +170,7 @@ body.q2l{background:var(--bg);--c1:#1F63B5;--c2:#B5651D;--c3:#7c3aed;--cg:#15803
   const main=el('main',{class:'ql-main'});
   const cover=el('section',{class:'ql-cover'});
   cover.innerHTML=`<div class="ql-top"><span>MTH 105 · Introduction to Statistics</span><span>Fall 2026 · Nadia</span></div>
-    <h1>Chi-square test · 5 steps</h1><p>One method for every table: hypotheses → expected counts → χ² → df and critical value → decision. Try each step, then press Show.</p>${STEPBAR}
+    <h1>Chi-square test · 5 steps</h1><p>One method for every table: hypotheses → α, df and χ² critical → expected counts → χ² calculated → decision. Try each step, then press Show.</p>${STEPBAR}
     <ol class="ql-toc">${CH.map(w=>`<li><a href="#${w.id}"><small>${w.wk}</small>${w.t}</a></li>`).join('')}</ol>
     <div class="ql-tools"><button type="button" class="btn" id="showall">Show all answers</button> <button type="button" class="btn" id="pr">Print / Save as PDF</button></div>`;
   main.appendChild(cover);
